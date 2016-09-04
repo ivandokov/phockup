@@ -1,6 +1,6 @@
 # phockup
 
-Photos backup tool to organize photos from camera in folders by year and month
+Photos backup tool to organize photos from camera in folders by year, month and day
 
 ## Install (Ubuntu)
 By default I install the software in `/opt`. You can change the commands below if you use different folder

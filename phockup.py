@@ -88,6 +88,7 @@ def set_output_dir(date, outputdir):
         outputdir,
         '%04d' % date.year,
         '%02d' % date.month,
+        '%02d' % date.day,
     ]
     fullpath = '/'.join(path)
 
