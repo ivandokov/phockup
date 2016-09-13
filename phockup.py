@@ -104,7 +104,7 @@ def get_file_name(file, date):
         '%04d' % date['date'].year,
         '%02d' % date['date'].month,
         '%02d' % date['date'].day,
-        '',
+        '-',
         '%02d' % date['date'].hour,
         '%02d' % date['date'].minute,
         '%02d' % date['date'].second,
@@ -113,7 +113,7 @@ def get_file_name(file, date):
     if date['subseconds']:
         filename.append(date['subseconds'])
 
-    return '-'.join(filename) + os.path.splitext(file)[1]
+    return ''.join(filename) + os.path.splitext(file)[1]
 
 
 def handle_file(file, outputdir):
