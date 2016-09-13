@@ -85,7 +85,7 @@ def get_date(exif_data):
 
     if datestr:
         datestr = datestr.split('.')
-        subseconds = datastr[1] if 1 in datestr else ''
+        subseconds = datestr[1] if 1 in datestr else ''
         return {'date': datetime.strptime(datestr[0], "%Y:%m:%d %H:%M:%S"), 'subseconds': subseconds}
 
 
