@@ -48,7 +48,11 @@ def main(argv):
 
     for file_regex in files:
         for file in glob.iglob(file_regex, recursive=True):
-            handle_file(file, outputdir)
+            try:
+                handle_file(file, outputdir)
+            except KeyboardInterrupt:
+                print(' Exiting...')
+                sys.exit(0)
 
 
 def check_dependencies():
