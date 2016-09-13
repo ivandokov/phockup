@@ -90,6 +90,9 @@ def get_date(exif_data):
 
 
 def set_output_dir(date, outputdir):
+    if outputdir.endswith('/'):
+        outputdir = outputdir[:-1]
+
     path = [
         outputdir,
         '%04d' % date.year,
