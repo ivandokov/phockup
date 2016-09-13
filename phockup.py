@@ -75,7 +75,7 @@ def exif(file):
 
 
 def get_date(exif_data):
-    keys = ['Create Date', 'Date/Time Original', ]
+    keys = ['Create Date', 'Date/Time Original']
 
     datestr = None
 
