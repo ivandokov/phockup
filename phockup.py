@@ -80,7 +80,8 @@ def get_date(exif_data):
 
     if datestr:
         datestr = datestr.split('.')
-        return {'date': datetime.strptime(datestr[0], "%Y:%m:%d %H:%M:%S"), 'subseconds': datestr[1]}
+        subseconds = datastr[1] if 1 in datestr else ''
+        return {'date': datetime.strptime(datestr[0], "%Y:%m:%d %H:%M:%S"), 'subseconds': subseconds}
 
 
 def set_output_dir(date, outputdir):
