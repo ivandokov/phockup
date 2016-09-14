@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import sys
+import re
 from datetime import datetime
 from subprocess import check_output
 
@@ -74,31 +75,58 @@ def exif(file):
     return exif_data
 
 
-def get_date(exif_data):
+def get_date(file):
     keys = ['Create Date', 'Date/Time Original']
 
+    exif_data = exif(file)
     datestr = None
 
     for key in keys:
         if key in exif_data:
             datestr = exif_data[key]
+            break
 
     if datestr:
         datestr = datestr.split('.')
         subseconds = datestr[1] if 1 in datestr else ''
-        return {'date': datetime.strptime(datestr[0], "%Y:%m:%d %H:%M:%S"), 'subseconds': subseconds}
+
+        return {
+            'date': datetime.strptime(datestr[0], "%Y:%m:%d %H:%M:%S"),
+            'subseconds': subseconds
+        }
+    else:
+        # If missing datetime from exif data check if filename is in datetime format
+        # E.g.: IMG_20160915_123456.jpg
+        regex = re.compile('.*[_-](\d{8})[_-]?(\d{6})')
+        matches = regex.findall(os.path.basename(file))
+
+        if matches:
+            datetimestr = ' '.join(list(matches[0]))
+
+            return {
+                'date': datetime.strptime(datetimestr, "%Y%m%d %H%M%S"),
+                'subseconds': ''
+            }
+
 
 
 def set_output_dir(date, outputdir):
     if outputdir.endswith('/'):
         outputdir = outputdir[:-1]
 
-    path = [
-        outputdir,
-        '%04d' % date.year,
-        '%02d' % date.month,
-        '%02d' % date.day,
-    ]
+    if date:
+        path = [
+            outputdir,
+            '%04d' % date['date'].year,
+            '%02d' % date['date'].month,
+            '%02d' % date['date'].day,
+        ]
+    else:
+        path = [
+            outputdir,
+            'unknown',
+        ]
+
     fullpath = '/'.join(path)
 
     subprocess.call(['mkdir', '-p', fullpath])
@@ -107,33 +135,40 @@ def set_output_dir(date, outputdir):
 
 
 def get_file_name(file, date):
-    filename = [
-        '%04d' % date['date'].year,
-        '%02d' % date['date'].month,
-        '%02d' % date['date'].day,
-        '-',
-        '%02d' % date['date'].hour,
-        '%02d' % date['date'].minute,
-        '%02d' % date['date'].second,
-    ]
+    if date:
+        filename = [
+            '%04d' % date['date'].year,
+            '%02d' % date['date'].month,
+            '%02d' % date['date'].day,
+            '-',
+            '%02d' % date['date'].hour,
+            '%02d' % date['date'].minute,
+            '%02d' % date['date'].second,
+        ]
 
-    if date['subseconds']:
-        filename.append(date['subseconds'])
+        if date['subseconds']:
+            filename.append(date['subseconds'])
 
-    return ''.join(filename) + os.path.splitext(file)[1]
+        return ''.join(filename) + os.path.splitext(file)[1]
+
+    else:
+        return os.path.basename(file)
 
 
 def handle_file(file, outputdir):
-    date = get_date(exif(file))
-    exif_output_dir = set_output_dir(date['date'], outputdir)
+    print(file, end="", flush=True)
+
+    date = get_date(file)
+    exif_output_dir = set_output_dir(date, outputdir)
     image_name = get_file_name(file, date)
     image_path = '/'.join([exif_output_dir, image_name])
 
-    print('%s => %s' % (file, image_path))
+    print(' => %s' % image_path)
     shutil.copy2(file, image_path)
 
     image_xmp = file + '.xmp'
     image_xmp_name = os.path.basename(file) + '.xmp'
+
     if os.path.isfile(image_xmp):
         image_xmp_path = '/'.join([exif_output_dir, image_xmp_name])
         print('%s => %s' % (image_xmp, image_xmp_path))
