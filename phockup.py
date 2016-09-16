@@ -83,7 +83,11 @@ def get_date(file):
 
     if datestr:
         datestr = datestr.split('.')
-        subseconds = datestr[1] if 1 in datestr else ''
+
+        if len(datestr) > 1:
+            subseconds = datestr[1]
+        else:
+            subseconds = ''
 
         return {
             'date': datetime.strptime(datestr[0], "%Y:%m:%d %H:%M:%S"),
@@ -162,7 +166,7 @@ def handle_file(file, outputdir):
     shutil.copy2(file, image_path)
 
     image_xmp = file + '.xmp'
-    image_xmp_name = os.path.basename(file) + '.xmp'
+    image_xmp_name = image_name + '.xmp'
 
     if os.path.isfile(image_xmp):
         image_xmp_path = '/'.join([exif_output_dir, image_xmp_name])
