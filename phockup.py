@@ -159,7 +159,7 @@ def handle_file(file, outputdir):
 
     date = get_date(file)
     exif_output_dir = set_output_dir(date, outputdir)
-    image_name = get_file_name(file, date)
+    image_name = get_file_name(file, date).lower()
     image_path = '/'.join([exif_output_dir, image_name])
 
     print(' => %s' % image_path)
