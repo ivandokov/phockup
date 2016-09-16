@@ -40,19 +40,10 @@ def main(argv):
         print('Output directory does not exist, creating now')
         os.makedirs(outputdir)
 
-    files = (
-        inputdir + '/**/*.nef',
-        inputdir + '/**/*.NEF',
-        inputdir + '/**/*.cr2',
-        inputdir + '/**/*.CR2',
-        inputdir + '/**/*.crw',
-        inputdir + '/**/*.CRW',
-        inputdir + '/**/*.jp*g',
-        inputdir + '/**/*.JP*G'
-    )
+    extensions = ['nef', 'NEF', 'cr2', 'CR2', 'crw', 'CRW', 'jp*g', 'JP*G']
 
-    for file_regex in files:
-        for file in glob.iglob(file_regex, recursive=True):
+    for ext in extensions:
+        for file in glob.iglob(inputdir+'/**/*.'+ext, recursive=True):
             try:
                 handle_file(file, outputdir)
             except KeyboardInterrupt:
