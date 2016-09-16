@@ -43,6 +43,10 @@ def main(argv):
     files = (
         inputdir + '/**/*.nef',
         inputdir + '/**/*.NEF',
+        inputdir + '/**/*.cr2',
+        inputdir + '/**/*.CR2',
+        inputdir + '/**/*.crw',
+        inputdir + '/**/*.CRW',
         inputdir + '/**/*.jp*g',
         inputdir + '/**/*.JP*G'
     )
