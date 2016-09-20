@@ -43,9 +43,9 @@ def main(argv):
     extensions = ['nef', 'NEF', 'cr2', 'CR2', 'crw', 'CRW', 'jp*g', 'JP*G']
 
     for ext in extensions:
-        for file in glob.iglob(inputdir+'/**/*.'+ext, recursive=True):
+        for file in glob.iglob(inputdir + '/**/*.' + ext, recursive=True):
             try:
-                handle_image(file, outputdir)
+                handle_photo(file, outputdir)
             except KeyboardInterrupt:
                 print(' Exiting...')
                 sys.exit(0)
@@ -108,7 +108,6 @@ def get_date(file):
             }
 
 
-
 def set_output_dir(date, outputdir):
     if outputdir.endswith('/'):
         outputdir = outputdir[:-1]
@@ -133,7 +132,7 @@ def set_output_dir(date, outputdir):
     return fullpath
 
 
-def get_image_name(file, date):
+def get_photo_name(file, date):
     if date:
         filename = [
             '%04d' % date['date'].year,
@@ -154,24 +153,38 @@ def get_image_name(file, date):
         return os.path.basename(file)
 
 
-def handle_image(file, outputdir):
+def handle_photo(file, outputdir):
     print(file, end="", flush=True)
 
     date = get_date(file)
     exif_output_dir = set_output_dir(date, outputdir)
-    image_name = get_image_name(file, date).lower()
-    image_path = '/'.join([exif_output_dir, image_name])
+    photo_name = get_photo_name(file, date).lower()
+    photo_path = '/'.join([exif_output_dir, photo_name])
 
-    print(' => %s' % image_path)
-    shutil.copy2(file, image_path)
+    print(' => %s' % photo_path)
+    shutil.copy2(file, photo_path)
 
-    image_xmp = file + '.xmp'
-    image_xmp_name = image_name + '.xmp'
+    handle_photo_xmp(file, photo_name, exif_output_dir)
 
-    if os.path.isfile(image_xmp):
-        image_xmp_path = '/'.join([exif_output_dir, image_xmp_name])
-        print('%s => %s' % (image_xmp, image_xmp_path))
-        shutil.copy2(image_xmp, image_xmp_path)
+
+def handle_photo_xmp(file, photo_name, exif_output_dir):
+    xmp_original_with_ext = file + '.xmp'
+    xmp_original_without_ext = os.path.splitext(file)[0] + '.xmp'
+
+    if os.path.isfile(xmp_original_with_ext):
+        xmp_original = xmp_original_with_ext
+        xmp_target = photo_name + '.xmp'
+    elif os.path.isfile(xmp_original_without_ext):
+        xmp_original = xmp_original_without_ext
+        xmp_target = os.path.splitext(photo_name)[0] + '.xmp'
+    else:
+        xmp_original = None
+        xmp_target = None
+
+    if xmp_original:
+        xmp_path = '/'.join([exif_output_dir, xmp_target])
+        print('%s => %s' % (xmp_original, xmp_path))
+        shutil.copy2(xmp_original, xmp_path)
 
 
 def error(message):
