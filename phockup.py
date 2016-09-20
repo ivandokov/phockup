@@ -45,7 +45,7 @@ def main(argv):
     for ext in extensions:
         for file in glob.iglob(inputdir+'/**/*.'+ext, recursive=True):
             try:
-                handle_file(file, outputdir)
+                handle_image(file, outputdir)
             except KeyboardInterrupt:
                 print(' Exiting...')
                 sys.exit(0)
@@ -133,7 +133,7 @@ def set_output_dir(date, outputdir):
     return fullpath
 
 
-def get_file_name(file, date):
+def get_image_name(file, date):
     if date:
         filename = [
             '%04d' % date['date'].year,
@@ -154,12 +154,12 @@ def get_file_name(file, date):
         return os.path.basename(file)
 
 
-def handle_file(file, outputdir):
+def handle_image(file, outputdir):
     print(file, end="", flush=True)
 
     date = get_date(file)
     exif_output_dir = set_output_dir(date, outputdir)
-    image_name = get_file_name(file, date).lower()
+    image_name = get_image_name(file, date).lower()
     image_path = '/'.join([exif_output_dir, image_name])
 
     print(' => %s' % image_path)
