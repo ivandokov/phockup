@@ -83,14 +83,19 @@ def get_date(file):
 
     if datestr:
         datestr = datestr.split('.')
+        date = datestr[0]
 
         if len(datestr) > 1:
             subseconds = datestr[1]
         else:
             subseconds = ''
 
+        search = r'(.*)([+-]\d{2}:\d{2})'
+        if re.search(search, date) is not None:
+            date = re.sub(search, r'\1', date)
+
         return {
-            'date': datetime.strptime(datestr[0], "%Y:%m:%d %H:%M:%S"),
+            'date': datetime.strptime(date, "%Y:%m:%d %H:%M:%S"),
             'subseconds': subseconds
         }
     else:
