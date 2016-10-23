@@ -105,12 +105,17 @@ def get_date(file):
         matches = regex.findall(os.path.basename(file))
 
         if matches:
-            datetimestr = ' '.join(list(matches[0]))
+            try:
+                datetimestr = ' '.join(list(matches[0]))
+                date = datetime.strptime(datetimestr, "%Y%m%d %H%M%S")
+            except ValueError:
+                date = None
 
-            return {
-                'date': datetime.strptime(datetimestr, "%Y%m%d %H%M%S"),
-                'subseconds': ''
-            }
+            if date:
+                return {
+                    'date': date,
+                    'subseconds': ''
+                }
 
 
 def set_output_dir(date, outputdir):
