@@ -30,9 +30,9 @@ def main(argv):
             outputdir = arg
 
     if inputdir == '':
-        help()
+        help_info()
     if outputdir == '':
-        help()
+        help_info()
 
     if not os.path.isdir(inputdir) or not os.path.exists(inputdir):
         error('Input directory does not exist')
