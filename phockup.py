@@ -203,7 +203,23 @@ def error(message):
 
 
 def help_info():
-    error('phockup -i <inputdir> -o <outputdir>')
+    error("""NAME
+    phockup
+
+SYNOPSIS
+    phockup -i inputdir -o outputdir
+
+DESCRIPTION
+    Phockup is a photos sorting and backup tool written in Python 3.
+    It organizes your photos from your camera in a meaningful hierarchy and with proper file names.
+
+ARGUMENTS
+    -i|--input=
+        Specify the source directory where your photos are located
+
+    -o|--output=
+        Specify the output directory where your photos should be exported
+""")
 
 
 if __name__ == '__main__':
