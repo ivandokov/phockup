@@ -34,5 +34,5 @@ phockup -i ~/Pictures/camera -o ~/Pictures/organized
 ```
 
 ## Changelog
-* **v1.1.0** - Collect all files instead only specified file types. This also enables video sorting
-* **v1.0.0** - Initial version
+* `v1.1.0` - Collect all files instead only specified file types. This also enables video sorting
+* `v1.0.0` - Initial version
