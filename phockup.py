@@ -9,6 +9,8 @@ import re
 from datetime import datetime
 from subprocess import check_output
 
+version = '1.1.0'
+
 
 def main(argv):
     check_dependencies()
@@ -40,15 +42,16 @@ def main(argv):
         print('Output directory does not exist, creating now')
         os.makedirs(outputdir)
 
-    extensions = ['nef', 'NEF', 'cr2', 'CR2', 'crw', 'CRW', 'jp*g', 'JP*G']
+    for file in glob.iglob(inputdir + '/**/*.*', recursive=True):
+        # handle rare case when there are directories with "." in the name
+        if os.path.isdir(file):
+            continue
 
-    for ext in extensions:
-        for file in glob.iglob(inputdir + '/**/*.' + ext, recursive=True):
-            try:
-                handle_photo(file, outputdir)
-            except KeyboardInterrupt:
-                print(' Exiting...')
-                sys.exit(0)
+        try:
+            handle_file(file, outputdir)
+        except KeyboardInterrupt:
+            print(' Exiting...')
+            sys.exit(0)
 
 
 def check_dependencies():
@@ -70,10 +73,9 @@ def exif(file):
     return exif_data
 
 
-def get_date(file):
+def get_date(file, exif_data):
     keys = ['Create Date', 'Date/Time Original']
 
-    exif_data = exif(file)
     datestr = None
 
     for key in keys:
@@ -118,7 +120,7 @@ def get_date(file):
                 }
 
 
-def set_output_dir(date, outputdir):
+def get_output_dir(date, outputdir):
     if outputdir.endswith('/'):
         outputdir = outputdir[:-1]
 
@@ -142,7 +144,7 @@ def set_output_dir(date, outputdir):
     return fullpath
 
 
-def get_photo_name(file, date):
+def get_file_name(file, date):
     if date:
         filename = [
             '%04d' % date['date'].year,
@@ -163,21 +165,36 @@ def get_photo_name(file, date):
         return os.path.basename(file)
 
 
-def handle_photo(file, outputdir):
+def is_image_or_video(exif_data):
+    pattern = re.compile('^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
+    if pattern.match(exif_data['MIME Type']):
+        return True
+    return False
+
+
+def handle_file(file, outputdir):
     print(file, end="", flush=True)
 
-    date = get_date(file)
-    exif_output_dir = set_output_dir(date, outputdir)
-    photo_name = get_photo_name(file, date).lower()
-    photo_path = '/'.join([exif_output_dir, photo_name])
+    exif_data = exif(file)
 
-    print(' => %s' % photo_path)
-    shutil.copy2(file, photo_path)
+    if is_image_or_video(exif_data):
+        date = get_date(file, exif_data)
+        output_dir = get_output_dir(date, outputdir)
+        file_name = get_file_name(file, date).lower()
+        file_path = '/'.join([output_dir, file_name])
 
-    handle_photo_xmp(file, photo_name, exif_output_dir)
+        print(' => %s' % file_path)
+        shutil.copy2(file, file_path)
+
+        handle_file_xmp(file, file_name, output_dir)
+    else:
+        output_dir = get_output_dir(False, outputdir)
+        file_path = '/'.join([output_dir, os.path.basename(file)])
+        print(' => %s' % file_path)
+        shutil.copy2(file, file_path)
 
 
-def handle_photo_xmp(file, photo_name, exif_output_dir):
+def handle_file_xmp(file, photo_name, exif_output_dir):
     xmp_original_with_ext = file + '.xmp'
     xmp_original_without_ext = os.path.splitext(file)[0] + '.xmp'
 
@@ -204,14 +221,14 @@ def error(message):
 
 def help_info():
     error("""NAME
-    phockup
+    phockup - v{version}
 
 SYNOPSIS
     phockup -i inputdir -o outputdir
 
 DESCRIPTION
-    Phockup is a photos sorting and backup tool written in Python 3.
-    It organizes your photos from your camera in a meaningful hierarchy and with proper file names.
+    Phockup is a photos and videos sorting and backup tool written in Python 3.
+    It organizes the media from your camera in a meaningful hierarchy and with proper file names.
 
 ARGUMENTS
     -i|--input=
@@ -219,7 +236,7 @@ ARGUMENTS
 
     -o|--output=
         Specify the output directory where your photos should be exported
-""")
+""".format(version=version))
 
 
 if __name__ == '__main__':
