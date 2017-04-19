@@ -7,7 +7,7 @@ import subprocess
 import sys
 import re
 from datetime import datetime
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 
 version = '1.1.0'
 
@@ -63,8 +63,11 @@ def check_dependencies():
 
 
 def exif(file):
-    data = check_output(['exiftool', file]).decode('UTF-8').strip().split("\\n")[0].split("\n")
-    exif_data = {}
+    try:
+        data = check_output(['exiftool', file]).decode('UTF-8').strip().split("\\n")[0].split("\n")
+        exif_data = {}
+    except CalledProcessError:
+        return None
 
     for row in data:
         opt = row.split(":")
@@ -177,7 +180,7 @@ def handle_file(file, outputdir):
 
     exif_data = exif(file)
 
-    if is_image_or_video(exif_data):
+    if exif_data and is_image_or_video(exif_data):
         date = get_date(file, exif_data)
         output_dir = get_output_dir(date, outputdir)
         file_name = get_file_name(file, date).lower()
