@@ -42,16 +42,13 @@ def main(argv):
         print('Output directory does not exist, creating now')
         os.makedirs(outputdir)
 
-    for file in glob.iglob(inputdir + '/**/*.*', recursive=True):
-        # handle rare case when there are directories with "." in the name
-        if os.path.isdir(file):
-            continue
-
-        try:
-            handle_file(file, outputdir)
-        except KeyboardInterrupt:
-            print(' Exiting...')
-            sys.exit(0)
+    for root, _, files in os.walk(inputdir):
+        for filename in files:
+            try:
+                handle_file(os.path.join(root, filename), outputdir)
+            except KeyboardInterrupt:
+                print(' Exiting...')
+                sys.exit(0)
 
 
 def check_dependencies():
