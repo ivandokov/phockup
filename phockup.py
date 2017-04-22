@@ -96,8 +96,16 @@ def get_date(file, exif_data):
         if re.search(search, date) is not None:
             date = re.sub(search, r'\1', date)
 
+        try:
+            parsed_date_time = datetime.strptime(date, "%Y:%m:%d %H:%M:%S")
+        except ValueError:
+            try:
+                parsed_date_time = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                parsed_date_time = None
+
         return {
-            'date': datetime.strptime(date, "%Y:%m:%d %H:%M:%S"),
+            'date': parsed_date_time,
             'subseconds': subseconds
         }
     else:
