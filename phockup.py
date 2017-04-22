@@ -63,7 +63,7 @@ def exif(file):
     try:
         data = check_output(['exiftool', file]).decode('UTF-8').strip().split("\\n")[0].split("\n")
         exif_data = {}
-    except CalledProcessError:
+    except (CalledProcessError, UnicodeDecodeError):
         return None
 
     for row in data:
