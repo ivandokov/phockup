@@ -30,7 +30,7 @@ sudo mv phockup.py /usr/local/bin/phockup
 ## Usage
 Organize photos from one directory into another
 ```
-phockup -i ~/Pictures/camera -o ~/Pictures/organized
+phockup ~/Pictures/camera ~/Pictures/organized
 ```
 
 ## Changelog
