@@ -35,13 +35,14 @@ phockup -i ~/Pictures/camera -o ~/Pictures/organized
 
 ## Changelog
 ##### `v1.2.0` 
-* Do not process duplicated files located in different directories
+* Changed synopsis of the script. `-i|--inputdir` and `-o|--outputdir` are not required anymore. Use first argument for input directory and second for output directory.
+* Do not process duplicated files located in different directories.
 * Prefix duplicated target file names of different files. Sha256 checksum is used for comparison of the source and target files.
 * Ignore `.DS_Store` and `Thumbs.db` files
 * Handle case when `exiftool` returns exit code > 0. 
 * Use `os.walk` instead of `iglob` to support Python < 3.5
-* Handle some different date formats from exif data
+* Handle some different date formats from exif data.
 ##### `v1.1.0`
-* Collect all files instead only specified file types. This also enables video sorting
+* Collect all files instead only specified file types. This also enables video sorting.
 ##### `v1.0.0`
-Initial version
+Initial version.

@@ -9,37 +9,22 @@ import re
 from datetime import datetime
 from subprocess import check_output, CalledProcessError
 
-version = '1.1.0'
+version = '1.2.0'
 
 
 def main(argv):
     check_dependencies()
 
-    try:
-        opts, args = getopt.getopt(argv, 'hi:o:', ['help', 'input=', 'output='])
-    except getopt.GetoptError:
+    if len(argv) != 2:
         help_info()
 
-    inputdir = ''
-    outputdir = ''
-
-    for opt, arg in opts:
-        if opt == '-h':
-            help_info()
-        elif opt in ('-i', '--input'):
-            inputdir = arg
-        elif opt in ('-o', '--output'):
-            outputdir = arg
-
-    if inputdir == '':
-        help_info()
-    if outputdir == '':
-        help_info()
+    inputdir = argv[0]
+    outputdir = argv[1]
 
     if not os.path.isdir(inputdir) or not os.path.exists(inputdir):
-        error('Input directory does not exist')
+        error('Input directory "%s" does not exist' % inputdir)
     if not os.path.exists(outputdir):
-        print('Output directory does not exist, creating now')
+        print('Output directory "%s" does not exist, creating now' % outputdir)
         os.makedirs(outputdir)
 
     ignored_files = ('.DS_Store', 'Thumbs.db')
@@ -260,17 +245,17 @@ def help_info():
     phockup - v{version}
 
 SYNOPSIS
-    phockup -i inputdir -o outputdir
+    phockup INPUTDIR OUTPUTDIR
 
 DESCRIPTION
     Phockup is a photos and videos sorting and backup tool written in Python 3.
     It organizes the media from your camera in a meaningful hierarchy and with proper file names.
 
 ARGUMENTS
-    -i|--input=
+    INPUTDIR
         Specify the source directory where your photos are located
 
-    -o|--output=
+    OUTPUTDIR
         Specify the output directory where your photos should be exported
 """.format(version=version))
 
