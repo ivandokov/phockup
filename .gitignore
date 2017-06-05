@@ -1,2 +1,7 @@
-.idea
+/.idea
+/parts
+/prime
+/snap
+/stage
+phockup*.snap
 .python-version
