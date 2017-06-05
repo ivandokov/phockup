@@ -136,7 +136,8 @@ def get_output_dir(date, outputdir):
 
     fullpath = '/'.join(path)
 
-    subprocess.call(['mkdir', '-p', fullpath])
+    if not os.path.isdir(fullpath):
+        os.makedirs(fullpath)
 
     return fullpath
 
