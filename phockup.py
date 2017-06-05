@@ -118,7 +118,7 @@ def get_date(file, exif_data):
 
 
 def get_output_dir(date, outputdir):
-    if outputdir.endswith('/'):
+    if outputdir.endswith(os.path.sep):
         outputdir = outputdir[:-1]
 
     if date:
@@ -134,7 +134,7 @@ def get_output_dir(date, outputdir):
             'unknown',
         ]
 
-    fullpath = '/'.join(path)
+    fullpath = os.path.sep.join(path)
 
     if not os.path.isdir(fullpath):
         os.makedirs(fullpath)
@@ -182,11 +182,11 @@ def handle_file(source_file, outputdir):
         date = get_date(source_file, exif_data)
         output_dir = get_output_dir(date, outputdir)
         target_file_name = get_file_name(source_file, date).lower()
-        target_file_path = '/'.join([output_dir, target_file_name])
+        target_file_path = os.path.sep.join([output_dir, target_file_name])
     else:
         output_dir = get_output_dir(False, outputdir)
         target_file_name = os.path.basename(source_file)
-        target_file_path = '/'.join([output_dir, target_file_name])
+        target_file_path = os.path.sep.join([output_dir, target_file_name])
 
     suffix = 1
     target_file = target_file_path
@@ -223,7 +223,7 @@ def handle_file_xmp(source_file, photo_name, suffix, exif_output_dir):
         xmp_target = None
 
     if xmp_original:
-        xmp_path = '/'.join([exif_output_dir, xmp_target])
+        xmp_path = os.path.sep.join([exif_output_dir, xmp_target])
         print('%s => %s' % (xmp_original, xmp_path))
         shutil.copy2(xmp_original, xmp_path)
 
