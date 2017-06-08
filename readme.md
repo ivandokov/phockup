@@ -25,7 +25,7 @@ brew install phockup
 
 ### Windows
 * Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/)
-* Download this package and run phockup.py from Command Prompt
+* Download this package and run `phockup.py` from Command Prompt
 
 ## Usage
 Organize photos from one directory into another
