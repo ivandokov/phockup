@@ -10,7 +10,7 @@ All files which are not images or videos will be placed in a directory called `u
 ### Ubuntu
 ```
 sudo apt-get install libimage-exiftool-perl -y
-curl -L https://github.com/ivandokov/phockup/archive/v1.2.0.tar.gz --output phockup.tar.gz
+curl -L https://github.com/ivandokov/phockup/archive/v1.2.0.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
 mv phockup-1.2.0 /opt
 sudo ln -s /opt/phockup-1.2.0/phockup.py /usr/local/bin/phockup
