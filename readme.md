@@ -14,13 +14,12 @@ wget -q https://raw.githubusercontent.com/ivandokov/phockup/master/phockup.py
 chmod +x phockup.py
 sudo mv phockup.py /usr/local/bin/phockup
 ```
+    
 ### Mac
-Requires [homebrew](http://brew.sh/) or download package from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/)
+Requires [Homebrew](http://brew.sh/)
 ```
-brew install exiftool
-wget -q https://raw.githubusercontent.com/ivandokov/phockup/master/phockup.py
-chmod +x phockup.py
-sudo mv phockup.py /usr/local/bin/phockup
+brew tap ivandokov/homebrew-contrib
+brew install phockup
 ```
 
 ### Windows
