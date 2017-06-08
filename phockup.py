@@ -43,8 +43,6 @@ def main(argv):
 def check_dependencies():
     if shutil.which('exiftool') is None:
         print('Exiftool is not installed. Visit http://www.sno.phy.queensu.ca/~phil/exiftool/')
-        print('On Ubuntu you can `sudo apt-get install libimage-exiftool-perl`')
-        print('On Mac you can `brew install exiftool`')
         sys.exit(2)
 
 
