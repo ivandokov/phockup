@@ -37,7 +37,7 @@ phockup ~/Pictures/camera ~/Pictures/organized
 ##### `v1.2.0` 
 * Changed synopsis of the script. `-i|--inputdir` and `-o|--outputdir` are not required anymore. Use first argument for input directory and second for output directory.
 * Do not process duplicated files located in different directories.
-* Prefix duplicated target file names of different files. Sha256 checksum is used for comparison of the source and target files.
+* Suffix duplicated file names of different files. Sha256 checksum is used for comparison of the source and target files to see if they are identical.
 * Ignore `.DS_Store` and `Thumbs.db` files
 * Handle case when `exiftool` returns exit code > 0. 
 * Use `os.walk` instead of `iglob` to support Python < 3.5
