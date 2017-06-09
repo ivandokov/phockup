@@ -24,6 +24,7 @@ brew install phockup
 ```
 
 ### Windows
+* Download and install latest stable [Python 3](https://www.python.org/downloads/windows/)
 * Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/v1.2.1.zip) and extract the archive
 * Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool-10.56.zip) and extract the archive
 * Rename `exiftool(-k).exe` to `exiftool.exe`
