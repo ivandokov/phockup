@@ -9,7 +9,7 @@ import re
 from datetime import datetime
 from subprocess import check_output, CalledProcessError
 
-version = '1.2.0'
+version = '1.2.1'
 
 
 def main(argv):
