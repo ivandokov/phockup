@@ -10,10 +10,10 @@ All files which are not images or videos or those which do not have creation dat
 ### Ubuntu
 ```
 sudo apt-get install libimage-exiftool-perl -y
-curl -L https://github.com/ivandokov/phockup/archive/v1.2.0.tar.gz -o phockup.tar.gz
+curl -L https://github.com/ivandokov/phockup/archive/v1.2.1.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
-mv phockup-1.2.0 /opt
-sudo ln -s /opt/phockup-1.2.0/phockup.py /usr/local/bin/phockup
+mv phockup-1.2.1 /opt
+sudo ln -s /opt/phockup-1.2.1/phockup.py /usr/local/bin/phockup
 ```
     
 ### Mac
@@ -24,7 +24,7 @@ brew install phockup
 ```
 
 ### Windows
-* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/v1.2.0.zip) and extract the archive
+* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/v1.2.1.zip) and extract the archive
 * Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool-10.56.zip) and extract the archive
 * Rename `exiftool(-k).exe` to `exiftool.exe`
 * Move `exiftool.exe` to phockup folder
@@ -46,6 +46,8 @@ phockup ~/Pictures/camera ~/Pictures/sorted
 ```
 
 ## Changelog
+##### `v1.2.1`
+* Windows compatibility fixes
 ##### `v1.2.0` 
 * Changed synopsis of the script. `-i|--inputdir` and `-o|--outputdir` are not required anymore. Use first argument for input directory and second for output directory.
 * Do not process duplicated files located in different directories.
