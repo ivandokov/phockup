@@ -1,0 +1,26 @@
+name: phockup
+version: '1.2.0'
+summary: Photo and video sorting tool
+description: |
+  Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
+  The software will collect all files from the input directory and copy them to the output directory without
+  changing the files content. It will only rename the files and place them in the proper directory for year, month and day.
+
+grade: devel
+confinement: devmode
+
+apps:
+  phockup:
+    command: phockup
+    plugs: [home]
+
+parts:
+  phockup:
+    source: https://github.com/ivandokov/phockup.git
+    source-tag: v1.2.0
+    plugin: python
+    install: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp phockup.py $SNAPCRAFT_PART_INSTALL/bin/phockup
+    stage-packages:
+      - libimage-exiftool-perl
