@@ -34,12 +34,15 @@ brew install phockup
 ## Usage
 Organize photos from one directory into another
 ```
-phockup <source-folder> <target-folder>
+phockup INPUTDIR OUTPUTDIR
 ```
+
+`INPUTDIR` is the directory where your photos are located.  
+`OUTPUTDIR` is the directory where your **sorted** photos will be stored. It could be a new not existing directory.
 
 Example:
 ```
-phockup ~/Pictures/camera ~/Pictures/organized
+phockup ~/Pictures/camera ~/Pictures/sorted
 ```
 
 ## Changelog
