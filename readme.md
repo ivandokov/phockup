@@ -24,11 +24,20 @@ brew install phockup
 ```
 
 ### Windows
-* Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/)
-* Download this package and run `phockup.py` from Command Prompt
+* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/v1.2.0.zip) and extract the archive
+* Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool-10.56.zip) and extract the archive
+* Rename `exiftool(-k).exe` to `exiftool.exe`
+* Move `exiftool.exe` to phockup folder
+* Open Command Prompt and `cd` to phockup folder
+* Use the command below (use `phockup.py` instead of `phockup`)
 
 ## Usage
 Organize photos from one directory into another
+```
+phockup <source-folder> <target-folder>
+```
+
+Example:
 ```
 phockup ~/Pictures/camera ~/Pictures/organized
 ```
