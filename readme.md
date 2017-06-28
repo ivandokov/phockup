@@ -1,4 +1,7 @@
 # Phockup
+
+<a href="https://build.snapcraft.io/user/ivandokov/phockup"><img src="https://build.snapcraft.io/badge/ivandokov/phockup.svg" alt="Build Status"></a>
+
 Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
 
 ## How it works
