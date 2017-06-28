@@ -10,13 +10,9 @@ The software will collect all files from the input directory and copy them to th
 All files which are not images or videos or those which do not have creation date information will be placed in a directory called `unknown` without file name change. By doing this you can be sure that the input directory can be safely deleted after the successful process completion because **all** files from the input directory have a copy in the output directory.
 
 ## Installation
-### Ubuntu
+### Linux (snap)
 ```
-sudo apt-get install libimage-exiftool-perl -y
-curl -L https://github.com/ivandokov/phockup/archive/v1.2.1.tar.gz -o phockup.tar.gz
-tar -zxf phockup.tar.gz
-mv phockup-1.2.1 /opt
-sudo ln -s /opt/phockup-1.2.1/phockup.py /usr/local/bin/phockup
+sudo snap install phockup
 ```
     
 ### Mac
