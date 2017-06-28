@@ -10,7 +10,8 @@ The software will collect all files from the input directory and copy them to th
 All files which are not images or videos or those which do not have creation date information will be placed in a directory called `unknown` without file name change. By doing this you can be sure that the input directory can be safely deleted after the successful process completion because **all** files from the input directory have a copy in the output directory.
 
 ## Installation
-### Linux (snap)
+### Linux
+Requires [snapd](https://snapcraft.io/docs/core/install)
 ```
 sudo snap install phockup
 ```
