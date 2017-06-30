@@ -15,6 +15,15 @@ Requires [snapd](https://snapcraft.io/docs/core/install)
 ```
 sudo snap install phockup
 ```
+---
+If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the sorce and set it up
+```
+sudo apt-get install libimage-exiftool-perl -y
+curl -L https://github.com/ivandokov/phockup/archive/v1.2.2.tar.gz -o phockup.tar.gz
+tar -zxf phockup.tar.gz
+mv phockup-1.2.2 /opt
+sudo ln -s /opt/phockup-1.2.2/phockup.py /usr/local/bin/phockup
+```
     
 ### Mac
 Requires [Homebrew](http://brew.sh/)
@@ -25,7 +34,7 @@ brew install phockup
 
 ### Windows
 * Download and install latest stable [Python 3](https://www.python.org/downloads/windows/)
-* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/v1.2.1.zip) and extract the archive
+* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/v1.2.2.zip) and extract the archive
 * Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool-10.56.zip) and extract the archive
 * Rename `exiftool(-k).exe` to `exiftool.exe`
 * Move `exiftool.exe` to phockup folder
@@ -47,7 +56,10 @@ phockup ~/Pictures/camera ~/Pictures/sorted
 ```
 
 ## Changelog
-##### `v1.2.1`
+##### `v1.2.2`
+* Allow access to removable media (external HDD, USB, etc) for snap the application
+* Continue execution even if date attribute is not present [[#6](https://github.com/ivandokov/phockup/pull/6)]
+##### `v1.2.2`
 * Windows compatibility fixes
 ##### `v1.2.0` 
 * Changed synopsis of the script. `-i|--inputdir` and `-o|--outputdir` are not required anymore. Use first argument for input directory and second for output directory.
