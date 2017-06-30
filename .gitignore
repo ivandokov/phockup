@@ -2,5 +2,6 @@
 /parts
 /prime
 /stage
+/snap
 phockup*.snap
 .python-version
