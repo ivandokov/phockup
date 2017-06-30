@@ -119,14 +119,14 @@ def get_output_dir(date, outputdir):
     if outputdir.endswith(os.path.sep):
         outputdir = outputdir[:-1]
 
-    if date:
+    try:
         path = [
             outputdir,
             '%04d' % date['date'].year,
             '%02d' % date['date'].month,
             '%02d' % date['date'].day,
         ]
-    else:
+    except:
         path = [
             outputdir,
             'unknown',
@@ -141,7 +141,7 @@ def get_output_dir(date, outputdir):
 
 
 def get_file_name(file, date):
-    if date:
+    try:
         filename = [
             '%04d' % date['date'].year,
             '%02d' % date['date'].month,
@@ -157,7 +157,7 @@ def get_file_name(file, date):
 
         return ''.join(filename) + os.path.splitext(file)[1]
 
-    else:
+    except:
         return os.path.basename(file)
 
 
