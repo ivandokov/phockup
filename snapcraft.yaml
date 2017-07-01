@@ -13,7 +13,7 @@ grade: stable
 apps:
   phockup:
     command: phockup.sh
-    plugs: [home, removable-media]
+    plugs: [home]
 
 parts:
   files:
