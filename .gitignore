@@ -3,5 +3,7 @@
 /prime
 /stage
 /snap
+/input
+/output
 phockup*.snap
 .python-version
