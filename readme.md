@@ -16,7 +16,7 @@ Requires [snapd](https://snapcraft.io/docs/core/install)
 sudo snap install phockup
 ```
 ---
-If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the sorce and set it up
+If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
 ```
 sudo apt-get install libimage-exiftool-perl -y
 curl -L https://github.com/ivandokov/phockup/archive/1.3.0.tar.gz -o phockup.tar.gz
