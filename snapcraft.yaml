@@ -12,7 +12,7 @@ grade: stable
 
 apps:
   phockup:
-    command: phockup.sh
+    command: env LC_ALL=C.UTF-8 LANG=C.UTF-8 $SNAP/phockup.sh
     plugs: [home]
 
 parts:
@@ -25,8 +25,7 @@ parts:
     after: [integration, source]
 
   source:
-    source: https://github.com/ivandokov/phockup.git
-    source-tag: $SNAPCRAFT_PROJECT_VERSION
+    source: .
     plugin: python
 
   integration:
