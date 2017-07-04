@@ -21,7 +21,7 @@ If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/
 sudo apt-get install libimage-exiftool-perl -y
 curl -L https://github.com/ivandokov/phockup/archive/1.3.0.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
-mv phockup-1.3.0 /opt
+sudo mv phockup-1.3.0 /opt
 sudo ln -s /opt/phockup-1.3.0/phockup.py /usr/local/bin/phockup
 ```
 
