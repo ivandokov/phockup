@@ -78,6 +78,9 @@ Example:
 ```
 
 ## Changelog
+##### `1.3.2`
+* More snapcraft.yaml fixes (removed architecture which were producing wrong snaps for amd64).
+* Catch some possible write permission for directories and expand absolute path and home directory on *nix
 ##### `1.3.1`
 * Fixed issue with the snap application and simplified the snapcraft.yaml
 ##### `1.3.0`
