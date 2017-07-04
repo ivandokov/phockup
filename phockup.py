@@ -18,14 +18,18 @@ def main(argv):
     if len(argv) < 2:
         help_info()
 
-    inputdir = argv[0]
-    outputdir = argv[1]
+    inputdir = os.path.abspath(os.path.expanduser(argv[0]))
+    outputdir = os.path.abspath(os.path.expanduser(argv[1]))
 
     if not os.path.isdir(inputdir) or not os.path.exists(inputdir):
-        error('Input directory "%s" does not exist' % inputdir)
+        error('Input directory "%s" does not exist or cannot be accessed' % inputdir)
     if not os.path.exists(outputdir):
         print('Output directory "%s" does not exist, creating now' % outputdir)
-        os.makedirs(outputdir)
+        try:
+            os.makedirs(outputdir)
+        except Exception:
+            print('Cannot create output directory. No write access!')
+            sys.exit(0)
 
     date_format = [
         '%Y',
@@ -167,7 +171,12 @@ def get_output_dir(date, outputdir, dir_format):
     fullpath = os.path.sep.join(path)
 
     if not os.path.isdir(fullpath):
-        os.makedirs(fullpath)
+        try:
+            os.makedirs(fullpath)
+        except Exception:
+            print('')
+            print('Cannot create directory %s. No write access!' % fullpath)
+            sys.exit(0)
 
     return fullpath
 
