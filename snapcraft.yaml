@@ -7,13 +7,12 @@ description: |
   changing the files content. It will only rename the files and place them in the proper directory for year, month and day.
 
 confinement: strict
-architectures: [amd64]
 grade: stable
 
 apps:
   phockup:
     command: env LC_ALL=C.UTF-8 LANG=C.UTF-8 $SNAP/phockup.sh
-    plugs: [home]
+    plugs: [home, removable-media]
 
 parts:
   files:
