@@ -19,10 +19,10 @@ sudo snap install phockup
 If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
 ```
 sudo apt-get install libimage-exiftool-perl -y
-curl -L https://github.com/ivandokov/phockup/archive/1.3.0.tar.gz -o phockup.tar.gz
+curl -L https://github.com/ivandokov/phockup/archive/1.3.1.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
-mv phockup-1.3.0 /opt
-sudo ln -s /opt/phockup-1.3.0/phockup.py /usr/local/bin/phockup
+mv phockup-1.3.1 /opt
+sudo ln -s /opt/phockup-1.3.1/phockup.py /usr/local/bin/phockup
 ```
 
 ### Mac
@@ -78,6 +78,8 @@ Example:
 ```
 
 ## Changelog
+##### `1.3.1`
+* Fixed issue with the snap application and simplified the snapcraft.yaml
 ##### `1.3.0`
 * Allow different output directories date format with `-d | --date` option.
 ##### `1.2.2`

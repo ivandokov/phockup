@@ -1,5 +1,5 @@
 name: phockup
-version: '1.3.0'
+version: '1.3.1'
 summary: Photo and video sorting tool
 description: |
   Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
@@ -22,15 +22,12 @@ parts:
     organize:
       phockup.py: lib/phockup/phockup.py
       license: lib/phockup/license
-    after: [integration, source]
-
-  source:
-    source: .
-    plugin: python
+    after: [integration]
 
   integration:
     plugin: nil
     stage-packages:
       - locales-all
+      - python3
       - libimage-exiftool-perl
       - libc-bin
