@@ -18,8 +18,8 @@ def main(argv):
     if len(argv) < 2:
         help_info()
 
-    inputdir = os.path.abspath(os.path.expanduser(argv[0]))
-    outputdir = os.path.abspath(os.path.expanduser(argv[1]))
+    inputdir = os.path.expanduser(argv[0])
+    outputdir = os.path.expanduser(argv[1])
 
     if not os.path.isdir(inputdir) or not os.path.exists(inputdir):
         error('Input directory "%s" does not exist or cannot be accessed' % inputdir)
