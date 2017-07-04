@@ -9,13 +9,13 @@ import re
 from datetime import datetime
 from subprocess import check_output, CalledProcessError
 
-version = '1.2.1'
+version = '1.3.0'
 
 
 def main(argv):
     check_dependencies()
 
-    if len(argv) != 2:
+    if len(argv) < 2:
         help_info()
 
     inputdir = argv[0]
@@ -27,6 +27,27 @@ def main(argv):
         print('Output directory "%s" does not exist, creating now' % outputdir)
         os.makedirs(outputdir)
 
+    date_format = [
+        '%Y',
+        '%m',
+        '%d'
+    ]
+
+    dir_format = os.path.sep.join(date_format)
+
+    try:
+        opts, args = getopt.getopt(argv[2:],"d:",["date="])
+    except getopt.GetoptError:
+        help_info()
+
+    for opt, arg in opts:
+        if opt in ("-d", "--date"):
+            if not arg:
+                print('Date format cannot be empty')
+                sys.exit(0)
+
+            dir_format = parse_date_format(arg)
+
     ignored_files = ('.DS_Store', 'Thumbs.db')
 
     for root, _, files in os.walk(inputdir):
@@ -34,7 +55,7 @@ def main(argv):
             try:
                 if filename in ignored_files:
                     continue
-                handle_file(os.path.join(root, filename), outputdir)
+                handle_file(os.path.join(root, filename), outputdir, dir_format)
             except KeyboardInterrupt:
                 print(' Exiting...')
                 sys.exit(0)
@@ -44,6 +65,19 @@ def check_dependencies():
     if shutil.which('exiftool') is None:
         print('Exiftool is not installed. Visit http://www.sno.phy.queensu.ca/~phil/exiftool/')
         sys.exit(2)
+
+
+def parse_date_format(date):
+    date = date.replace("YYYY", "%Y") # 2017 (year)
+    date = date.replace("YY", "%y")   # 17 (year)
+    date = date.replace("m", "%b")    # Dec (month)
+    date = date.replace("MM", "%m")   # 12 (month)
+    date = date.replace("M", "%B")    # December (month)
+    date = date.replace("DDD", "%j")  # 123 (day or year)
+    date = date.replace("DD", "%d")   # 25 (day)
+    date = date.replace("\\", os.path.sep)  # path separator
+    date = date.replace("/", os.path.sep)   # path separator
+    return date
 
 
 def exif(file):
@@ -115,16 +149,14 @@ def get_date(file, exif_data):
                 }
 
 
-def get_output_dir(date, outputdir):
+def get_output_dir(date, outputdir, dir_format):
     if outputdir.endswith(os.path.sep):
         outputdir = outputdir[:-1]
 
     try:
         path = [
             outputdir,
-            '%04d' % date['date'].year,
-            '%02d' % date['date'].month,
-            '%02d' % date['date'].day,
+            date['date'].date().strftime(dir_format)
         ]
     except:
         path = [
@@ -168,7 +200,7 @@ def is_image_or_video(exif_data):
     return False
 
 
-def handle_file(source_file, outputdir):
+def handle_file(source_file, outputdir, dir_format):
     if str.endswith(source_file, '.xmp'):
         return None
 
@@ -178,11 +210,11 @@ def handle_file(source_file, outputdir):
 
     if exif_data and is_image_or_video(exif_data):
         date = get_date(source_file, exif_data)
-        output_dir = get_output_dir(date, outputdir)
+        output_dir = get_output_dir(date, outputdir, dir_format)
         target_file_name = get_file_name(source_file, date).lower()
         target_file_path = os.path.sep.join([output_dir, target_file_name])
     else:
-        output_dir = get_output_dir(False, outputdir)
+        output_dir = get_output_dir(False, outputdir, dir_format)
         target_file_name = os.path.basename(source_file)
         target_file_path = os.path.sep.join([output_dir, target_file_name])
 
@@ -244,11 +276,12 @@ def help_info():
     phockup - v{version}
 
 SYNOPSIS
-    phockup INPUTDIR OUTPUTDIR
+    phockup INPUTDIR OUTPUTDIR [-d|--date='YYYY/MM/DD']
 
 DESCRIPTION
-    Phockup is a photos and videos sorting and backup tool written in Python 3.
-    It organizes the media from your camera in a meaningful hierarchy and with proper file names.
+    Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
+    The software will collect all files from the input directory and copy them to the output directory without
+    changing the files content. It will only rename the files and place them in the proper directory for year, month and day.
 
 ARGUMENTS
     INPUTDIR
@@ -256,6 +289,27 @@ ARGUMENTS
 
     OUTPUTDIR
         Specify the output directory where your photos should be exported
+
+OPTIONS
+    -d | --date 
+        Specify date format for OUTPUTDIR directories.
+        You can choose different year format (e.g. 17 instead of 2017) or decide
+        to skip the day directories and have all photos sorted in year/month.
+        
+        Supported formats:
+            YYYY - 2016, 2017 ...
+            YY   - 16, 17 ...
+            MM   - 07, 08, 09 ...
+            M    - July, August, September ...
+            m    - Jul, Aug, Sept ...
+            DD   - 27, 28, 29 ... (day of month)
+            DDD  - 123, 158, 365 ... (day of year)
+        
+        Example:
+            YYYY/MM/DD -> 2011/07/17
+            YYYY/M/DD  -> 2011/July/17
+            YYYY/m/DD  -> 2011/Jul/17
+            YY/m-DD    -> 11/Jul-17
 """.format(version=version))
 
 

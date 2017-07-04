@@ -16,15 +16,15 @@ Requires [snapd](https://snapcraft.io/docs/core/install)
 sudo snap install phockup
 ```
 ---
-If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the sorce and set it up
+If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
 ```
 sudo apt-get install libimage-exiftool-perl -y
-curl -L https://github.com/ivandokov/phockup/archive/1.2.2.tar.gz -o phockup.tar.gz
+curl -L https://github.com/ivandokov/phockup/archive/1.3.0.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
-sudo mv phockup-1.2.2 /opt
-sudo ln -s /opt/phockup-1.2.2/phockup.py /usr/local/bin/phockup
+sudo mv phockup-1.3.0 /opt
+sudo ln -s /opt/phockup-1.3.0/phockup.py /usr/local/bin/phockup
 ```
-    
+
 ### Mac
 Requires [Homebrew](http://brew.sh/)
 ```
@@ -47,7 +47,7 @@ Organize photos from one directory into another
 phockup INPUTDIR OUTPUTDIR
 ```
 
-`INPUTDIR` is the directory where your photos are located.  
+`INPUTDIR` is the directory where your photos are located.
 `OUTPUTDIR` is the directory where your **sorted** photos will be stored. It could be a new not existing directory.
 
 Example:
@@ -55,13 +55,37 @@ Example:
 phockup ~/Pictures/camera ~/Pictures/sorted
 ```
 
+### Date format
+If you want to change the output directories date format you can do it by passing the format as `-d | --date` argument.
+You can choose different year format (e.g. 17 instead of 2017) or decide
+        to skip the day directories and have all photos sorted in year/month.
+
+```
+Supported formats:
+    YYYY - 2016, 2017 ...
+    YY   - 16, 17 ...
+    MM   - 07, 08, 09 ...
+    M    - July, August, September ...
+    m    - Jul, Aug, Sept ...
+    DD   - 27, 28, 29 ... (day of month)
+    DDD  - 123, 158, 365 ... (day of year)
+
+Example:
+    YYYY/MM/DD -> 2011/07/17
+    YYYY/M/DD  -> 2011/July/17
+    YYYY/m/DD  -> 2011/Jul/17
+    YY/m-DD    -> 11/Jul-17
+```
+
 ## Changelog
-##### `v1.2.2`
+##### `1.3.0`
+* Allow different output directories date format with `-d | --date` option.
+##### `1.2.2`
 * Allow access to removable media (external HDD, USB, etc) for snap the application
 * Continue execution even if date attribute is not present [[#6](https://github.com/ivandokov/phockup/pull/6)]
-##### `v1.2.2`
+##### `1.2.1`
 * Windows compatibility fixes
-##### `v1.2.0` 
+##### `1.2.0`
 * Changed synopsis of the script. `-i|--inputdir` and `-o|--outputdir` are not required anymore. Use first argument for input directory and second for output directory.
 * Do not process duplicated files located in different directories.
 * Suffix duplicated file names of different files. Sha256 checksum is used for comparison of the source and target files to see if they are identical.
@@ -69,7 +93,7 @@ phockup ~/Pictures/camera ~/Pictures/sorted
 * Handle case when `exiftool` returns exit code > 0. 
 * Use `os.walk` instead of `iglob` to support Python < 3.5
 * Handle some different date formats from exif data.
-##### `v1.1.0`
+##### `1.1.0`
 * Collect all files instead only specified file types. This also enables video sorting.
-##### `v1.0.0`
+##### `1.0.0`
 Initial version.
