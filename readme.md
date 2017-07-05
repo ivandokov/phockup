@@ -15,10 +15,12 @@ Requires [snapd](https://snapcraft.io/docs/core/install)
 ```
 sudo snap install phockup
 ```
----
+*Note: snap applications can access files only in your **home and `/media` directories** for security reasons. If your media files are not located in these directories you should use the installation method below.*
+
+### Linux (w/o snap)
 If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
 ```
-sudo apt-get install libimage-exiftool-perl -y
+sudo apt-get install python3 libimage-exiftool-perl -y
 curl -L https://github.com/ivandokov/phockup/archive/1.3.2.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
 sudo mv phockup-1.3.2 /opt
