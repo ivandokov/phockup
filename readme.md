@@ -10,14 +10,14 @@ The software will collect all files from the input directory and copy them to th
 All files which are not images or videos or those which do not have creation date information will be placed in a directory called `unknown` without file name change. By doing this you can be sure that the input directory can be safely deleted after the successful process completion because **all** files from the input directory have a copy in the output directory.
 
 ## Installation
-### Linux
+### Linux (snap)
 Requires [snapd](https://snapcraft.io/docs/core/install)
 ```
 sudo snap install phockup
 ```
 *Note: snap applications can access files only in your **home and `/media` directories** for security reasons. If your media files are not located in these directories you should use the installation method below.*
 
-### Linux (w/o snap)
+### Linux (without snap)
 If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
 ```
 sudo apt-get install python3 libimage-exiftool-perl -y
