@@ -9,11 +9,33 @@ import re
 from datetime import datetime
 from subprocess import check_output, CalledProcessError
 
-version = '1.3.2'
+version = '1.4.0'
 
 
 def main(argv):
     check_dependencies()
+
+    move_files = False
+    dir_format = os.path.sep.join(['%Y', '%m', '%d'])
+
+    try:
+        opts, args = getopt.getopt(argv[2:], "d:mh",["date=", "move", "help"])
+    except getopt.GetoptError:
+        help_info()
+
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            help_info()
+
+        if opt in ("-d", "--date"):
+            if not arg:
+                print('Date format cannot be empty')
+                sys.exit(0)
+            dir_format = parse_date_format(arg)
+
+        if opt in ("-m", "--move"):
+            move_files = True
+            print('Using move strategy!')
 
     if len(argv) < 2:
         help_info()
@@ -31,27 +53,6 @@ def main(argv):
             print('Cannot create output directory. No write access!')
             sys.exit(0)
 
-    date_format = [
-        '%Y',
-        '%m',
-        '%d'
-    ]
-
-    dir_format = os.path.sep.join(date_format)
-
-    try:
-        opts, args = getopt.getopt(argv[2:],"d:",["date="])
-    except getopt.GetoptError:
-        help_info()
-
-    for opt, arg in opts:
-        if opt in ("-d", "--date"):
-            if not arg:
-                print('Date format cannot be empty')
-                sys.exit(0)
-
-            dir_format = parse_date_format(arg)
-
     ignored_files = ('.DS_Store', 'Thumbs.db')
 
     for root, _, files in os.walk(inputdir):
@@ -59,7 +60,7 @@ def main(argv):
             try:
                 if filename in ignored_files:
                     continue
-                handle_file(os.path.join(root, filename), outputdir, dir_format)
+                handle_file(os.path.join(root, filename), outputdir, dir_format, move_files)
             except KeyboardInterrupt:
                 print(' Exiting...')
                 sys.exit(0)
@@ -209,7 +210,7 @@ def is_image_or_video(exif_data):
     return False
 
 
-def handle_file(source_file, outputdir, dir_format):
+def handle_file(source_file, outputdir, dir_format, move_files):
     if str.endswith(source_file, '.xmp'):
         return None
 
@@ -235,9 +236,13 @@ def handle_file(source_file, outputdir, dir_format):
                 print(' => skipped, duplicated file')
                 break
         else:
-            shutil.copy2(source_file, target_file)
+            if move_files:
+                shutil.move(source_file, target_file)
+            else:
+                shutil.copy2(source_file, target_file)
+
             print(' => %s' % target_file)
-            handle_file_xmp(source_file, target_file_name, suffix, output_dir)
+            handle_file_xmp(source_file, target_file_name, suffix, output_dir, move_files)
             break
 
         suffix += 1
@@ -245,7 +250,7 @@ def handle_file(source_file, outputdir, dir_format):
         target_file = "%s-%d%s" % (target_split[0], suffix, target_split[1])
 
 
-def handle_file_xmp(source_file, photo_name, suffix, exif_output_dir):
+def handle_file_xmp(source_file, photo_name, suffix, exif_output_dir, move_files):
     xmp_original_with_ext = source_file + '.xmp'
     xmp_original_without_ext = os.path.splitext(source_file)[0] + '.xmp'
 
@@ -264,7 +269,11 @@ def handle_file_xmp(source_file, photo_name, suffix, exif_output_dir):
     if xmp_original:
         xmp_path = os.path.sep.join([exif_output_dir, xmp_target])
         print('%s => %s' % (xmp_original, xmp_path))
-        shutil.copy2(xmp_original, xmp_path)
+
+        if move_files:
+            shutil.move(xmp_original, xmp_path)
+        else:
+            shutil.copy2(xmp_original, xmp_path)
 
 
 def sha256_checksum(filename, block_size=65536):
@@ -285,7 +294,7 @@ def help_info():
     phockup - v{version}
 
 SYNOPSIS
-    phockup INPUTDIR OUTPUTDIR [-d|--date='YYYY/MM/DD']
+    phockup INPUTDIR OUTPUTDIR [OPTIONS]
 
 DESCRIPTION
     Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
@@ -319,6 +328,14 @@ OPTIONS
             YYYY/M/DD  -> 2011/July/17
             YYYY/m/DD  -> 2011/Jul/17
             YY/m-DD    -> 11/Jul-17
+            
+    -m | --move 
+        Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR.
+        This is useful when working with a big collection of files and the 
+        remaining free space is not enough to make a copy of the INPUTDIR.
+            
+    -h | --help 
+        Display this help.
 """.format(version=version))
 
 
