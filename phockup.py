@@ -40,7 +40,7 @@ def main(argv):
     dir_format = os.path.sep.join(date_format)
 
     try:
-        opts, args = getopt.getopt(argv[2:],"d:",["date="])
+        opts, args = getopt.getopt(argv[2:],"d:m",["date=", "move"])
     except getopt.GetoptError:
         help_info()
 
@@ -52,6 +52,9 @@ def main(argv):
 
             dir_format = parse_date_format(arg)
 
+        if opt in ("-m", "--move"):
+            move = True
+
     ignored_files = ('.DS_Store', 'Thumbs.db')
 
     for root, _, files in os.walk(inputdir):
@@ -59,7 +62,7 @@ def main(argv):
             try:
                 if filename in ignored_files:
                     continue
-                handle_file(os.path.join(root, filename), outputdir, dir_format)
+                handle_file(os.path.join(root, filename), outputdir, dir_format, move)
             except KeyboardInterrupt:
                 print(' Exiting...')
                 sys.exit(0)
@@ -209,13 +212,17 @@ def is_image_or_video(exif_data):
     return False
 
 
-def handle_file(source_file, outputdir, dir_format):
+def handle_file(source_file, outputdir, dir_format, move):
     if str.endswith(source_file, '.xmp'):
         return None
 
     print(source_file, end="", flush=True)
 
     exif_data = exif(source_file)
+
+    operate = shutil.copy2
+    if move:
+        operate = shutil.move
 
     if exif_data and is_image_or_video(exif_data):
         date = get_date(source_file, exif_data)
@@ -235,7 +242,7 @@ def handle_file(source_file, outputdir, dir_format):
                 print(' => skipped, duplicated file')
                 break
         else:
-            shutil.copy2(source_file, target_file)
+            operate(source_file, target_file)
             print(' => %s' % target_file)
             handle_file_xmp(source_file, target_file_name, suffix, output_dir)
             break
@@ -285,12 +292,12 @@ def help_info():
     phockup - v{version}
 
 SYNOPSIS
-    phockup INPUTDIR OUTPUTDIR [-d|--date='YYYY/MM/DD']
+    phockup INPUTDIR OUTPUTDIR [-d|--date='YYYY/MM/DD'] [-m|--move]
 
 DESCRIPTION
     Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
-    The software will collect all files from the input directory and copy them to the output directory without
-    changing the files content. It will only rename the files and place them in the proper directory for year, month and day.
+    By default the software will collect all files from the input directory and copy them to the output directory
+    without changing content, copying as YYYY/MM/DD/YYYYMMDD-HHMMSSSSSSSS.*
 
 ARGUMENTS
     INPUTDIR
@@ -319,6 +326,9 @@ OPTIONS
             YYYY/M/DD  -> 2011/July/17
             YYYY/m/DD  -> 2011/Jul/17
             YY/m-DD    -> 11/Jul-17
+            
+    -m | --move
+        Specify whether to move files instead of copying.
 """.format(version=version))
 
 
