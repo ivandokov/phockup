@@ -82,6 +82,21 @@ Example:
 ### Move files
 Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR by using the flag `-m | --move`. This is useful when working with a big collection of files and the remaining free space is not enough to make a copy of the INPUTDIR.
 
+## Development
+
+### Running tests
+To run the tests, first install the dev dependencies using
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Then run the tests using
+
+```bash
+pytest tests.py
+```
+
 ## Changelog
 ##### `1.4.0`
 * Add `-m | --move` flag to move files instead of copy.
