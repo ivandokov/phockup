@@ -3,7 +3,6 @@ import getopt
 import hashlib
 import os
 import shutil
-import subprocess
 import sys
 import re
 from datetime import datetime
@@ -19,7 +18,7 @@ def main(argv):
     dir_format = os.path.sep.join(['%Y', '%m', '%d'])
 
     try:
-        opts, args = getopt.getopt(argv[2:], "d:mh",["date=", "move", "help"])
+        opts, args = getopt.getopt(argv[2:], "d:mh", ["date=", "move", "help"])
     except getopt.GetoptError:
         help_info()
 
@@ -73,13 +72,13 @@ def check_dependencies():
 
 
 def parse_date_format(date):
-    date = date.replace("YYYY", "%Y") # 2017 (year)
-    date = date.replace("YY", "%y")   # 17 (year)
-    date = date.replace("m", "%b")    # Dec (month)
-    date = date.replace("MM", "%m")   # 12 (month)
-    date = date.replace("M", "%B")    # December (month)
-    date = date.replace("DDD", "%j")  # 123 (day or year)
-    date = date.replace("DD", "%d")   # 25 (day)
+    date = date.replace("YYYY", "%Y")  # 2017 (year)
+    date = date.replace("YY", "%y")    # 17 (year)
+    date = date.replace("m", "%b")     # Dec (month)
+    date = date.replace("MM", "%m")    # 12 (month)
+    date = date.replace("M", "%B")     # December (month)
+    date = date.replace("DDD", "%j")   # 123 (day or year)
+    date = date.replace("DD", "%d")    # 25 (day)
     date = date.replace("\\", os.path.sep)  # path separator
     date = date.replace("/", os.path.sep)   # path separator
     return date
@@ -309,11 +308,11 @@ ARGUMENTS
         Specify the output directory where your photos should be exported
 
 OPTIONS
-    -d | --date 
+    -d | --date
         Specify date format for OUTPUTDIR directories.
         You can choose different year format (e.g. 17 instead of 2017) or decide
         to skip the day directories and have all photos sorted in year/month.
-        
+
         Supported formats:
             YYYY - 2016, 2017 ...
             YY   - 16, 17 ...
@@ -322,19 +321,19 @@ OPTIONS
             m    - Jul, Aug, Sept ...
             DD   - 27, 28, 29 ... (day of month)
             DDD  - 123, 158, 365 ... (day of year)
-        
+
         Example:
             YYYY/MM/DD -> 2011/07/17
             YYYY/M/DD  -> 2011/July/17
             YYYY/m/DD  -> 2011/Jul/17
             YY/m-DD    -> 11/Jul-17
-            
-    -m | --move 
+
+    -m | --move
         Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR.
-        This is useful when working with a big collection of files and the 
+        This is useful when working with a big collection of files and the
         remaining free space is not enough to make a copy of the INPUTDIR.
-            
-    -h | --help 
+
+    -h | --help
         Display this help.
 """.format(version=version))
 

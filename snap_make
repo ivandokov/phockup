@@ -8,7 +8,7 @@ rm -f *.snap
 snapcraft clean
 snapcraft prime
 
-# reduce size 
+# reduce size
 rm -f prime/usr/lib/x86_64-linux-gnu/libLLVM*
 rm -f prime/usr/lib/x86_64-linux-gnu/libx265.so.79
 rm -f prime/usr/lib/x86_64-linux-gnu/libflite*
