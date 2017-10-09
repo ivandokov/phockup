@@ -15,7 +15,6 @@ def main(argv):
     check_dependencies()
 
     move_files = False
-    # Regex to extract date from filename if there is no EXIF date in the image.
     date_regex = None
     dir_format = os.path.sep.join(['%Y', '%m', '%d'])
 
@@ -42,7 +41,7 @@ def main(argv):
             try:
                 date_regex = re.compile(arg)
             except:
-                error("Got a invalid regex. Exit.")
+                error("Provided regex is invalid!")
 
     if len(argv) < 2:
         help_info()
@@ -142,7 +141,7 @@ def get_date(file, exif_data, user_regex=None):
             'subseconds': subseconds
         }
     else:
-        # If missing datetime from exif data check if filename is in datetime format.
+        # If missing datetime from EXIF data check if filename is in datetime format.
         # For this use a user provided regex if possible.
         # Otherwise assume a filename such as IMG_20160915_123456.jpg as default.
         default_regex = re.compile('.*[_-](?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})[_-]?(?P<hour>\d{2})(?P<minute>\d{2})(?P<second>\d{2})')
@@ -342,13 +341,13 @@ OPTIONS
             YYYY/m/DD  -> 2011/Jul/17
             YY/m-DD    -> 11/Jul-17
 
+    -h | --help
+        Display this help.
+
     -m | --move
         Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR.
         This is useful when working with a big collection of files and the
         remaining free space is not enough to make a copy of the INPUTDIR.
-
-    -h | --help
-        Display this help.
 
     -r | --regex
         Specify date format for date extraction from filenames
