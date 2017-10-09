@@ -15,10 +15,12 @@ def main(argv):
     check_dependencies()
 
     move_files = False
+    # Regex to extract date from filename if there is no EXIF date in the image.
+    date_regex = None
     dir_format = os.path.sep.join(['%Y', '%m', '%d'])
 
     try:
-        opts, args = getopt.getopt(argv[2:], "d:mh", ["date=", "move", "help"])
+        opts, args = getopt.getopt(argv[2:], "d:r:mh", ["date=", "regex=", "move", "help"])
     except getopt.GetoptError:
         help_info()
 
@@ -35,6 +37,12 @@ def main(argv):
         if opt in ("-m", "--move"):
             move_files = True
             print('Using move strategy!')
+
+        if opt in ("-r", "--regex"):
+            try:
+                date_regex = re.compile(arg)
+            except:
+                error("Got a invalid regex. Exit.")
 
     if len(argv) < 2:
         help_info()
@@ -59,7 +67,7 @@ def main(argv):
             try:
                 if filename in ignored_files:
                     continue
-                handle_file(os.path.join(root, filename), outputdir, dir_format, move_files)
+                handle_file(os.path.join(root, filename), outputdir, dir_format, move_files, date_regex)
             except KeyboardInterrupt:
                 print(' Exiting...')
                 sys.exit(0)
@@ -98,7 +106,7 @@ def exif(file):
     return exif_data
 
 
-def get_date(file, exif_data):
+def get_date(file, exif_data, user_regex=None):
     keys = ['Create Date', 'Date/Time Original']
 
     datestr = None
@@ -134,16 +142,22 @@ def get_date(file, exif_data):
             'subseconds': subseconds
         }
     else:
-        # If missing datetime from exif data check if filename is in datetime format
-        # E.g.: IMG_20160915_123456.jpg
-        regex = re.compile('.*[_-](\d{8})[_-]?(\d{6})')
-        matches = regex.findall(os.path.basename(file))
+        # If missing datetime from exif data check if filename is in datetime format.
+        # For this use a user provided regex if possible.
+        # Otherwise assume a filename such as IMG_20160915_123456.jpg as default.
+        default_regex = re.compile('.*[_-](?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})[_-]?(?P<hour>\d{2})(?P<minute>\d{2})(?P<second>\d{2})')
+        regex = user_regex or default_regex
+        matches = regex.search(os.path.basename(file))
 
         if matches:
             try:
-                datetimestr = ' '.join(list(matches[0]))
-                date = datetime.strptime(datetimestr, "%Y%m%d %H%M%S")
-            except ValueError:
+                match_dir = matches.groupdict()
+                match_dir = dict([a, int(x)] for a, x in match_dir.items()) #Convert str to int
+                date = datetime(
+                    match_dir["year"], match_dir["month"], match_dir["day"],
+                    match_dir["hour"], match_dir["minute"], match_dir["second"]
+                )
+            except (KeyError, ValueError):
                 date = None
 
             if date:
@@ -209,7 +223,7 @@ def is_image_or_video(exif_data):
     return False
 
 
-def handle_file(source_file, outputdir, dir_format, move_files):
+def handle_file(source_file, outputdir, dir_format, move_files, date_regex=None):
     if str.endswith(source_file, '.xmp'):
         return None
 
@@ -218,7 +232,7 @@ def handle_file(source_file, outputdir, dir_format, move_files):
     exif_data = exif(source_file)
 
     if exif_data and is_image_or_video(exif_data):
-        date = get_date(source_file, exif_data)
+        date = get_date(source_file, exif_data, date_regex)
         output_dir = get_output_dir(date, outputdir, dir_format)
         target_file_name = get_file_name(source_file, date).lower()
         target_file_path = os.path.sep.join([output_dir, target_file_name])
@@ -335,7 +349,16 @@ OPTIONS
 
     -h | --help
         Display this help.
-""".format(version=version))
+
+    -r | --regex
+        Specify date format for date extraction from filenames
+        if there is no EXIF date information.
+        
+        Example:
+            {regex}
+            can be used to extract the dafe from file names like
+            the following IMG_27.01.2015-19.20.00.jpg.
+""".format(version=version, regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"))
 
 
 if __name__ == '__main__':

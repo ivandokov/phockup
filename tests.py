@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import tempfile
+import re
 
 from datetime import datetime
 
@@ -86,6 +87,37 @@ def test_get_date_none_on_no_info():
 
 def test_get_date_none_on_no_error():
     assert get_date("IMG_2017_01.jpg", {}) is None
+
+
+def test_get_date_custom_regex():
+    """
+    A valid regex with a matching filename. Returns a datetime.
+    """
+    date_regex = re.compile("(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})")
+    filename = "IMG_27.01.2015-19.20.00.jpg"
+    assert get_date(filename, {}, date_regex) == {
+        "date": datetime(2015, 1, 27, 19, 20, 00),
+        "subseconds": ""
+    }
+
+
+def test_get_date_custom_regex_invalid():
+    """
+    A valid regex with a matching filename.
+    Return none because there is not enougth information in the filename.
+    """
+    date_regex = re.compile("(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})")
+    filename = "19.20.00.jpg"
+    assert get_date(filename, {}, date_regex) is None
+
+
+def test_get_date_custom_regex_no_match():
+    """
+    A valid regex with a non-matching filename.
+    """
+    date_regex = re.compile("(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})")
+    filename = "Foo.jpg"
+    assert get_date(filename, {}, date_regex) is None
 
 
 def test_is_image_or_video():
