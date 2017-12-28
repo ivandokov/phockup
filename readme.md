@@ -21,10 +21,10 @@ sudo snap install phockup
 If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
 ```
 sudo apt-get install python3 libimage-exiftool-perl -y
-curl -L https://github.com/ivandokov/phockup/archive/1.4.1.tar.gz -o phockup.tar.gz
+curl -L https://github.com/ivandokov/phockup/archive/1.4.2.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
-sudo mv phockup-1.4.1 /opt
-sudo ln -s /opt/phockup-1.4.1/phockup.py /usr/local/bin/phockup
+sudo mv phockup-1.4.2 /opt
+sudo ln -s /opt/phockup-1.4.2/phockup.py /usr/local/bin/phockup
 ```
 
 ### Mac
@@ -36,7 +36,7 @@ brew install phockup
 
 ### Windows
 * Download and install latest stable [Python 3](https://www.python.org/downloads/windows/)
-* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/1.4.1.zip) and extract the archive
+* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/1.4.2.zip) and extract the archive
 * Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool-10.56.zip) and extract the archive
 * Rename `exiftool(-k).exe` to `exiftool.exe`
 * Move `exiftool.exe` to phockup folder
@@ -80,7 +80,7 @@ Example:
 ```
 
 ### Move files
-Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR by using the flag `-m | --move`. This is useful when working with a big collection of files and the remaining free space is not enough to make a copy of the INPUTDIR.
+Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR by using the flag `-m | --move`. This is useful when working with a big collection of files and the remaining free space is not enough to make a copy of the INPUTDIR. This will delete empty directories from INPUTDIR.
 
 ### Link files
 Instead of copying the process will create hard link all files from the INPUTDIR into new structure in OUTPUTDIR by using the flag `-l | --link`. This is useful when working with good structure of photos in INPUTDIR (like folders per device).
@@ -101,6 +101,8 @@ pytest tests.py
 ```
 
 ## Changelog
+##### `1.4.2`
+* Move strategy will delete empty directories.
 ##### `1.4.1`
 * Add `-l | --link` flag to link files instead of copy.
 ##### `1.4.0`

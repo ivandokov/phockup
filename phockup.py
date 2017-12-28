@@ -8,7 +8,7 @@ import re
 from datetime import datetime
 from subprocess import check_output, CalledProcessError
 
-version = '1.4.1'
+version = '1.4.2'
 
 
 def main(argv):
@@ -78,6 +78,11 @@ def main(argv):
             except KeyboardInterrupt:
                 print(' Exiting...')
                 sys.exit(0)
+
+    for root, _, _ in reversed(list(os.walk(inputdir))):
+        if len(os.listdir(root)) == 0:
+            print('Deleting empty dir: {}'.format(root))
+            os.rmdir(root)
 
 
 def check_dependencies():
@@ -360,6 +365,8 @@ OPTIONS
         Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR.
         This is useful when working with a big collection of files and the
         remaining free space is not enough to make a copy of the INPUTDIR.
+
+        It will delete empty directories in INPUTDIR.
 
     -l | --link
         Instead of copying the process will make hard links to all files in INPUTDIR and place them in the OUTPUTDIR.
