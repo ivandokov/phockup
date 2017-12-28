@@ -13,7 +13,8 @@ from phockup import (
     get_output_dir,
     handle_file,
     is_image_or_video,
-    parse_date_format
+    parse_date_format,
+    main
 )
 
 
@@ -250,3 +251,22 @@ def test_check_dependencies_missing(mocker):
 
     check_dependencies()
     sys.exit.assert_called_once_with(2)
+
+
+def test_handle_move_removes_empty_dirs():
+     tempdir = tempfile.mkdtemp(suffix='first')
+     firstnesteddir = os.path.join(tempdir, 'one')
+     nesteddir = os.path.join(firstnesteddir, 'two', 'three')
+     os.makedirs(nesteddir, exist_ok=True)
+
+     open(os.path.join(nesteddir, "move.txt"), "w").close()
+
+     # we need to do removeal per dir, not in handle_file, (for now, before refactoring into classes)
+     main([firstnesteddir, tempdir, '-m'])
+
+     assert not os.path.isfile(os.path.join(nesteddir, "move.txt"))
+
+     assert os.path.isfile(os.path.join(tempdir, "unknown/move.txt"))
+
+     # shutil.rmtree(tempdir)
+     assert not os.path.isdir(firstnesteddir)

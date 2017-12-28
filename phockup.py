@@ -69,7 +69,7 @@ def main(argv):
 
     ignored_files = ('.DS_Store', 'Thumbs.db')
 
-    for root, _, files in os.walk(inputdir):
+    for root, dirs, files in os.walk(inputdir):
         for filename in files:
             try:
                 if filename in ignored_files:
@@ -79,10 +79,10 @@ def main(argv):
                 print(' Exiting...')
                 sys.exit(0)
 
-    for root, _, _ in reversed(list(os.walk(inputdir))):
         if len(os.listdir(root)) == 0:
-            print('Deleting empty dir: {}'.format(root))
-            os.rmdir(root)
+            # remove all empty directories in PATH
+            print('Deleting empty dirs in path: {}'.format(root))
+            os.removedirs(root)
 
 
 def check_dependencies():
@@ -316,7 +316,6 @@ def sha256_checksum(filename, block_size=65536):
 def error(message):
     print(message)
     sys.exit(2)
-
 
 def help_info():
     error("""NAME
