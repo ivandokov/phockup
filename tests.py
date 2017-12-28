@@ -142,39 +142,39 @@ def test_get_file_name_is_original_on_exception():
 
 def test_handle_file_filename_date():
     with tempfile.TemporaryDirectory("phockup") as dir_name:
-        handle_file("test_files/input/in_date_20170101_010101.jpg", dir_name, "%Y/%m/%d", False)
+        handle_file("test_files/input/in_date_20170101_010101.jpg", dir_name, "%Y/%m/%d", False, False)
         assert os.path.isfile(os.path.join(dir_name, "2017/01/01/20170101-010101.jpg"))
 
 
 def test_handle_image_exif_date():
     with tempfile.TemporaryDirectory("phockup") as dir_name:
-        handle_file("test_files/input/in_exif.jpg", dir_name, "%Y/%m/%d", False)
+        handle_file("test_files/input/in_exif.jpg", dir_name, "%Y/%m/%d", False, False)
         assert os.path.isfile(os.path.join(dir_name, "2017/01/01/20170101-010101.jpg"))
 
 
 def test_handle_image_xmp():
     with tempfile.TemporaryDirectory("phockup") as dir_name:
-        handle_file("test_files/input/in_xmp.jpg", dir_name, "%Y/%m/%d", False)
+        handle_file("test_files/input/in_xmp.jpg", dir_name, "%Y/%m/%d", False, False)
         assert os.path.isfile(os.path.join(dir_name, "2017/01/01/20170101-010101.jpg"))
         assert os.path.isfile(os.path.join(dir_name, "2017/01/01/20170101-010101.jpg.xmp"))
 
 
 def test_handle_image_xmp_noext():
     with tempfile.TemporaryDirectory("phockup") as dir_name:
-        handle_file("test_files/input/in_xmp_noext.jpg", dir_name, "%Y/%m/%d", False)
+        handle_file("test_files/input/in_xmp_noext.jpg", dir_name, "%Y/%m/%d", False, False)
         assert os.path.isfile(os.path.join(dir_name, "2017/01/01/20170101-010101.jpg"))
         assert os.path.isfile(os.path.join(dir_name, "2017/01/01/20170101-010101.xmp"))
 
 
 def test_handle_image_unknown():
     with tempfile.TemporaryDirectory("phockup") as dir_name:
-        handle_file("test_files/input/in_unknown.jpg", dir_name, "%Y/%m/%d", False)
+        handle_file("test_files/input/in_unknown.jpg", dir_name, "%Y/%m/%d", False, False)
         assert os.path.isfile(os.path.join(dir_name, "unknown/in_unknown.jpg"))
 
 
 def test_handle_other():
     with tempfile.TemporaryDirectory("phockup") as dir_name:
-        handle_file("test_files/input/in_other.log", dir_name, "%Y/%m/%d", False)
+        handle_file("test_files/input/in_other.log", dir_name, "%Y/%m/%d", False, False)
         assert os.path.isfile(os.path.join(dir_name, "unknown/in_other.log"))
 
 
@@ -183,7 +183,7 @@ def test_handle_move():
         open(os.path.join(dir_name, "in_move.txt"), "w").close()
         open(os.path.join(dir_name, "in_move.txt.xmp"), "w").close()
 
-        handle_file(os.path.join(dir_name, "in_move.txt"), dir_name, "%Y/%m/%d", True)
+        handle_file(os.path.join(dir_name, "in_move.txt"), dir_name, "%Y/%m/%d", True, False)
 
         assert not os.path.isfile(os.path.join(dir_name, "in_move.txt"))
         assert not os.path.isfile(os.path.join(dir_name, "in_move.txt.xmp"))
@@ -199,7 +199,7 @@ def test_handle_exists_same(capsys):
         os.makedirs(output_dir)
         shutil.copy2("test_files/input/in_other.log", output_dir)
 
-        handle_file("test_files/input/in_other.log", dir_name, "%Y/%m/%d", False)
+        handle_file("test_files/input/in_other.log", dir_name, "%Y/%m/%d", False, False)
         assert 'skipped, duplicated file' in capsys.readouterr()[0]
 
 
@@ -210,13 +210,13 @@ def test_handle_exists_rename():
         os.makedirs(output_dir)
         shutil.copy2("test_files/input/in_exif.jpg", os.path.join(output_dir, "in_other.log"))
 
-        handle_file("test_files/input/in_other.log", dir_name, "%Y/%m/%d", False)
+        handle_file("test_files/input/in_other.log", dir_name, "%Y/%m/%d", False, False)
         assert os.path.isfile(os.path.join(dir_name, "unknown/in_other-2.log"))
 
 
 def test_handle_skip_xmp():
     # Assume no errors == skip XMP file
-    handle_file("skip.xmp", "", "", False)
+    handle_file("skip.xmp", "", "", False, False)
 
 
 def test_get_output_dir_no_write_access(mocker, capsys):
