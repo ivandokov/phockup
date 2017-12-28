@@ -8,18 +8,19 @@ import re
 from datetime import datetime
 from subprocess import check_output, CalledProcessError
 
-version = '1.4.0'
+version = '1.4.1'
 
 
 def main(argv):
     check_dependencies()
 
     move_files = False
+    link_files = False
     date_regex = None
     dir_format = os.path.sep.join(['%Y', '%m', '%d'])
 
     try:
-        opts, args = getopt.getopt(argv[2:], "d:r:mh", ["date=", "regex=", "move", "help"])
+        opts, args = getopt.getopt(argv[2:], "d:r:mlh", ["date=", "regex=", "move", "link", "help"])
     except getopt.GetoptError:
         help_info()
 
@@ -37,11 +38,18 @@ def main(argv):
             move_files = True
             print('Using move strategy!')
 
+        if opt in ("-l", "--link"):
+            link_files = True
+            print('Using link strategy!')
+
         if opt in ("-r", "--regex"):
             try:
                 date_regex = re.compile(arg)
             except:
                 error("Provided regex is invalid!")
+
+    if link_files and move_files:
+        error("Cant use move and link strategy!")
 
     if len(argv) < 2:
         help_info()
@@ -66,7 +74,7 @@ def main(argv):
             try:
                 if filename in ignored_files:
                     continue
-                handle_file(os.path.join(root, filename), outputdir, dir_format, move_files, date_regex)
+                handle_file(os.path.join(root, filename), outputdir, dir_format, move_files, link_files, date_regex)
             except KeyboardInterrupt:
                 print(' Exiting...')
                 sys.exit(0)
@@ -222,7 +230,7 @@ def is_image_or_video(exif_data):
     return False
 
 
-def handle_file(source_file, outputdir, dir_format, move_files, date_regex=None):
+def handle_file(source_file, outputdir, dir_format, move_files, link_files, date_regex=None):
     if str.endswith(source_file, '.xmp'):
         return None
 
@@ -250,11 +258,13 @@ def handle_file(source_file, outputdir, dir_format, move_files, date_regex=None)
         else:
             if move_files:
                 shutil.move(source_file, target_file)
+            elif link_files:
+                os.link(source_file, target_file)
             else:
                 shutil.copy2(source_file, target_file)
 
             print(' => %s' % target_file)
-            handle_file_xmp(source_file, target_file_name, suffix, output_dir, move_files)
+            handle_file_xmp(source_file, target_file_name, suffix, output_dir, move_files, link_files)
             break
 
         suffix += 1
@@ -262,7 +272,7 @@ def handle_file(source_file, outputdir, dir_format, move_files, date_regex=None)
         target_file = "%s-%d%s" % (target_split[0], suffix, target_split[1])
 
 
-def handle_file_xmp(source_file, photo_name, suffix, exif_output_dir, move_files):
+def handle_file_xmp(source_file, photo_name, suffix, exif_output_dir, move_files, link_files):
     xmp_original_with_ext = source_file + '.xmp'
     xmp_original_without_ext = os.path.splitext(source_file)[0] + '.xmp'
 
@@ -284,6 +294,8 @@ def handle_file_xmp(source_file, photo_name, suffix, exif_output_dir, move_files
 
         if move_files:
             shutil.move(xmp_original, xmp_path)
+        elif link_files:
+            os.link(xmp_original, xmp_path)
         else:
             shutil.copy2(xmp_original, xmp_path)
 
@@ -349,10 +361,15 @@ OPTIONS
         This is useful when working with a big collection of files and the
         remaining free space is not enough to make a copy of the INPUTDIR.
 
+    -l | --link
+        Instead of copying the process will make hard links to all files in INPUTDIR and place them in the OUTPUTDIR.
+        This is useful when working with working structure and want to create YYYY/MM/DD structure to point to same files.
+
+
     -r | --regex
         Specify date format for date extraction from filenames
         if there is no EXIF date information.
-        
+
         Example:
             {regex}
             can be used to extract the dafe from file names like
