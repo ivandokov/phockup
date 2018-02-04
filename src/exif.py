@@ -1,4 +1,5 @@
 from subprocess import check_output, CalledProcessError
+import json
 
 
 class Exif(object):
@@ -7,13 +8,9 @@ class Exif(object):
 
     def data(self):
         try:
-            data = check_output(['exiftool', self.file]).decode('UTF-8').strip().split("\\n")[0].split("\n")
-            exif = {}
+            data = check_output('exiftool -time:all -mimetype -j ' + self.file, shell=True).decode('UTF-8')
+            exif = json.loads(data)[0]
         except (CalledProcessError, UnicodeDecodeError):
             return None
-
-        for row in data:
-            opt = row.split(":")
-            exif[opt[0].strip()] = ":".join(opt[1:]).strip()
 
         return exif

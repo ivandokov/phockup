@@ -1,65 +1,16 @@
 #!/usr/bin/env python3
-import getopt
 import hashlib
 import os
 import re
 import shutil
 import sys
 
-from date import Date
-from dependency import check_dependencies
-from exif import Exif
-from help import help
-from print import Printer
+from src.date import Date
+from src.exif import Exif
+from src.print import Printer
 
-version = '1.4.1'
 printer = Printer()
 ignored_files = (".DS_Store", "Thumbs.db")
-
-
-def main(argv):
-    check_dependencies()
-
-    move = False
-    link = False
-    date_regex = None
-    dir_format = os.path.sep.join(['%Y', '%m', '%d'])
-
-    try:
-        opts, args = getopt.getopt(argv[2:], "d:r:mlh", ["date=", "regex=", "move", "link", "help"])
-    except getopt.GetoptError:
-        help(version)
-
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            help(version)
-
-        if opt in ("-d", "--date"):
-            if not arg:
-                printer.print.error("Date format cannot be empty")
-            dir_format = Date().parse(arg)
-
-        if opt in ("-m", "--move"):
-            move = True
-            printer.line("Using move strategy!")
-
-        if opt in ("-l", "--link"):
-            link = True
-            printer.line("Using link strategy!")
-
-        if opt in ("-r", "--regex"):
-            try:
-                date_regex = re.compile(arg)
-            except:
-                printer.error("Provided regex is invalid!")
-
-    if link and move:
-        printer.error("Can't use move and link strategy together!")
-
-    if len(argv) < 2:
-        help(version)
-
-    Phockup(argv[0], argv[1], dir_format=dir_format, move=move, link=link, date_regex=date_regex)
 
 
 class Phockup():
@@ -74,10 +25,10 @@ class Phockup():
 
         self.input = input
         self.output = output
-        self.dir_format = args['dir_format']
-        self.move = args['move']
-        self.link = args['link']
-        self.date_regex = args['date_regex']
+        self.dir_format = args.get('dir_format', os.path.sep.join(['%Y', '%m', '%d']))
+        self.move = args.get('move', False)
+        self.link = args.get('link', False)
+        self.date_regex = args.get('date_regex', None)
 
         self.check_directories()
         self.walk_directory()
@@ -90,12 +41,15 @@ class Phockup():
         """
         if not os.path.isdir(self.input) or not os.path.exists(self.input):
             printer.error('Input directory "%s" does not exist or cannot be accessed' % self.input)
+            sys.exit(2)
+            return
         if not os.path.exists(self.output):
             printer.line('Output directory "%s" does not exist, creating now' % self.output)
             try:
                 os.makedirs(self.output)
             except Exception:
                 printer.error('Cannot create output directory. No write access!')
+                sys.exit(2)
 
     def walk_directory(self):
         """
@@ -147,6 +101,7 @@ class Phockup():
                 os.makedirs(fullpath)
             except Exception:
                 printer.error('Cannot create directory %s. No write access!' % fullpath)
+                sys.exit(2)
 
         return fullpath
 
@@ -182,18 +137,7 @@ class Phockup():
 
         printer.line(file, True)
 
-        exif = Exif(file)
-        exif_data = exif.data()
-
-        if exif_data and self.is_image_or_video(exif_data['MIME Type']):
-            date = Date(file).from_exif(exif, self.date_regex)
-            output = self.get_output_dir(date)
-            target_file_name = self.get_file_name(file, date).lower()
-            target_file_path = os.path.sep.join([output, target_file_name])
-        else:
-            output = self.get_output_dir(False)
-            target_file_name = os.path.basename(file)
-            target_file_path = os.path.sep.join([output, target_file_name])
+        output, target_file_name, target_file_path = self.get_file_name_and_path(file)
 
         suffix = 1
         target_file = target_file_path
@@ -218,6 +162,23 @@ class Phockup():
             suffix += 1
             target_split = os.path.splitext(target_file_path)
             target_file = "%s-%d%s" % (target_split[0], suffix, target_split[1])
+
+    def get_file_name_and_path(self, file):
+        """
+        Returns target file name and path
+        """
+        exif_data = Exif(file).data()
+        if exif_data and self.is_image_or_video(exif_data['MIMEType']):
+            date = Date(file).from_exif(exif_data, self.date_regex)
+            output = self.get_output_dir(date)
+            target_file_name = self.get_file_name(file, date).lower()
+            target_file_path = os.path.sep.join([output, target_file_name])
+        else:
+            output = self.get_output_dir(False)
+            target_file_name = os.path.basename(file)
+            target_file_path = os.path.sep.join([output, target_file_name])
+
+        return output, target_file_name, target_file_path
 
     def process_xmp(self, file, file_name, suffix, output):
         """
@@ -248,11 +209,3 @@ class Phockup():
                 os.link(xmp_original, xmp_path)
             else:
                 shutil.copy2(xmp_original, xmp_path)
-
-
-if __name__ == '__main__':
-    try:
-        main(sys.argv[1:])
-    except KeyboardInterrupt:
-        printer.empty().line('Exiting...')
-        sys.exit(0)

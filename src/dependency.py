@@ -1,7 +1,7 @@
 import shutil
 import sys
 
-from print import Printer
+from src.print import Printer
 
 
 def check_dependencies():
