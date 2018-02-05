@@ -4,7 +4,7 @@ from src.exif import Exif
 
 
 def test_exif_reads_valid_file():
-    exif = Exif("input/in_exif.jpg")
+    exif = Exif("input/exif.jpg")
     assert exif.data()['CreateDate'] == '2017:01:01 01:01:01'
 
 def test_exif_handles_exception(mocker):
