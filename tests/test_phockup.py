@@ -46,7 +46,7 @@ def test_error_for_no_write_access_when_creating_output_dir(mocker, capsys):
     with mocker.patch.object(Phockup, 'walk_directory'):
         mocker.patch('os.makedirs', side_effect=Exception("No write access"))
         mocker.patch('sys.exit')
-        Phockup('test_files', '/root/phockup')
+        Phockup('files', '/root/phockup')
         sys.exit.assert_called_once_with(2)
         assert 'No write access' in capsys.readouterr()[0]
 
