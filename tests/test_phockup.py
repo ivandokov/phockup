@@ -1,11 +1,7 @@
 import shutil
 import sys
 import os
-import tempfile
 from datetime import datetime
-
-import pytest
-
 from src.exif import Exif
 from src.phockup import Phockup
 from src.dependency import check_dependencies
@@ -184,9 +180,26 @@ def test_process_move(mocker):
     shutil.rmtree('output', ignore_errors=True)
 
 
-@pytest.mark.skip(reason="Must be implemented")
-def test_process_link():
-    return
+def test_process_link(mocker):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    mocker.patch.object(Exif, 'data')
+    Exif.data.return_value = {
+        "MIMEType": "image/jpeg"
+    }
+    phockup = Phockup('input', 'output', link=True)
+    open("input/tmp_20170101_010101.jpg", "w").close()
+    open("input/tmp_20170101_010101.xmp", "w").close()
+    phockup.process_file("input/tmp_20170101_010101.jpg")
+    phockup.process_file("input/tmp_20170101_010101.xmp")
+    assert os.path.isfile("input/tmp_20170101_010101.jpg")
+    assert os.path.isfile("input/tmp_20170101_010101.xmp")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.jpg")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.xmp")
+    shutil.rmtree('output', ignore_errors=True)
+    os.remove("input/tmp_20170101_010101.jpg")
+    os.remove("input/tmp_20170101_010101.xmp")
 
 
 def test_process_exists_same(mocker, capsys):
@@ -223,3 +236,14 @@ def test_process_skip_xmp(mocker):
     mocker.patch.object(Phockup, 'walk_directory')
     phockup = Phockup('input', 'output')
     phockup.process_file("skip.xmp")
+
+
+def test_process_skip_ignored_file():
+    shutil.rmtree('output', ignore_errors=True)
+    shutil.rmtree('input_ignored', ignore_errors=True)
+    os.mkdir('input_ignored')
+    open("input_ignored/.DS_Store", "w").close()
+    Phockup('input_ignored', 'output')
+    assert not os.path.isfile("output/unknown/.DS_Store")
+    shutil.rmtree('output', ignore_errors=True)
+    shutil.rmtree('input_ignored', ignore_errors=True)
