@@ -97,11 +97,7 @@ class Phockup():
         fullpath = os.path.sep.join(path)
 
         if not os.path.isdir(fullpath):
-            try:
-                os.makedirs(fullpath)
-            except Exception:
-                printer.error('Cannot create directory %s. No write access!' % fullpath)
-                sys.exit(2)
+            os.makedirs(fullpath)
 
         return fullpath
 
