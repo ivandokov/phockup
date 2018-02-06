@@ -7,7 +7,7 @@ import sys
 
 from src.date import Date
 from src.exif import Exif
-from src.print import Printer
+from src.printer import Printer
 
 printer = Printer()
 ignored_files = (".DS_Store", "Thumbs.db")

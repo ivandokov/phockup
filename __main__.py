@@ -8,7 +8,7 @@ from src.date import Date
 from src.dependency import check_dependencies
 from src.help import help
 from src.phockup import Phockup
-from src.print import Printer
+from src.printer import Printer
 
 version = '1.4.1'
 printer = Printer()
