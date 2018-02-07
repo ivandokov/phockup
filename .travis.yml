@@ -4,7 +4,7 @@ python:
   - "3.5"
   - "3.6"
 install:
-  - libimage-exiftool-perl
+  - apt-get install libimage-exiftool-perl
   - pip install -r requirements-dev.txt
 script:
   - pytest
