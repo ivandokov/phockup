@@ -158,8 +158,8 @@ def test_process_other(mocker):
     shutil.rmtree('output', ignore_errors=True)
     mocker.patch.object(Phockup, 'check_directories')
     mocker.patch.object(Phockup, 'walk_directory')
-    Phockup('input', 'output').process_file("input/other.log")
-    assert os.path.isfile("output/unknown/other.log")
+    Phockup('input', 'output').process_file("input/other.txt")
+    assert os.path.isfile("output/unknown/other.txt")
     shutil.rmtree('output', ignore_errors=True)
 
 
