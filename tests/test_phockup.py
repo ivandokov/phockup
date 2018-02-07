@@ -7,6 +7,9 @@ from src.exif import Exif
 from src.phockup import Phockup
 
 
+os.chdir(os.path.dirname(__file__))
+
+
 def test_check_dependencies(mocker):
     mocker.patch('shutil.which', return_value='exiftool')
     mocker.patch('sys.exit')
