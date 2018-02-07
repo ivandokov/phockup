@@ -41,7 +41,7 @@ class Phockup():
         """
         if not os.path.isdir(self.input) or not os.path.exists(self.input):
             printer.error('Input directory "%s" does not exist or cannot be accessed' % self.input)
-            sys.exit(2)
+            sys.exit(1)
             return
         if not os.path.exists(self.output):
             printer.line('Output directory "%s" does not exist, creating now' % self.output)
@@ -49,7 +49,7 @@ class Phockup():
                 os.makedirs(self.output)
             except Exception:
                 printer.error('Cannot create output directory. No write access!')
-                sys.exit(2)
+                sys.exit(1)
 
     def walk_directory(self):
         """

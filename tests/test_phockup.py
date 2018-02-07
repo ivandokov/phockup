@@ -2,9 +2,9 @@ import shutil
 import sys
 import os
 from datetime import datetime
+from src.dependency import check_dependencies
 from src.exif import Exif
 from src.phockup import Phockup
-from src.dependency import check_dependencies
 
 
 def test_check_dependencies(mocker):
@@ -20,14 +20,14 @@ def test_check_dependencies_missing(mocker):
     mocker.patch('sys.exit')
 
     check_dependencies()
-    sys.exit.assert_called_once_with(2)
+    sys.exit.assert_called_once_with(1)
 
 
 def test_exit_if_missing_input_directory(mocker):
     mocker.patch('os.makedirs')
     mocker.patch('sys.exit')
     Phockup('in', 'out')
-    sys.exit.assert_called_once_with(2)
+    sys.exit.assert_called_once_with(1)
 
 
 def test_removing_trailing_slash_for_input_output(mocker):
@@ -41,7 +41,7 @@ def test_removing_trailing_slash_for_input_output(mocker):
 def test_error_for_missing_input_dir(mocker, capsys):
     mocker.patch('sys.exit')
     Phockup('in', 'out')
-    sys.exit.assert_called_once_with(2)
+    sys.exit.assert_called_once_with(1)
     assert 'Input directory "in" does not exist' in capsys.readouterr()[0]
 
 
@@ -50,7 +50,7 @@ def test_error_for_no_write_access_when_creating_output_dir(mocker, capsys):
     mocker.patch('os.makedirs', side_effect=Exception("No write access"))
     mocker.patch('sys.exit')
     Phockup('input', '/root/phockup')
-    sys.exit.assert_called_once_with(2)
+    sys.exit.assert_called_once_with(1)
     assert 'No write access' in capsys.readouterr()[0]
 
 
