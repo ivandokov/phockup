@@ -19,7 +19,8 @@ parts:
     plugin: dump
     source: .
     organize:
-      phockup.py: lib/phockup/phockup.py
+      __main__.py: lib/phockup/phockup.py
+      src/: lib/phockup/src/
       license: lib/phockup/license
     after: [integration]
 
