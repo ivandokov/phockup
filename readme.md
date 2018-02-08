@@ -1,6 +1,7 @@
 # Phockup
 
-<a href="https://build.snapcraft.io/user/ivandokov/phockup"><img src="https://build.snapcraft.io/badge/ivandokov/phockup.svg" alt="Build Status"></a>
+[![Snap Status](https://build.snapcraft.io/badge/ivandokov/phockup.svg)](https://build.snapcraft.io/user/ivandokov/phockup)
+[![Build Status](https://travis-ci.org/ivandokov/phockup.svg?branch=master)](https://travis-ci.org/ivandokov/phockup)
 
 Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
 
@@ -97,7 +98,7 @@ pip install -r requirements-dev.txt
 Then run the tests using
 
 ```bash
-pytest tests.py
+pytest
 ```
 
 ## Changelog
