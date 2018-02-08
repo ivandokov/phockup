@@ -56,6 +56,7 @@ class Phockup():
         Walk input directory recursively and call process_file for each file except the ignored ones
         """
         for root, _, files in os.walk(self.input):
+            files.sort()
             for filename in files:
                 if filename in ignored_files:
                     continue
