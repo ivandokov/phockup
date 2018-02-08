@@ -11,15 +11,15 @@ grade: stable
 
 apps:
   phockup:
-    command: env LC_ALL=C.UTF-8 LANG=C.UTF-8 $SNAP/phockup.sh
-    plugs: [home, removable-media]
+    command: $SNAP/phockup.sh
+    plugs: [home, removable-media, raw-usb]
 
 parts:
   files:
     plugin: dump
     source: .
     organize:
-      __main__.py: lib/phockup/phockup.py
+      phockup.py: lib/phockup/phockup.py
       src/: lib/phockup/src/
       license: lib/phockup/license
     after: [integration]
