@@ -61,12 +61,12 @@ def test_walking_directory():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output')
     dir1='output/2017/01/01'
-    dir2='output/2018/02/05'
+    dir2='output/2017/10/06'
     dir3='output/unknown'
     assert os.path.isdir(dir1)
     assert os.path.isdir(dir2)
     assert os.path.isdir(dir3)
-    assert len([name for name in os.listdir(dir1) if os.path.isfile(os.path.join(dir1, name))]) == 2
+    assert len([name for name in os.listdir(dir1) if os.path.isfile(os.path.join(dir1, name))]) == 3
     assert len([name for name in os.listdir(dir2) if os.path.isfile(os.path.join(dir2, name))]) == 1
     assert len([name for name in os.listdir(dir3) if os.path.isfile(os.path.join(dir3, name))]) == 1
     shutil.rmtree('output', ignore_errors=True)
