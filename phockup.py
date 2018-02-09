@@ -10,7 +10,7 @@ from src.help import help
 from src.phockup import Phockup
 from src.printer import Printer
 
-version = '1.4.1'
+version = '1.5.0'
 printer = Printer()
 
 
