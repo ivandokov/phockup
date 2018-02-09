@@ -1,5 +1,6 @@
 name: phockup
-version: '1.4.1'
+version: latest
+version-script: cat $SNAPCRAFT_STAGE/lib/phockup/phockup.py | grep 'version = ' | sed "s/.*'\(.*\)'/\1/"
 summary: Photo and video sorting tool
 description: |
   Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
@@ -11,7 +12,7 @@ grade: stable
 
 apps:
   phockup:
-    command: $SNAP/phockup.sh
+    command: phockup.sh
     plugs: [home, removable-media, raw-usb]
 
 parts:
@@ -31,3 +32,10 @@ parts:
       - python3
       - libimage-exiftool-perl
       - libc-bin
+      - libbz2-dev
+      - liblzma5
+      - libncursesw5
+      - libreadline-dev
+      - libtinfo-dev
+      - libz-dev
+      - libdb5.3
