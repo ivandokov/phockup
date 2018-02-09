@@ -102,6 +102,10 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.0`
+* Major refactoring.
+* Updated all tests.
+* Added TravisCI.
 ##### `1.4.1`
 * Add `-l | --link` flag to link files instead of copy.
 ##### `1.4.0`
