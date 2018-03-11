@@ -13,6 +13,7 @@ from src.printer import Printer
 version = '1.4.1'
 printer = Printer()
 
+
 def main(argv):
     check_dependencies()
 
@@ -25,10 +26,12 @@ def main(argv):
         opts, args = getopt.getopt(argv[2:], "d:r:mlh", ["date=", "regex=", "move", "link", "help"])
     except getopt.GetoptError:
         help(version)
+        sys.exit(2)
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             help(version)
+            sys.exit(2)
 
         if opt in ("-d", "--date"):
             if not arg:
@@ -52,12 +55,13 @@ def main(argv):
 
     if link and move:
         printer.error("Can't use move and link strategy together!")
-        sys.exit(2)
+        sys.exit(1)
 
     if len(argv) < 2:
         help(version)
+        sys.exit(2)
 
-    Phockup(
+    return Phockup(
         argv[0], argv[1],
         dir_format=dir_format,
         move=move,

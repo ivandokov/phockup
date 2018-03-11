@@ -1,6 +1,9 @@
+import os
 from subprocess import CalledProcessError
-
 from src.exif import Exif
+
+
+os.chdir(os.path.dirname(__file__))
 
 
 def test_exif_reads_valid_file():

@@ -41,7 +41,7 @@ class Phockup():
         """
         if not os.path.isdir(self.input) or not os.path.exists(self.input):
             printer.error('Input directory "%s" does not exist or cannot be accessed' % self.input)
-            sys.exit(2)
+            sys.exit(1)
             return
         if not os.path.exists(self.output):
             printer.line('Output directory "%s" does not exist, creating now' % self.output)
@@ -49,13 +49,14 @@ class Phockup():
                 os.makedirs(self.output)
             except Exception:
                 printer.error('Cannot create output directory. No write access!')
-                sys.exit(2)
+                sys.exit(1)
 
     def walk_directory(self):
         """
         Walk input directory recursively and call process_file for each file except the ignored ones
         """
         for root, _, files in os.walk(self.input):
+            files.sort()
             for filename in files:
                 if filename in ignored_files:
                     continue
@@ -97,11 +98,7 @@ class Phockup():
         fullpath = os.path.sep.join(path)
 
         if not os.path.isdir(fullpath):
-            try:
-                os.makedirs(fullpath)
-            except Exception:
-                printer.error('Cannot create directory %s. No write access!' % fullpath)
-                sys.exit(2)
+            os.makedirs(fullpath)
 
         return fullpath
 

@@ -1,14 +1,13 @@
 import shutil
 import sys
 import os
-import tempfile
 from datetime import datetime
-
-import pytest
-
+from src.dependency import check_dependencies
 from src.exif import Exif
 from src.phockup import Phockup
-from src.dependency import check_dependencies
+
+
+os.chdir(os.path.dirname(__file__))
 
 
 def test_check_dependencies(mocker):
@@ -24,14 +23,14 @@ def test_check_dependencies_missing(mocker):
     mocker.patch('sys.exit')
 
     check_dependencies()
-    sys.exit.assert_called_once_with(2)
+    sys.exit.assert_called_once_with(1)
 
 
 def test_exit_if_missing_input_directory(mocker):
     mocker.patch('os.makedirs')
     mocker.patch('sys.exit')
     Phockup('in', 'out')
-    sys.exit.assert_called_once_with(2)
+    sys.exit.assert_called_once_with(1)
 
 
 def test_removing_trailing_slash_for_input_output(mocker):
@@ -45,7 +44,7 @@ def test_removing_trailing_slash_for_input_output(mocker):
 def test_error_for_missing_input_dir(mocker, capsys):
     mocker.patch('sys.exit')
     Phockup('in', 'out')
-    sys.exit.assert_called_once_with(2)
+    sys.exit.assert_called_once_with(1)
     assert 'Input directory "in" does not exist' in capsys.readouterr()[0]
 
 
@@ -54,25 +53,22 @@ def test_error_for_no_write_access_when_creating_output_dir(mocker, capsys):
     mocker.patch('os.makedirs', side_effect=Exception("No write access"))
     mocker.patch('sys.exit')
     Phockup('input', '/root/phockup')
-    sys.exit.assert_called_once_with(2)
+    sys.exit.assert_called_once_with(1)
     assert 'No write access' in capsys.readouterr()[0]
 
 
 def test_walking_directory():
-    shutil.rmtree('input/output', ignore_errors=True)
+    shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output')
     dir1='output/2017/01/01'
     dir2='output/2017/10/06'
-    dir3='output/2018/02/05'
-    dir4='output/unknown'
+    dir3='output/unknown'
     assert os.path.isdir(dir1)
     assert os.path.isdir(dir2)
     assert os.path.isdir(dir3)
-    assert os.path.isdir(dir4)
-    assert len([name for name in os.listdir(dir1) if os.path.isfile(os.path.join(dir1, name))]) == 2
+    assert len([name for name in os.listdir(dir1) if os.path.isfile(os.path.join(dir1, name))]) == 3
     assert len([name for name in os.listdir(dir2) if os.path.isfile(os.path.join(dir2, name))]) == 1
     assert len([name for name in os.listdir(dir3) if os.path.isfile(os.path.join(dir3, name))]) == 1
-    assert len([name for name in os.listdir(dir4) if os.path.isfile(os.path.join(dir4, name))]) == 1
     shutil.rmtree('output', ignore_errors=True)
 
 
@@ -159,8 +155,8 @@ def test_process_other(mocker):
     shutil.rmtree('output', ignore_errors=True)
     mocker.patch.object(Phockup, 'check_directories')
     mocker.patch.object(Phockup, 'walk_directory')
-    Phockup('input', 'output').process_file("input/other.log")
-    assert os.path.isfile("output/unknown/other.log")
+    Phockup('input', 'output').process_file("input/other.txt")
+    assert os.path.isfile("output/unknown/other.txt")
     shutil.rmtree('output', ignore_errors=True)
 
 
@@ -184,9 +180,26 @@ def test_process_move(mocker):
     shutil.rmtree('output', ignore_errors=True)
 
 
-@pytest.mark.skip(reason="Must be implemented")
-def test_process_link():
-    return
+def test_process_link(mocker):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    mocker.patch.object(Exif, 'data')
+    Exif.data.return_value = {
+        "MIMEType": "image/jpeg"
+    }
+    phockup = Phockup('input', 'output', link=True)
+    open("input/tmp_20170101_010101.jpg", "w").close()
+    open("input/tmp_20170101_010101.xmp", "w").close()
+    phockup.process_file("input/tmp_20170101_010101.jpg")
+    phockup.process_file("input/tmp_20170101_010101.xmp")
+    assert os.path.isfile("input/tmp_20170101_010101.jpg")
+    assert os.path.isfile("input/tmp_20170101_010101.xmp")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.jpg")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.xmp")
+    shutil.rmtree('output', ignore_errors=True)
+    os.remove("input/tmp_20170101_010101.jpg")
+    os.remove("input/tmp_20170101_010101.xmp")
 
 
 def test_process_exists_same(mocker, capsys):
@@ -223,3 +236,14 @@ def test_process_skip_xmp(mocker):
     mocker.patch.object(Phockup, 'walk_directory')
     phockup = Phockup('input', 'output')
     phockup.process_file("skip.xmp")
+
+
+def test_process_skip_ignored_file():
+    shutil.rmtree('output', ignore_errors=True)
+    shutil.rmtree('input_ignored', ignore_errors=True)
+    os.mkdir('input_ignored')
+    open("input_ignored/.DS_Store", "w").close()
+    Phockup('input_ignored', 'output')
+    assert not os.path.isfile("output/unknown/.DS_Store")
+    shutil.rmtree('output', ignore_errors=True)
+    shutil.rmtree('input_ignored', ignore_errors=True)
