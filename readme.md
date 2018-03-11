@@ -80,6 +80,12 @@ Example:
     YY/m-DD    -> 11/Jul-17
 ```
 
+### Missing date information in EXIF
+If any of the photos does not have date information you can use the `-r | --regex` option to specify date format for date extraction from filenames:
+```
+--regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"
+```
+
 ### Move files
 Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR by using the flag `-m | --move`. This is useful when working with a big collection of files and the remaining free space is not enough to make a copy of the INPUTDIR.
 
