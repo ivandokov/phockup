@@ -108,6 +108,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.1`
+* Handle filenames with spaces
 ##### `1.5.0`
 * Major refactoring.
 * Updated all tests.
