@@ -16,7 +16,11 @@ Requires [snapd](https://snapcraft.io/docs/core/install)
 ```
 sudo snap install phockup
 ```
-*Note: snap applications can access files only in your **home and `/media` directories** for security reasons. If your media files are not located in these directories you should use the installation method below.*
+*Note: snap applications can access files only in your **home and `/media` directories** for security reasons. If your media files are not located in these directories you should use the installation method below.  
+If your files are in `/media` you should run the following command to allow access:*
+```
+sudo snap connect phockup:removable-media
+```
 
 ### Linux (without snap)
 If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
