@@ -109,6 +109,34 @@ def test_process_file_with_filename_date(mocker):
     shutil.rmtree('output', ignore_errors=True)
 
 
+def test_process_link_to_file_with_filename_date(mocker):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    Phockup('input', 'output').process_file("input/link_to_date_20170101_010101.jpg")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.jpg")
+    shutil.rmtree('output', ignore_errors=True)
+
+
+def test_process_broken_link(mocker, capsys):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    Phockup('input', 'output').process_file("input/not_a_file.jpg")
+    assert 'skipped, no such file or directory' in capsys.readouterr()[0]
+    shutil.rmtree('output', ignore_errors=True)
+
+
+def test_process_broken_link_move(mocker, capsys):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    phockup = Phockup('input', 'output', move=True)
+    phockup.process_file("input/not_a_file.jpg")
+    assert 'skipped, no such file or directory' in capsys.readouterr()[0]
+    shutil.rmtree('output', ignore_errors=True)
+
+
 def test_process_image_exif_date(mocker):
     shutil.rmtree('output', ignore_errors=True)
     mocker.patch.object(Phockup, 'check_directories')

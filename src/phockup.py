@@ -146,11 +146,19 @@ class Phockup():
                     break
             else:
                 if self.move:
-                    shutil.move(file, target_file)
+                    try:
+                        shutil.move(file, target_file)
+                    except FileNotFoundError:
+                        printer.line(' => skipped, no such file or directory')
+                        break
                 elif self.link:
                     os.link(file, target_file)
                 else:
-                    shutil.copy2(file, target_file)
+                    try:
+                        shutil.copy2(file, target_file)
+                    except FileNotFoundError:
+                        printer.line(' => skipped, no such file or directory')
+                        break
 
                 printer.line(' => %s' % target_file)
                 self.process_xmp(file, target_file_name, suffix, output)
