@@ -26,10 +26,10 @@ sudo snap connect phockup:removable-media
 If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
 ```
 sudo apt-get install python3 libimage-exiftool-perl -y
-curl -L https://github.com/ivandokov/phockup/archive/1.5.2.tar.gz -o phockup.tar.gz
+curl -L https://github.com/ivandokov/phockup/archive/1.5.3.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
-sudo mv phockup-1.5.2 /opt
-sudo ln -s /opt/phockup-1.5.2/phockup.py /usr/local/bin/phockup
+sudo mv phockup-* /opt/phockup
+sudo ln -s /opt/phockup/phockup.py /usr/local/bin/phockup
 ```
 
 ### Mac
@@ -41,7 +41,7 @@ brew install phockup
 
 ### Windows
 * Download and install latest stable [Python 3](https://www.python.org/downloads/windows/)
-* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/1.5.2.zip) and extract the archive
+* Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/1.5.3.zip) and extract the archive
 * Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool-10.56.zip) and extract the archive
 * Rename `exiftool(-k).exe` to `exiftool.exe`
 * Move `exiftool.exe` to phockup folder
@@ -112,6 +112,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.3`
+* Handle broken symlinks
 ##### `1.5.2`
 * Add `SubSecCreateDate` and `SubSecDateTimeOriginal` EXIF dates to the list of allowed ones because exiftool changed the default behavior to not include the subseconds for `CreateDate` and `DateTimeOriginal`
 ##### `1.5.1`
