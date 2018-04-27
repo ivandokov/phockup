@@ -173,7 +173,7 @@ class Phockup():
         Returns target file name and path
         """
         exif_data = Exif(file).data()
-        if exif_data and self.is_image_or_video(exif_data['MIMEType']):
+        if exif_data and 'MIMEType' in exif_data and self.is_image_or_video(exif_data['MIMEType']):
             date = Date(file).from_exif(exif_data, self.date_regex)
             output = self.get_output_dir(date)
             target_file_name = self.get_file_name(file, date).lower()
