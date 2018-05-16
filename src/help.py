@@ -56,6 +56,6 @@ OPTIONS
 
         Example:
             {regex}
-            can be used to extract the dafe from file names like the following IMG_27.01.2015-19.20.00.jpg.
+            can be used to extract the date from file names like the following IMG_27.01.2015-19.20.00.jpg.
 """.format(version=version,
            regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"))
