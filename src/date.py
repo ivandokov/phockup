@@ -1,7 +1,7 @@
 import os
 import re
 from datetime import datetime
-
+import time
 
 class Date():
     def __init__(self, file=None):
@@ -26,20 +26,35 @@ class Date():
         return datetime(date_object["year"], date_object["month"], date_object["day"],
                         date_object["hour"], date_object["minute"], date_object["second"])
 
-    def from_exif(self, exif, user_regex=None):
+    def from_exif(self, exif, timestamp, user_regex=None):
         keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
 
         datestr = None
+        parsed_date = None
 
         for key in keys:
             if key in exif:
                 datestr = exif[key]
                 break
-
-        if datestr:
-            return self.from_datestring(datestr)
+        
+        
+        if isinstance(datestr,str): #sometimes this returns an int
+            # sometimes exif data can return all zeros
+            # check to see if valid date first
+            if datestr:
+                parsed_date = self.from_datestring(datestr)
         else:
+            parsed_date = {'date': None, 'subseconds': ''}
+
+        try:
+            if parsed_date['date'] is not None:
+                return parsed_date
+            else:
+                raise TypeError("EXIF data couldn't be parsed into a date")
+        except TypeError:
+            if timestamp: return self.from_timestamp()
             return self.from_filename(user_regex)
+            
 
     def from_datestring(self, datestr):
         datestr = datestr.split('.')
@@ -85,3 +100,12 @@ class Date():
                     'date': date,
                     'subseconds': ''
                 }
+
+    def from_timestamp(self):
+        date = datetime.fromtimestamp(os.path.getmtime(self.file))
+        return {
+            'date': date,
+            'subseconds': ''
+        }
+
+        

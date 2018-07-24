@@ -10,7 +10,7 @@ from src.help import help
 from src.phockup import Phockup
 from src.printer import Printer
 
-version = '1.5.4'
+version = '1.5.5'
 printer = Printer()
 
 
@@ -21,9 +21,10 @@ def main(argv):
     link = False
     date_regex = None
     dir_format = os.path.sep.join(['%Y', '%m', '%d'])
+    timestamp = False
 
     try:
-        opts, args = getopt.getopt(argv[2:], "d:r:mlh", ["date=", "regex=", "move", "link", "help"])
+        opts, args = getopt.getopt(argv[2:], "d:r:mlth", ["date=", "regex=", "move", "link", "timestamp", "help"])
     except getopt.GetoptError:
         help(version)
         sys.exit(2)
@@ -52,6 +53,11 @@ def main(argv):
             except:
                 printer.error("Provided regex is invalid!")
                 sys.exit(2)
+        
+        if opt in ("-t", "--timestamp"):
+            timestamp = True
+            printer.line("Using file's timestamp!")
+        
 
     if link and move:
         printer.error("Can't use move and link strategy together!")
@@ -66,7 +72,8 @@ def main(argv):
         dir_format=dir_format,
         move=move,
         link=link,
-        date_regex=date_regex
+        date_regex=date_regex,
+        timestamp=timestamp
     )
 
 

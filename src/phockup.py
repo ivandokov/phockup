@@ -29,6 +29,7 @@ class Phockup():
         self.move = args.get('move', False)
         self.link = args.get('link', False)
         self.date_regex = args.get('date_regex', None)
+        self.timestamp = args.get('timestamp', False)
 
         self.check_directories()
         self.walk_directory()
@@ -89,6 +90,7 @@ class Phockup():
         """
         Generate output directory path based on the extracted date and formatted using dir_format
         If date is missing from the exifdata the file is going to "unknown" directory
+        unless user included a regex from filename or uses timestamp
         """
         try:
             path = [self.output, date['date'].date().strftime(self.dir_format)]
@@ -174,7 +176,7 @@ class Phockup():
         """
         exif_data = Exif(file).data()
         if exif_data and 'MIMEType' in exif_data and self.is_image_or_video(exif_data['MIMEType']):
-            date = Date(file).from_exif(exif_data, self.date_regex)
+            date = Date(file).from_exif(exif_data, self.timestamp, self.date_regex)
             output = self.get_output_dir(date)
             target_file_name = self.get_file_name(file, date).lower()
             target_file_path = os.path.sep.join([output, target_file_name])
