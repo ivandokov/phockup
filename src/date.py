@@ -26,7 +26,7 @@ class Date():
         return datetime(date_object["year"], date_object["month"], date_object["day"],
                         date_object["hour"], date_object["minute"], date_object["second"])
 
-    def from_exif(self, exif, timestamp, user_regex=None):
+    def from_exif(self, exif, timestamp=False, user_regex=None):
         keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
 
         datestr = None
@@ -46,15 +46,14 @@ class Date():
         else:
             parsed_date = {'date': None, 'subseconds': ''}
 
-        try:
-            if parsed_date['date'] is not None:
-                return parsed_date
-            else:
-                raise TypeError("EXIF data couldn't be parsed into a date")
-        except TypeError:
+        if parsed_date.get("date") is not None:
+            return parsed_date
+        else:
             if timestamp: return self.from_timestamp()
-            return self.from_filename(user_regex)
-            
+            if self.file:
+                return self.from_filename(user_regex)
+            else:
+                return parsed_date
 
     def from_datestring(self, datestr):
         datestr = datestr.split('.')
@@ -100,6 +99,7 @@ class Date():
                     'date': date,
                     'subseconds': ''
                 }
+            
 
     def from_timestamp(self):
         date = datetime.fromtimestamp(os.path.getmtime(self.file))
