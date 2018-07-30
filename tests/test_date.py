@@ -93,7 +93,7 @@ def test_get_date_custom_regex():
 def test_get_date_custom_regex_invalid():
     """
     A valid regex with a matching filename.
-    Return none because there is not enougth information in the filename.
+    Return none because there is not enough information in the filename.
     """
     date_regex = re.compile("(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})")
     assert Date("19.20.00.jpg").from_exif({}, False, date_regex) is None

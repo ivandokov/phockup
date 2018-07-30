@@ -59,6 +59,9 @@ OPTIONS
             can be used to extract the date from file names like the following IMG_27.01.2015-19.20.00.jpg.
 
     -t | --timestamp
-        Use the timestamp of the file (last modified date) if there is no EXIF date information.
+        Use the timestamp of the file (last modified date) if there is no EXIF date information. 
+        If the user supplies a regex, it will be used if it finds a match in the filename.
+        This option is intended as "last resort" since the file modified date may not be accurate, 
+        nevertheless it can be useful if no other date information can be obtained.
 """.format(version=version,
            regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"))

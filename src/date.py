@@ -26,7 +26,7 @@ class Date():
         return datetime(date_object["year"], date_object["month"], date_object["day"],
                         date_object["hour"], date_object["minute"], date_object["second"])
 
-    def from_exif(self, exif, timestamp=False, user_regex=None):
+    def from_exif(self, exif, timestamp=None, user_regex=None):
         keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
 
         datestr = None
@@ -36,7 +36,6 @@ class Date():
             if key in exif:
                 datestr = exif[key]
                 break
-        
         
         if isinstance(datestr,str): #sometimes this returns an int
             # sometimes exif data can return all zeros
@@ -49,9 +48,8 @@ class Date():
         if parsed_date.get("date") is not None:
             return parsed_date
         else:
-            if timestamp: return self.from_timestamp()
             if self.file:
-                return self.from_filename(user_regex)
+                return self.from_filename(user_regex, timestamp)
             else:
                 return parsed_date
 
@@ -77,7 +75,7 @@ class Date():
             'subseconds': subseconds
         }
 
-    def from_filename(self, user_regex):
+    def from_filename(self, user_regex, timestamp=None):
         # If missing datetime from EXIF data check if filename is in datetime format.
         # For this use a user provided regex if possible.
         # Otherwise assume a filename such as IMG_20160915_123456.jpg as default.
@@ -100,6 +98,7 @@ class Date():
                     'subseconds': ''
                 }
             
+        if timestamp: return self.from_timestamp()    
 
     def from_timestamp(self):
         date = datetime.fromtimestamp(os.path.getmtime(self.file))
