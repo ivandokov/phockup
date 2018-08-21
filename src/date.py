@@ -1,7 +1,7 @@
 import os
 import re
 from datetime import datetime
-
+import time
 
 class Date():
     def __init__(self, file=None):
@@ -26,20 +26,32 @@ class Date():
         return datetime(date_object["year"], date_object["month"], date_object["day"],
                         date_object["hour"], date_object["minute"], date_object["second"])
 
-    def from_exif(self, exif, user_regex=None):
+    def from_exif(self, exif, timestamp=None, user_regex=None):
         keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
 
         datestr = None
+        parsed_date = None
 
         for key in keys:
             if key in exif:
                 datestr = exif[key]
                 break
-
-        if datestr:
-            return self.from_datestring(datestr)
+        
+        if isinstance(datestr,str): #sometimes this returns an int
+            # sometimes exif data can return all zeros
+            # check to see if valid date first
+            if datestr:
+                parsed_date = self.from_datestring(datestr)
         else:
-            return self.from_filename(user_regex)
+            parsed_date = {'date': None, 'subseconds': ''}
+
+        if parsed_date.get("date") is not None:
+            return parsed_date
+        else:
+            if self.file:
+                return self.from_filename(user_regex, timestamp)
+            else:
+                return parsed_date
 
     def from_datestring(self, datestr):
         datestr = datestr.split('.')
@@ -63,7 +75,7 @@ class Date():
             'subseconds': subseconds
         }
 
-    def from_filename(self, user_regex):
+    def from_filename(self, user_regex, timestamp=None):
         # If missing datetime from EXIF data check if filename is in datetime format.
         # For this use a user provided regex if possible.
         # Otherwise assume a filename such as IMG_20160915_123456.jpg as default.
@@ -85,3 +97,14 @@ class Date():
                     'date': date,
                     'subseconds': ''
                 }
+            
+        if timestamp: return self.from_timestamp()    
+
+    def from_timestamp(self):
+        date = datetime.fromtimestamp(os.path.getmtime(self.file))
+        return {
+            'date': date,
+            'subseconds': ''
+        }
+
+        

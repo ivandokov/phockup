@@ -90,6 +90,8 @@ If any of the photos does not have date information you can use the `-r | --rege
 --regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"
 ```
 
+As a last resort, specify the `-t` option to use the file modification timestamp. This may not be accurate in all cases but can provide some kind of date if you'd rather it not go into the `unknown` folder. 
+
 ### Move files
 Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR by using the flag `-m | --move`. This is useful when working with a big collection of files and the remaining free space is not enough to make a copy of the INPUTDIR.
 
@@ -112,6 +114,9 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.5` 
+* Add `-t` option to allow using file modification time as a last resort
+* Workaround EXIF DateTaken time of all-zeros
 ##### `1.5.4`
 * Handle gracefully files without MIMEType
 ##### `1.5.3`
