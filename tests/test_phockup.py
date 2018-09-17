@@ -275,3 +275,13 @@ def test_process_skip_ignored_file():
     assert not os.path.isfile("output/unknown/.DS_Store")
     shutil.rmtree('output', ignore_errors=True)
     shutil.rmtree('input_ignored', ignore_errors=True)
+
+
+def test_keep_original_filenames(mocker):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    Phockup('input', 'output', original_filenames=True).process_file("input/exif.jpg")
+    assert os.path.isfile("output/2017/01/01/exif.jpg")
+    assert not os.path.isfile("output/2017/01/01/20170101-010101.jpg")
+    shutil.rmtree('output', ignore_errors=True)

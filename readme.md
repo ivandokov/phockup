@@ -98,13 +98,16 @@ Instead of copying the process will move all files from the INPUTDIR to the OUTP
 ### Link files
 Instead of copying the process will create hard link all files from the INPUTDIR into new structure in OUTPUTDIR by using the flag `-l | --link`. This is useful when working with good structure of photos in INPUTDIR (like folders per device).
 
+### Original filenames
+Organize the files in selected format or using the defauly year/month/day format but keep original filenames by using the flag `-o | --original-names`.
+
 ## Development
 
 ### Running tests
 To run the tests, first install the dev dependencies using
 
 ```bash
-pip install -r requirements-dev.txt
+pip3 install -r requirements-dev.txt
 ```
 
 Then run the tests using
@@ -114,6 +117,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.6` 
+* Add `-o | --original-names` option to allow keeping the original filenames
 ##### `1.5.5` 
 * Add `-t` option to allow using file modification time as a last resort
 * Workaround EXIF DateTaken time of all-zeros

@@ -28,6 +28,7 @@ class Phockup():
         self.dir_format = args.get('dir_format', os.path.sep.join(['%Y', '%m', '%d']))
         self.move = args.get('move', False)
         self.link = args.get('link', False)
+        self.original_filenames = args.get('original_filenames', False)
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
 
@@ -106,8 +107,12 @@ class Phockup():
 
     def get_file_name(self, file, date):
         """
-        Generate file name based on exif data unless it is missing. Then use original file name
+        Generate file name based on exif data unless it is missing or
+        original filenames are required. Then use original file name
         """
+        if self.original_filenames:
+            return os.path.basename(file)
+
         try:
             filename = [
                 '%04d' % date['date'].year,
