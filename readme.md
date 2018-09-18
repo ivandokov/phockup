@@ -99,7 +99,7 @@ Instead of copying the process will move all files from the INPUTDIR to the OUTP
 Instead of copying the process will create hard link all files from the INPUTDIR into new structure in OUTPUTDIR by using the flag `-l | --link`. This is useful when working with good structure of photos in INPUTDIR (like folders per device).
 
 ### Original filenames
-Organize the files in selected format or using the defauly year/month/day format but keep original filenames by using the flag `-o | --original-names`.
+Organize the files in selected format or using the default year/month/day format but keep original filenames by using the flag `-o | --original-names`.
 
 ## Development
 

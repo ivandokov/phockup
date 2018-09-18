@@ -51,7 +51,7 @@ OPTIONS
         This is useful when working with working structure and want to create YYYY/MM/DD structure to point to same files.
 
     -o | --original-names
-        Organize the files in selected format or using the defauly year/month/day format but keep original filenames.
+        Organize the files in selected format or using the default year/month/day format but keep original filenames.
 
     -r | --regex
         Specify date format for date extraction from filenames if there is no EXIF date information.
