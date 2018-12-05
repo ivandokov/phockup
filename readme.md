@@ -117,6 +117,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.7` 
+* Resolved [#44](https://github.com/ivandokov/phockup/issues/44)
 ##### `1.5.6` 
 * Add `-o | --original-names` option to allow keeping the original filenames
 ##### `1.5.5` 

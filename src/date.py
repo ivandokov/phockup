@@ -30,18 +30,17 @@ class Date():
         keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
 
         datestr = None
-        parsed_date = None
 
         for key in keys:
             if key in exif:
                 datestr = exif[key]
                 break
-        
-        if isinstance(datestr,str): #sometimes this returns an int
-            # sometimes exif data can return all zeros
-            # check to see if valid date first
-            if datestr:
-                parsed_date = self.from_datestring(datestr)
+
+        # sometimes exif data can return all zeros
+        # check to see if valid date first
+        # sometimes this returns an int
+        if datestr and isinstance(datestr, str) and not datestr.startswith('0000'):
+            parsed_date = self.from_datestring(datestr)
         else:
             parsed_date = {'date': None, 'subseconds': ''}
 
