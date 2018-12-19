@@ -37,7 +37,7 @@ def main(argv):
 
         if opt in ("-d", "--date"):
             if not arg:
-                printer.print.error("Date format cannot be empty")
+                printer.error("Date format cannot be empty")
             dir_format = Date().parse(arg)
 
         if opt in ("-m", "--move"):
