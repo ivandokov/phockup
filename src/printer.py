@@ -6,7 +6,7 @@ class Printer(object):
         if skip_end:
             print(message, end="", flush=True)
         else:
-            print(message)
+            print(message, flush=True)
 
     def error(self, message):
         self.line('')

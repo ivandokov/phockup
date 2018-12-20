@@ -4,6 +4,7 @@ import os
 import re
 import shutil
 import sys
+import threading
 
 from src.date import Date
 from src.exif import Exif
@@ -31,6 +32,7 @@ class Phockup():
         self.original_filenames = args.get('original_filenames', False)
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
+        self.threads = min(16, max(1, args.get('threads', 1)))
 
         self.check_directories()
         self.walk_directory()
@@ -53,16 +55,45 @@ class Phockup():
 
     def walk_directory(self):
         """
-        Walk input directory recursively and call process_file for each file except the ignored ones
+        Walk input directory recursively, split the file list into parts and process them in threads
         """
+        files_temp = []
         for root, _, files in os.walk(self.input):
-            files.sort()
             for filename in files:
                 if filename in ignored_files:
                     continue
 
                 file = os.path.join(root, filename)
-                self.process_file(file)
+                files_temp.append(file)
+
+        files = files_temp
+        files.sort()
+        num_files = len(files)
+        num_threads = min(self.threads, num_files)
+
+        if num_threads > 1:
+            threads = []
+            for i in range(0, num_threads):
+                files_part = files[i::num_threads]
+                t = threading.Thread(target=self.process_file_worker, args=(files_part,))
+                threads.append(t)
+                t.start()
+
+            for t in threads:
+                t.join()
+
+            printer.line('%s files processed using %s threads' % (num_files, num_threads))
+        else:
+            self.process_file_worker(files)
+            printer.line('%s file(s) processed' % (num_files))
+
+    def process_file_worker(self, files):
+        """
+        Thread worker to call process_file for each file on a set
+        """
+        for file in files:
+            self.process_file(file)
+        return
 
     def checksum(self, file):
         """
@@ -98,8 +129,13 @@ class Phockup():
 
         fullpath = os.path.sep.join(path)
 
+        lock = threading.Lock()
+        lock.acquire()
+
         if not os.path.isdir(fullpath):
             os.makedirs(fullpath)
+
+        lock.release()
 
         return fullpath
 
@@ -137,24 +173,25 @@ class Phockup():
         if str.endswith(file, '.xmp'):
             return None
 
-        printer.line(file, True)
-
         output, target_file_name, target_file_path = self.get_file_name_and_path(file)
 
         suffix = 1
         target_file = target_file_path
 
+        lock = threading.Lock()
+        lock.acquire()
+
         while True:
             if os.path.isfile(target_file):
                 if self.checksum(file) == self.checksum(target_file):
-                    printer.line(' => skipped, duplicated file %s' % target_file)
+                    printer.line('%s => skipped, duplicated file %s' % (file, target_file))
                     break
             else:
                 if self.move:
                     try:
                         shutil.move(file, target_file)
                     except FileNotFoundError:
-                        printer.line(' => skipped, no such file or directory')
+                        printer.line('%s => skipped, no such file or directory' % file)
                         break
                 elif self.link:
                     os.link(file, target_file)
@@ -162,16 +199,18 @@ class Phockup():
                     try:
                         shutil.copy2(file, target_file)
                     except FileNotFoundError:
-                        printer.line(' => skipped, no such file or directory')
+                        printer.line('%s  => skipped, no such file or directory' % file)
                         break
 
-                printer.line(' => %s' % target_file)
+                printer.line('%s => %s' % (file, target_file))
                 self.process_xmp(file, target_file_name, suffix, output)
                 break
 
             suffix += 1
             target_split = os.path.splitext(target_file_path)
             target_file = "%s-%d%s" % (target_split[0], suffix, target_split[1])
+
+        lock.release()
 
     def get_file_name_and_path(self, file):
         """

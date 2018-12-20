@@ -101,6 +101,9 @@ Instead of copying the process will create hard link all files from the INPUTDIR
 ### Original filenames
 Organize the files in selected format or using the default year/month/day format but keep original filenames by using the flag `-o | --original-names`.
 
+### Speed up with multithreading
+Set the argument `-x | --threads=` to speed up the processing time. Reasonable numbers go from `2` to `8` threads. You should set the number of threads based on the number of cores on your processor. Note that using threads increases cpu and disk usage and may impact the performance of other processes. 
+
 ## Development
 
 ### Running tests
