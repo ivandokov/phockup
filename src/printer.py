@@ -1,3 +1,6 @@
+import sys
+
+
 class Printer(object):
     def line(self, message, skip_end=False):
         if skip_end:
@@ -9,6 +12,7 @@ class Printer(object):
         self.line('')
         self.line(message)
         self.line('')
+        sys.exit(1)
 
     def empty(self, times=1):
         for i in range(times):

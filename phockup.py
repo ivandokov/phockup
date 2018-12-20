@@ -57,7 +57,6 @@ def main(argv):
                 date_regex = re.compile(arg)
             except:
                 printer.error("Provided regex is invalid")
-                sys.exit(2)
         
         if opt in ("-t", "--timestamp"):
             timestamp = True
@@ -66,7 +65,6 @@ def main(argv):
 
     if link and move:
         printer.error("Can't use move and link strategy together")
-        sys.exit(1)
 
     if len(argv) < 2:
         help(version)
