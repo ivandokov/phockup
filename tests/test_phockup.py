@@ -242,6 +242,18 @@ def test_process_exists_same(mocker, capsys):
     shutil.rmtree('output', ignore_errors=True)
 
 
+def test_process_exists_same_prior(mocker, capsys):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    os.makedirs("output/2017/01/01")
+    shutil.copy2("input/exif.jpg", "output/2017/01/01/20170101-010101.jpg")
+    phockup = Phockup('input', 'output')
+    phockup.process_file("input/exif.jpg")
+    assert 'skipped, duplicated file' in capsys.readouterr()[0]
+    shutil.rmtree('output', ignore_errors=True)
+
+
 def test_process_same_date_different_files_rename(mocker):
     shutil.rmtree('output', ignore_errors=True)
     mocker.patch.object(Phockup, 'check_directories')

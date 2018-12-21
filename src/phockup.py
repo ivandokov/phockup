@@ -41,7 +41,7 @@ class Phockup():
             self.action = os.link
         else:
             self.action = shutil.copy2
-            
+
         self.check_directories()
         self.walk_directory()
 
@@ -183,30 +183,34 @@ class Phockup():
 
         targets = self.targets
         action = False
-        
+
         while True:
+            if os.path.isfile(target_file):
+                targets[target_file] = target_file
+
             target_source = targets.get(target_file)
             if target_source:
                 if self.checksum(file) == self.checksum(target_source):
                     printer.line('%s => skipped, duplicated file %s' % (file, target_file))
                     break
+
             else:
                 targets[target_file] = file
                 action = True
                 break
-                
+
             suffix += 1
             target_split = os.path.splitext(target_file_path)
             target_file = "%s-%d%s" % (target_split[0], suffix, target_split[1])
-            
+
         lock.release()
-        
+
         if action:
             try:
+                printer.line('%s => %s' % (file, target_file))
                 os.makedirs(output, exist_ok=True)
                 self.action(file, target_file)
                 self.process_xmp(file, target_file_name, suffix, output)
-                printer.line('%s => %s' % (file, target_file))
             except FileNotFoundError:
                 printer.line('%s => skipped, no such file or directory' % file)
 
@@ -251,5 +255,5 @@ class Phockup():
 
         if xmp_original:
             xmp_path = os.path.sep.join([output, xmp_target])
-            self.action(xmp_original, xmp_path)
             printer.line('%s => %s' % (xmp_original, xmp_path))
+            self.action(xmp_original, xmp_path)
