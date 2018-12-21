@@ -175,7 +175,7 @@ def test_process_image_unknown(mocker):
         "MIMEType": "image/jpeg"
     }
     Phockup('input', 'output').process_file("input/UNKNOWN.jpg")
-    assert os.path.isfile("output/unknown/UNKNOWN.jpg")
+    assert os.path.isfile("output/unknown/unknown.jpg")
     shutil.rmtree('output', ignore_errors=True)
 
 
