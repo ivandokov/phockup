@@ -32,8 +32,16 @@ class Phockup():
         self.original_filenames = args.get('original_filenames', False)
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
-        self.threads = min(16, max(1, args.get('threads', 1)))
+        self.threads = max(1, args.get('threads', 1))
 
+        self.targets = {}
+        if self.move:
+            self.action = shutil.move
+        elif self.link:
+            self.action = os.link
+        else:
+            self.action = shutil.copy2
+            
         self.check_directories()
         self.walk_directory()
 
@@ -75,12 +83,12 @@ class Phockup():
             threads = []
             for i in range(0, num_threads):
                 files_part = files[i::num_threads]
-                t = threading.Thread(target=self.process_file_worker, args=(files_part,))
-                threads.append(t)
-                t.start()
+                thread = threading.Thread(target=self.process_file_worker, args=(files_part,))
+                threads.append(thread)
+                thread.start()
 
-            for t in threads:
-                t.join()
+            for thread in threads:
+                thread.join()
 
             printer.line('%s files processed using %s threads' % (num_files, num_threads))
         else:
@@ -129,14 +137,6 @@ class Phockup():
 
         fullpath = os.path.sep.join(path)
 
-        lock = threading.Lock()
-        lock.acquire()
-
-        if not os.path.isdir(fullpath):
-            os.makedirs(fullpath)
-
-        lock.release()
-
         return fullpath
 
     def get_file_name(self, file, date):
@@ -181,36 +181,35 @@ class Phockup():
         lock = threading.Lock()
         lock.acquire()
 
+        targets = self.targets
+        action = False
+        
         while True:
-            if os.path.isfile(target_file):
-                if self.checksum(file) == self.checksum(target_file):
+            target_source = targets.get(target_file)
+            if target_source:
+                if self.checksum(file) == self.checksum(target_source):
                     printer.line('%s => skipped, duplicated file %s' % (file, target_file))
                     break
             else:
-                if self.move:
-                    try:
-                        shutil.move(file, target_file)
-                    except FileNotFoundError:
-                        printer.line('%s => skipped, no such file or directory' % file)
-                        break
-                elif self.link:
-                    os.link(file, target_file)
-                else:
-                    try:
-                        shutil.copy2(file, target_file)
-                    except FileNotFoundError:
-                        printer.line('%s  => skipped, no such file or directory' % file)
-                        break
-
-                printer.line('%s => %s' % (file, target_file))
-                self.process_xmp(file, target_file_name, suffix, output)
+                targets[target_file] = file
+                action = True
                 break
-
+                
             suffix += 1
             target_split = os.path.splitext(target_file_path)
             target_file = "%s-%d%s" % (target_split[0], suffix, target_split[1])
-
+            
         lock.release()
+        
+        if action:
+            try:
+                os.makedirs(output, exist_ok=True)
+                self.action(file, target_file)
+                self.process_xmp(file, target_file_name, suffix, output)
+                printer.line('%s => %s' % (file, target_file))
+            except FileNotFoundError:
+                printer.line('%s => skipped, no such file or directory' % file)
+
 
     def get_file_name_and_path(self, file):
         """
@@ -252,11 +251,5 @@ class Phockup():
 
         if xmp_original:
             xmp_path = os.path.sep.join([output, xmp_target])
+            self.action(xmp_original, xmp_path)
             printer.line('%s => %s' % (xmp_original, xmp_path))
-
-            if self.move:
-                shutil.move(xmp_original, xmp_path)
-            elif self.link:
-                os.link(xmp_original, xmp_path)
-            else:
-                shutil.copy2(xmp_original, xmp_path)
