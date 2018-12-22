@@ -26,8 +26,11 @@ class Date():
         return datetime(date_object["year"], date_object["month"], date_object["day"],
                         date_object["hour"], date_object["minute"], date_object["second"])
 
-    def from_exif(self, exif, timestamp=None, user_regex=None):
-        keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
+    def from_exif(self, exif, timestamp=None, user_regex=None, date_field=None):
+        if date_field:
+            keys = date_field.split()
+        else:
+            keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
 
         datestr = None
 

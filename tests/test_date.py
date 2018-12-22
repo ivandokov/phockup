@@ -23,6 +23,13 @@ def test_get_date_from_exif():
         "subseconds": ""
     }
 
+def test_get_date_from_custom_date_field():
+    assert Date().from_exif({
+        "CustomField": "2017:01:01 01:01:01"
+    }, date_field="CustomField") == {
+        "date": datetime(2017, 1, 1, 1, 1, 1),
+        "subseconds": ""
+    }
 
 def test_get_date_from_exif_strip_timezone():
     assert Date().from_exif({

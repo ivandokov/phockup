@@ -31,6 +31,7 @@ class Phockup():
         self.original_filenames = args.get('original_filenames', False)
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
+        self.date_field = args.get('date_field', False)
 
         self.check_directories()
         self.walk_directory()
@@ -179,7 +180,7 @@ class Phockup():
         """
         exif_data = Exif(file).data()
         if exif_data and 'MIMEType' in exif_data and self.is_image_or_video(exif_data['MIMEType']):
-            date = Date(file).from_exif(exif_data, self.timestamp, self.date_regex)
+            date = Date(file).from_exif(exif_data, self.timestamp, self.date_regex, self.date_field)
             output = self.get_output_dir(date)
             target_file_name = self.get_file_name(file, date)
             if not self.original_filenames:
