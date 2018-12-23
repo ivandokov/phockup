@@ -26,7 +26,7 @@ def main(argv):
     threads = 1
 
     try:
-        opts, args = getopt.getopt(argv[2:], "d:r:mltoh", ["date=", "regex=", "move", "link", "original-names", "timestamp", "threads=", "help"])
+        opts, args = getopt.getopt(argv[2:], "d:r:mltoxh", ["date=", "regex=", "move", "link", "original-names", "timestamp", "threads=", "help"])
     except getopt.GetoptError:
         help(version)
         sys.exit(2)
