@@ -24,7 +24,9 @@ class Date():
 
     def build(self, date_object):
         return datetime(date_object["year"], date_object["month"], date_object["day"],
-                        date_object["hour"], date_object["minute"], date_object["second"])
+                        date_object["hour"] if date_object.get("hour") else 0,
+                        date_object["minute"] if date_object.get("minute") else 0,
+                        date_object["second"] if date_object.get("second") else 0)
 
     def from_exif(self, exif, timestamp=None, user_regex=None):
         keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
