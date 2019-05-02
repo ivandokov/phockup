@@ -132,6 +132,11 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.8` 
+* Add `--date-field` option to set date extraction fields  [#54](https://github.com/ivandokov/phockup/issues/54)
+* Handle regex with optional hour information  [#62](https://github.com/ivandokov/phockup/issues/62)
+* Fix regex support for incomplete time on filename  [#55](https://github.com/ivandokov/phockup/issues/55)
+* Fix to handle files with illegal characters [#53](https://github.com/ivandokov/phockup/issues/53)
 ##### `1.5.7` 
 * Resolved [#44](https://github.com/ivandokov/phockup/issues/44)
 ##### `1.5.6` 
