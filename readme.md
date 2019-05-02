@@ -1,5 +1,6 @@
 # Phockup
 
+[![Phockup](https://snapcraft.io/phockup/badge.svg)](https://snapcraft.io/phockup)
 [![Snap Status](https://build.snapcraft.io/badge/ivandokov/phockup.svg)](https://build.snapcraft.io/user/ivandokov/phockup)
 [![Build Status](https://travis-ci.org/ivandokov/phockup.svg?branch=master)](https://travis-ci.org/ivandokov/phockup)
 
