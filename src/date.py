@@ -87,7 +87,7 @@ class Date():
 
         if matches:
             try:
-                match_dir = matches.groupdict()
+                match_dir = matches.groupdict(default='0')
                 match_dir = dict([a, int(x)] for a, x in match_dir.items())  # Convert str to int
                 date = self.build(match_dir)
             except (KeyError, ValueError):

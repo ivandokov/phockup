@@ -105,3 +105,14 @@ def test_get_date_custom_regex_no_match():
     """
     date_regex = re.compile(r"(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})")
     assert Date("Foo.jpg").from_exif({}, False, date_regex) is None
+
+def test_get_date_custom_regex_optional_time():
+    """
+    A valid regex with a matching filename that doesn't have hour information.
+    However, the regex in question has hour information as optional.
+    """
+    date_regex = re.compile(r"(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?((?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2}))?")
+    assert Date("IMG_27.01.2015.jpg").from_exif({}, False, date_regex) == {
+        "date": datetime(2015, 1, 27, 0, 0, 00),
+        "subseconds": ""
+    }
