@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 from subprocess import CalledProcessError
 from src.exif import Exif
