@@ -101,6 +101,21 @@ Instead of copying the process will create hard link all files from the INPUTDIR
 ### Original filenames
 Organize the files in selected format or using the default year/month/day format but keep original filenames by using the flag `-o | --original-names`.
 
+### Fix incorrect dates
+If date extracted from photos is incorrect, you can use the `-f | --date-field` option to set the correct exif field to get date information from. Use this command to list which fields are available for a file:
+```
+exiftool -time:all -mimetype -j file.jpg
+```
+The output may look like this, but with more fields:
+```
+[{
+  "DateTimeOriginal": "2017:10:06 01:01:01",
+  "CreateDate": "2017:01:01 01:01:01",
+]}
+```
+If the correct date is in `DateTimeOriginal`, you can include the option `--date-field=DateTimeOriginal` to get date information from it.
+To set multiple fields to be tried in order until a valid date is found, just join them with spaces in a quoted string like `"CreateDate FileModifyDate"`.
+
 ## Development
 
 ### Running tests
