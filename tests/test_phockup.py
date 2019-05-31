@@ -73,6 +73,18 @@ def test_walking_directory():
     shutil.rmtree('output', ignore_errors=True)
 
 
+def test_dry_run():
+    shutil.rmtree('output', ignore_errors=True)
+    Phockup('input', 'output', dry_run=True)
+    assert not os.path.isdir('output')
+    dir1='output/2017/01/01'
+    dir2='output/2017/10/06'
+    dir3='output/unknown'
+    assert not os.path.isdir(dir1)
+    assert not os.path.isdir(dir2)
+    assert not os.path.isdir(dir3)
+
+
 def test_is_image_or_video(mocker):
     mocker.patch.object(Phockup, 'check_directories')
     assert Phockup('in', '.').is_image_or_video("image/jpeg")

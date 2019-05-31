@@ -24,9 +24,10 @@ def main(argv):
     original_filenames = False
     timestamp = False
     date_field = None
+    dry_run = False
 
     try:
-        opts, args = getopt.getopt(argv[2:], "d:r:f:mltoh", ["date=", "regex=", "move", "link", "original-names", "timestamp", "date-field=", "help"])
+        opts, args = getopt.getopt(argv[2:], "d:r:f:mltoyh", ["date=", "regex=", "move", "link", "original-names", "timestamp", "date-field=", "dry-run", "help"])
     except getopt.GetoptError:
         help(version)
         sys.exit(2)
@@ -58,11 +59,15 @@ def main(argv):
                 date_regex = re.compile(arg)
             except:
                 printer.error("Provided regex is invalid")
-        
+
         if opt in ("-t", "--timestamp"):
             timestamp = True
             printer.line("Using file's timestamp")
-        
+
+        if opt in ("-y", "--dry-run"):
+            dry_run = True
+            printer.line("Dry run only, not moving files only showing changes")
+
         if opt in ("-f", "--date-field"):
             if not arg:
                 printer.error("Date field cannot be empty")
@@ -85,7 +90,8 @@ def main(argv):
         date_regex=date_regex,
         original_filenames=original_filenames,
         timestamp=timestamp,
-        date_field=date_field
+        date_field=date_field,
+        dry_run=dry_run,
     )
 
 
