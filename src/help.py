@@ -80,5 +80,8 @@ OPTIONS
 
         To get all date fields available for a file, do:
             exiftool -time:all -mimetype -j <file>
+
+    -y | --dry-run
+        Don't move any files, just show which changes would be done.
 """.format(version=version,
            regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"))
