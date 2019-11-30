@@ -15,7 +15,7 @@ class Exif(object):
                 exif_command = exif_command.replace("\'", "\"")
             data = check_output(exif_command, shell=True).decode('UTF-8')
             exif = json.loads(data)[0]
-        except (CalledProcessError, UnicodeDecodeError) as e:
+        except (CalledProcessError, UnicodeDecodeError):
             return None
 
         return exif
