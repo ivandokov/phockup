@@ -133,6 +133,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.9`
+* Fixed [#70](https://github.com/ivandokov/phockup/issues/70) related to Windows issues 
 ##### `1.5.8` 
 * Add `--date-field` option to set date extraction fields  [#54](https://github.com/ivandokov/phockup/issues/54)
 * Handle regex with optional hour information  [#62](https://github.com/ivandokov/phockup/issues/62)
