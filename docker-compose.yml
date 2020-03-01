@@ -1,0 +1,9 @@
+# 
+version: '3'
+services:
+  phockup:
+    container_name: phockup
+    build: .
+    volumes:
+      - ./originals:/originals
+      - ./sorted:/sorted
