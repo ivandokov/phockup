@@ -35,6 +35,13 @@ class Phockup():
         self.dry_run = args.get('dry_run', False)
 
         self.check_directories()
+
+        total_files = 0
+        for _, _, filenames in os.walk(input):
+            total_files += len([f for f in filenames if f not in ignored_files])
+        self.total_files=total_files
+        self.processed_files = 0
+
         self.walk_directory()
 
     def check_directories(self):
@@ -64,8 +71,10 @@ class Phockup():
                 if filename in ignored_files:
                     continue
 
+                self.processed_files += 1
                 file = os.path.join(root, filename)
                 self.process_file(file)
+
 
     def checksum(self, file):
         """
@@ -140,7 +149,8 @@ class Phockup():
         if str.endswith(file, '.xmp'):
             return None
 
-        printer.line(file, True)
+        process_status = "[" + str(self.processed_files) + "/" + str(self.total_files) + "]"
+        printer.line(process_status + file, True)
 
         output, target_file_name, target_file_path = self.get_file_name_and_path(file)
 
