@@ -39,10 +39,16 @@ class Phockup():
         total_files = 0
         for _, _, filenames in os.walk(input):
             total_files += len([f for f in filenames if f not in ignored_files])
-        self.total_files=total_files
+        self.total_files = total_files
         self.processed_files = 0
 
         self.walk_directory()
+
+    def print_process_status(self):
+        """
+        print the process status without a new line.
+        """
+        printer.line("[" + str(self.processed_files) + "/" + str(self.total_files) + "] ", True)
 
     def check_directories(self):
         """
@@ -71,7 +77,11 @@ class Phockup():
                 if filename in ignored_files:
                     continue
 
-                self.processed_files += 1
+                """
+                xmp file will be counted in process_xml().
+                """
+                if not str.endswith(filename, '.xmp'):
+                    self.processed_files += 1
                 file = os.path.join(root, filename)
                 self.process_file(file)
 
@@ -149,8 +159,8 @@ class Phockup():
         if str.endswith(file, '.xmp'):
             return None
 
-        process_status = "[" + str(self.processed_files) + "/" + str(self.total_files) + "]"
-        printer.line(process_status + file, True)
+        self.print_process_status()
+        printer.line(file, True)
 
         output, target_file_name, target_file_path = self.get_file_name_and_path(file)
 
@@ -227,6 +237,8 @@ class Phockup():
             xmp_target = None
 
         if xmp_original:
+            self.processed_files += 1
+            self.print_process_status()
             xmp_path = os.path.sep.join([output, xmp_target])
             printer.line('%s => %s' % (xmp_original, xmp_path))
 
