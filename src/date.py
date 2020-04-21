@@ -74,6 +74,8 @@ class Date():
                 parsed_date_time = self.strptime(date, "%Y-%m-%d %H:%M:%S")
             except ValueError:
                 parsed_date_time = None
+        if re.search(search, subseconds) is not None:
+            subseconds = re.sub(search, r'\1', subseconds)
         return {
             'date': parsed_date_time,
             'subseconds': subseconds
