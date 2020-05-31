@@ -1,5 +1,6 @@
 # Phockup
 
+[![Phockup](https://snapcraft.io/phockup/badge.svg)](https://snapcraft.io/phockup)
 [![Snap Status](https://build.snapcraft.io/badge/ivandokov/phockup.svg)](https://build.snapcraft.io/user/ivandokov/phockup)
 [![Build Status](https://travis-ci.org/ivandokov/phockup.svg?branch=master)](https://travis-ci.org/ivandokov/phockup)
 
@@ -42,7 +43,7 @@ brew install phockup
 ### Windows
 * Download and install latest stable [Python 3](https://www.python.org/downloads/windows/)
 * Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/latest.tar.gz) and extract the archive
-* Download exiftool from the official [website](http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool-10.56.zip) and extract the archive
+* Download exiftool from the official [website](https://exiftool.org/) and extract the archive
 * Rename `exiftool(-k).exe` to `exiftool.exe`
 * Move `exiftool.exe` to phockup folder
 * Open Command Prompt and `cd` to phockup folder
@@ -101,6 +102,21 @@ Instead of copying the process will create hard link all files from the INPUTDIR
 ### Original filenames
 Organize the files in selected format or using the default year/month/day format but keep original filenames by using the flag `-o | --original-names`.
 
+### Fix incorrect dates
+If date extracted from photos is incorrect, you can use the `-f | --date-field` option to set the correct exif field to get date information from. Use this command to list which fields are available for a file:
+```
+exiftool -time:all -mimetype -j file.jpg
+```
+The output may look like this, but with more fields:
+```
+[{
+  "DateTimeOriginal": "2017:10:06 01:01:01",
+  "CreateDate": "2017:01:01 01:01:01",
+]}
+```
+If the correct date is in `DateTimeOriginal`, you can include the option `--date-field=DateTimeOriginal` to get date information from it.
+To set multiple fields to be tried in order until a valid date is found, just join them with spaces in a quoted string like `"CreateDate FileModifyDate"`.
+
 ## Development
 
 ### Running tests
@@ -117,6 +133,13 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.9`
+* Fixed [#70](https://github.com/ivandokov/phockup/issues/70) related to Windows issues 
+##### `1.5.8` 
+* Add `--date-field` option to set date extraction fields  [#54](https://github.com/ivandokov/phockup/issues/54)
+* Handle regex with optional hour information  [#62](https://github.com/ivandokov/phockup/issues/62)
+* Fix regex support for incomplete time on filename  [#55](https://github.com/ivandokov/phockup/issues/55)
+* Fix to handle files with illegal characters [#53](https://github.com/ivandokov/phockup/issues/53)
 ##### `1.5.7` 
 * Resolved [#44](https://github.com/ivandokov/phockup/issues/44)
 ##### `1.5.6` 

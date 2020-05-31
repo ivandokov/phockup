@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import shutil
 import sys
 import os
@@ -70,6 +71,18 @@ def test_walking_directory():
     assert len([name for name in os.listdir(dir2) if os.path.isfile(os.path.join(dir2, name))]) == 1
     assert len([name for name in os.listdir(dir3) if os.path.isfile(os.path.join(dir3, name))]) == 1
     shutil.rmtree('output', ignore_errors=True)
+
+
+def test_dry_run():
+    shutil.rmtree('output', ignore_errors=True)
+    Phockup('input', 'output', dry_run=True)
+    assert not os.path.isdir('output')
+    dir1='output/2017/01/01'
+    dir2='output/2017/10/06'
+    dir3='output/unknown'
+    assert not os.path.isdir(dir1)
+    assert not os.path.isdir(dir2)
+    assert not os.path.isdir(dir3)
 
 
 def test_is_image_or_video(mocker):

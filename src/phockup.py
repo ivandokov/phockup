@@ -31,6 +31,8 @@ class Phockup():
         self.original_filenames = args.get('original_filenames', False)
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
+        self.date_field = args.get('date_field', False)
+        self.dry_run = args.get('dry_run', False)
 
         self.check_directories()
         self.walk_directory()
@@ -47,7 +49,8 @@ class Phockup():
         if not os.path.exists(self.output):
             printer.line('Output directory "%s" does not exist, creating now' % self.output)
             try:
-                os.makedirs(self.output)
+                if not self.dry_run:
+                    os.makedirs(self.output)
             except Exception:
                 printer.error('Cannot create output directory. No write access!')
 
@@ -98,7 +101,7 @@ class Phockup():
 
         fullpath = os.path.sep.join(path)
 
-        if not os.path.isdir(fullpath):
+        if not os.path.isdir(fullpath) and not self.dry_run:
             os.makedirs(fullpath)
 
         return fullpath
@@ -152,15 +155,17 @@ class Phockup():
             else:
                 if self.move:
                     try:
-                        shutil.move(file, target_file)
+                        if not self.dry_run:
+                            shutil.move(file, target_file)
                     except FileNotFoundError:
                         printer.line(' => skipped, no such file or directory')
                         break
-                elif self.link:
+                elif self.link and not self.dry_run:
                     os.link(file, target_file)
                 else:
                     try:
-                        shutil.copy2(file, target_file)
+                        if not self.dry_run:
+                            shutil.copy2(file, target_file)
                     except FileNotFoundError:
                         printer.line(' => skipped, no such file or directory')
                         break
@@ -179,7 +184,7 @@ class Phockup():
         """
         exif_data = Exif(file).data()
         if exif_data and 'MIMEType' in exif_data and self.is_image_or_video(exif_data['MIMEType']):
-            date = Date(file).from_exif(exif_data, self.timestamp, self.date_regex)
+            date = Date(file).from_exif(exif_data, self.timestamp, self.date_regex, self.date_field)
             output = self.get_output_dir(date)
             target_file_name = self.get_file_name(file, date)
             if not self.original_filenames:
@@ -215,9 +220,10 @@ class Phockup():
             xmp_path = os.path.sep.join([output, xmp_target])
             printer.line('%s => %s' % (xmp_original, xmp_path))
 
-            if self.move:
-                shutil.move(xmp_original, xmp_path)
-            elif self.link:
-                os.link(xmp_original, xmp_path)
-            else:
-                shutil.copy2(xmp_original, xmp_path)
+            if not self.dry_run:
+                if self.move:
+                    shutil.move(xmp_original, xmp_path)
+                elif self.link:
+                    os.link(xmp_original, xmp_path)
+                else:
+                    shutil.copy2(xmp_original, xmp_path)

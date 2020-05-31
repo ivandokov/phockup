@@ -28,8 +28,11 @@ class Date():
                         date_object["minute"] if date_object.get("minute") else 0,
                         date_object["second"] if date_object.get("second") else 0)
 
-    def from_exif(self, exif, timestamp=None, user_regex=None):
-        keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
+    def from_exif(self, exif, timestamp=None, user_regex=None, date_field=None):
+        if date_field:
+            keys = date_field.split()
+        else:
+            keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 'DateTimeOriginal']
 
         datestr = None
 
@@ -87,7 +90,7 @@ class Date():
 
         if matches:
             try:
-                match_dir = matches.groupdict()
+                match_dir = matches.groupdict(default='0')
                 match_dir = dict([a, int(x)] for a, x in match_dir.items())  # Convert str to int
                 date = self.build(match_dir)
             except (KeyError, ValueError):

@@ -1,5 +1,7 @@
 from subprocess import check_output, CalledProcessError
 import json
+import shlex
+import sys
 
 
 class Exif(object):
@@ -8,7 +10,10 @@ class Exif(object):
 
     def data(self):
         try:
-            data = check_output('exiftool -time:all -mimetype -j "%s"' % self.file, shell=True).decode('UTF-8')
+            exif_command = 'exiftool -time:all -mimetype -j %s' % shlex.quote(self.file)
+            if sys.platform == 'win32':
+                exif_command = exif_command.replace("\'", "\"")
+            data = check_output(exif_command, shell=True).decode('UTF-8')
             exif = json.loads(data)[0]
         except (CalledProcessError, UnicodeDecodeError):
             return None
