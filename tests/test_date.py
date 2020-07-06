@@ -41,6 +41,15 @@ def test_get_date_from_exif_strip_timezone():
     }
 
 
+def test_get_date_from_exif_strip_timezone_sub_sec():
+    assert Date().from_exif({
+        "SubSecCreateDate": "2019:10:06 11:02:50.575+01:00"
+    }) == {
+        "date": datetime(2019, 10, 6, 11, 2, 50),
+        "subseconds": "575"
+    }
+
+
 def test_get_date_from_exif_colon():
     assert Date().from_exif({
         "CreateDate": "2017:01:01 01:01:01"
