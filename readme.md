@@ -133,6 +133,9 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.10`
+* Merged [#78](https://github.com/ivandokov/phockup/issues/78)
+* Merged [#81](https://github.com/ivandokov/phockup/issues/81)
 ##### `1.5.9`
 * Fixed [#70](https://github.com/ivandokov/phockup/issues/70) related to Windows issues 
 ##### `1.5.8` 
