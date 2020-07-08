@@ -206,24 +206,23 @@ class Phockup():
 
         suffix = '-%s' % suffix if suffix > 1 else ''
 
-        if os.path.isfile(xmp_original_with_ext):
-            xmp_original = xmp_original_with_ext
-            xmp_target = '%s%s.xmp' % (file_name, suffix)
-        elif os.path.isfile(xmp_original_without_ext):
-            xmp_original = xmp_original_without_ext
-            xmp_target = '%s%s.xmp' % (os.path.splitext(file_name)[0], suffix)
-        else:
-            xmp_original = None
-            xmp_target = None
+        xmp_files = {}
 
-        if xmp_original:
-            xmp_path = os.path.sep.join([output, xmp_target])
-            printer.line('%s => %s' % (xmp_original, xmp_path))
+        if os.path.isfile(xmp_original_with_ext):
+            xmp_target = '%s%s.xmp' % (file_name, suffix)
+            xmp_files[xmp_original_with_ext] = xmp_target
+        if os.path.isfile(xmp_original_without_ext):
+            xmp_target = '%s%s.xmp' % (os.path.splitext(file_name)[0], suffix)
+            xmp_files[xmp_original_without_ext] = xmp_target
+
+        for original, target in xmp_files.items():
+            xmp_path = os.path.sep.join([output, target])
+            printer.line('%s => %s' % (original, xmp_path))
 
             if not self.dry_run:
                 if self.move:
-                    shutil.move(xmp_original, xmp_path)
+                    shutil.move(original, xmp_path)
                 elif self.link:
-                    os.link(xmp_original, xmp_path)
+                    os.link(original, xmp_path)
                 else:
-                    shutil.copy2(xmp_original, xmp_path)
+                    shutil.copy2(original, xmp_path)

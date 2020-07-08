@@ -179,6 +179,17 @@ def test_process_image_xmp_noext(mocker):
     shutil.rmtree('output', ignore_errors=True)
 
 
+def test_process_image_xmp_ext_and_noext(mocker):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    Phockup('input', 'output').process_file("input/xmp_ext.jpg")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.jpg")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.xmp")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.jpg.xmp")
+    shutil.rmtree('output', ignore_errors=True)
+
+
 def test_process_image_unknown(mocker):
     shutil.rmtree('output', ignore_errors=True)
     mocker.patch.object(Phockup, 'check_directories')
