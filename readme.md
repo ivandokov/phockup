@@ -49,6 +49,13 @@ brew install phockup
 * Open Command Prompt and `cd` to phockup folder
 * Use the command below (use `phockup.py` instead of `phockup`)
 
+### Docker
+```
+docker run -v ~/Pictures:/mnt ivandokov/phockup:latest phockup /mnt/Input /mnt/Output [PHOCKUP ARGUMENTS]
+```
+
+The `-v ~/Pictures:/mnt` part of the command mounts your `~/Pictures` directory to `/mnt` inside the container. You can pass any **absolute** path to be mounted to the container and later on be used as paths for the `phockup` command. The example above provides your `~/Pictures/Input` as `INPUTDIR` and `~/Pictures/Output` as `OUTPUDIR`. You can pass additional arguments afterwards.
+
 ## Usage
 Organize photos from one directory into another
 ```
@@ -133,6 +140,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.11`
+* Added Docker support [#75](https://github.com/ivandokov/phockup/issues/75)
 ##### `1.5.10`
 * Merged [#78](https://github.com/ivandokov/phockup/issues/78)
 * Merged [#81](https://github.com/ivandokov/phockup/issues/81)
