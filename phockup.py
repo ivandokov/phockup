@@ -22,7 +22,7 @@ changing the files content. It will only rename the files and place them in the 
 DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
 
 
-def main(argv):
+def main():
     check_dependencies()
 
 
@@ -156,7 +156,10 @@ To get all date fields available for a file, do:
     )
 
     args = parser.parse_args()
+<<<<<<< HEAD
     print(vars(args))
+=======
+>>>>>>> origin/feature/argparse-support
 
     return Phockup(
         args.input_dir,
@@ -174,7 +177,7 @@ To get all date fields available for a file, do:
 
 if __name__ == '__main__':
     try:
-        main(sys.argv[1:])
+        main()
     except KeyboardInterrupt:
         printer.empty().line('Exiting...')
         sys.exit(0)
