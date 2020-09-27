@@ -20,6 +20,14 @@ changing the files content. It will only rename the files and place them in the 
 """
 
 DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
+DEFAULT_DIR_NAME = "unknown"
+
+
+class CustomArgparseFormatter(
+    argparse.ArgumentDefaultsHelpFormatter,
+    argparse.RawTextHelpFormatter,
+):
+    pass
 
 
 def main():
@@ -28,7 +36,7 @@ def main():
 
     parser = argparse.ArgumentParser(
         description=PROGRAM_DESCRIPTION,
-        formatter_class=argparse.RawTextHelpFormatter,
+        formatter_class=CustomArgparseFormatter,
     )
     parser.version = "v%s" % __version__
 
@@ -124,6 +132,13 @@ Example:
     )
 
     parser.add_argument(
+        "--default-dir-name",
+        action="store",
+        help="The default directory name where are moved all files without datetime information.",
+        default=DEFAULT_DIR_NAME,
+    )
+
+    parser.add_argument(
         "-f",
         "--date-field",
         action="store",
@@ -168,6 +183,7 @@ To get all date fields available for a file, do:
         timestamp=args.timestamp,
         date_field=args.date_field,
         dry_run=args.dry_run,
+        default_dir_name=args.default_dir_name,
     )
 
 

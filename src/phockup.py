@@ -33,6 +33,7 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
+        self.default_dir_name = args.get('default_dir_name', 'unknown')
 
         self.check_directories()
         self.walk_directory()
@@ -91,13 +92,13 @@ class Phockup():
     def get_output_dir(self, date):
         """
         Generate output directory path based on the extracted date and formatted using dir_format
-        If date is missing from the exifdata the file is going to "unknown" directory
+        If date is missing from the exifdata the file is going to specified "unknown" directory
         unless user included a regex from filename or uses timestamp
         """
         try:
             path = [self.output_dir, date['date'].date().strftime(self.dir_format)]
         except:
-            path = [self.output_dir, 'unknown']
+            path = [self.output_dir, self.default_dir_name]
 
         fullpath = os.path.sep.join(path)
 
