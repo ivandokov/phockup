@@ -156,10 +156,6 @@ To get all date fields available for a file, do:
     )
 
     args = parser.parse_args()
-<<<<<<< HEAD
-    print(vars(args))
-=======
->>>>>>> origin/feature/argparse-support
 
     return Phockup(
         args.input_dir,

@@ -38,8 +38,8 @@ def test_removing_trailing_slash_for_input_output(mocker):
     mocker.patch('os.makedirs')
     mocker.patch('sys.exit')
     phockup = Phockup('in/', 'out/')
-    assert phockup.input == 'in'
-    assert phockup.output == 'out'
+    assert phockup.input_dir == 'in'
+    assert phockup.output_dir == 'out'
 
 
 def test_error_for_missing_input_dir(mocker, capsys):
