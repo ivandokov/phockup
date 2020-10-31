@@ -33,6 +33,7 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
+        self.file_type = args.get('file_type', None)
 
         self.check_directories()
         self.walk_directory()
@@ -79,14 +80,20 @@ class Phockup():
                 sha256.update(block)
         return sha256.hexdigest()
 
-    def is_image_or_video(self, mimetype):
+    def get_file_type(self, mimetype):
         """
-        Use mimetype to determine if the file is an image or video
+        Check if given file_type is image or video
+        Return None if other
         """
-        pattern = re.compile('^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
-        if pattern.match(mimetype):
-            return True
-        return False
+        patternImage = re.compile('^(image/.+|application/vnd.adobe.photoshop)$')
+        if patternImage.match(mimetype):
+            return 'image'
+
+        patternVideo = re.compile('^(video/.*)$')
+        if patternVideo.match(mimetype):
+            return 'video'
+        return None
+
 
     def get_output_dir(self, date):
         """
@@ -142,12 +149,17 @@ class Phockup():
 
         printer.line(file, True)
 
-        output, target_file_name, target_file_path = self.get_file_name_and_path(file)
+        output, target_file_name, target_file_path, target_file_type = self.get_file_name_and_path(file)
 
         suffix = 1
         target_file = target_file_path
 
         while True:
+            if self.file_type is not None:
+                if self.file_type != target_file_type:
+                    printer.line(' => skipped, file is %s but should be %s' % (target_file_type, self.file_type))
+                    break
+
             if os.path.isfile(target_file):
                 if self.checksum(file) == self.checksum(target_file):
                     printer.line(' => skipped, duplicated file %s' % target_file)
@@ -183,7 +195,12 @@ class Phockup():
         Returns target file name and path
         """
         exif_data = Exif(file).data()
-        if exif_data and 'MIMEType' in exif_data and self.is_image_or_video(exif_data['MIMEType']):
+        target_file_type = None
+
+        if exif_data and 'MIMEType' in exif_data:
+            target_file_type = self.get_file_type(exif_data['MIMEType'])
+
+        if target_file_type in ['image', 'video']:
             date = Date(file).from_exif(exif_data, self.timestamp, self.date_regex, self.date_field)
             output = self.get_output_dir(date)
             target_file_name = self.get_file_name(file, date)
@@ -195,7 +212,7 @@ class Phockup():
             target_file_name = os.path.basename(file)
             target_file_path = os.path.sep.join([output, target_file_name])
 
-        return output, target_file_name, target_file_path
+        return output, target_file_name, target_file_path, target_file_type
 
     def process_xmp(self, file, file_name, suffix, output):
         """

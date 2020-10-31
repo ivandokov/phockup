@@ -25,9 +25,10 @@ def main(argv):
     timestamp = False
     date_field = None
     dry_run = False
+    file_type = None
 
     try:
-        opts, args = getopt.getopt(argv[2:], "d:r:f:mltoyh", ["date=", "regex=", "move", "link", "original-names", "timestamp", "date-field=", "dry-run", "help"])
+        opts, args = getopt.getopt(argv[2:], "d:r:f:x:mltoyh", ["date=", "regex=", "move", "link", "original-names", "timestamp", "date-field=", "dry-run", "help", "file-type="])
     except getopt.GetoptError:
         help(version)
         sys.exit(2)
@@ -74,6 +75,15 @@ def main(argv):
             date_field = arg
             printer.line("Using as date field: %s" % date_field)
 
+        if opt in ("-x", "--file-type"):
+            if not arg:
+                printer.error("File Type cannot be empty")
+            try:
+                ["image", "video"].index(arg)
+                file_type = arg
+                printer.line("Checking for %s files" % file_type)
+            except:
+                printer.error("File type can only be 'image' or 'video'")
 
     if link and move:
         printer.error("Can't use move and link strategy together")
@@ -92,6 +102,7 @@ def main(argv):
         timestamp=timestamp,
         date_field=date_field,
         dry_run=dry_run,
+        file_type=file_type,
     )
 
 
