@@ -85,11 +85,11 @@ def test_dry_run():
     assert not os.path.isdir(dir3)
 
 
-def test_is_image_or_video(mocker):
+def test_get_file_type(mocker):
     mocker.patch.object(Phockup, 'check_directories')
-    assert Phockup('in', '.').is_image_or_video("image/jpeg")
-    assert Phockup('in', '.').is_image_or_video("video/mp4")
-    assert not Phockup('in', '.').is_image_or_video("foo/bar")
+    assert Phockup('in', '.').get_file_type("image/jpeg")
+    assert Phockup('in', '.').get_file_type("video/mp4")
+    assert not Phockup('in', '.').get_file_type("foo/bar")
 
 
 def test_get_file_name(mocker):
