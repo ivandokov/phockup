@@ -4,8 +4,8 @@ from datetime import datetime
 import time
 
 class Date():
-    def __init__(self, file=None):
-        self.file = file
+    def __init__(self, filename=None):
+        self.filename = filename
 
     def parse(self, date):
         date = date.replace("YYYY", "%Y")  # 2017 (year)
@@ -19,8 +19,8 @@ class Date():
         date = date.replace("/", os.path.sep)  # path separator
         return date
 
-    def strptime(self, date, format):
-        return datetime.strptime(date, format)
+    def strptime(self, date, date_format):
+        return datetime.strptime(date, date_format)
 
     def build(self, date_object):
         return datetime(date_object["year"], date_object["month"], date_object["day"],
@@ -52,7 +52,7 @@ class Date():
         if parsed_date.get("date") is not None:
             return parsed_date
         else:
-            if self.file:
+            if self.filename:
                 return self.from_filename(user_regex, timestamp)
             else:
                 return parsed_date
@@ -88,7 +88,7 @@ class Date():
         default_regex = re.compile(
             r'.*[_-](?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})[_-]?(?P<hour>\d{2})(?P<minute>\d{2})(?P<second>\d{2})')
         regex = user_regex or default_regex
-        matches = regex.search(os.path.basename(self.file))
+        matches = regex.search(os.path.basename(self.filename))
 
         if matches:
             try:
@@ -103,14 +103,14 @@ class Date():
                     'date': date,
                     'subseconds': ''
                 }
-            
-        if timestamp: return self.from_timestamp()    
+
+        if timestamp: return self.from_timestamp()
 
     def from_timestamp(self):
-        date = datetime.fromtimestamp(os.path.getmtime(self.file))
+        date = datetime.fromtimestamp(os.path.getmtime(self.filename))
         return {
             'date': date,
             'subseconds': ''
         }
 
-        
+
