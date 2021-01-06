@@ -1,0 +1,73 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Set up main repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: phockup
+
+      - name: Set up Homebrew repository
+        uses: actions/checkout@v2
+        with:
+          repository: ivandokov/homebrew-contrib
+          path: homebrew-contrib
+
+      - name: Deploy to Snapcraft
+        uses: samuelmeuli/action-snapcraft@v1
+        with:
+          snapcraft_token: ${{ secrets.SNAPCRAFT_LOGIN }}
+          use_lxd: true
+        run: |
+          echo "TODO"
+#          sudo apt-get install jq
+#
+#          cd phockup
+#
+#          LATEST_VERSION=`git tag | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -1`
+#
+#          CURRENT_VERSION=`curl -H 'Snap-Device-Series: 16' http://api.snapcraft.io/v2/snaps/info/phockup | jq '."channel-map" | .[0].version' | sed -e 's/^"//' -e 's/"$//'`
+#
+#          if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
+#            exit
+#          fi
+#
+#          sg lxd -c 'snapcraft --use-lxd'
+
+      - name: Deploy to Homebrew
+        run: |
+          cd phockup
+
+          LATEST_VERSION=`git tag | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -1`
+
+          CURRENT_VERSION=`cat ../homebrew-contrib/Formula/phockup.rb | tr '\n' '\r' | sed 's/.*archive\/\([0-9.]*\)\.tar.*/\1/g'`
+
+          if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
+            exit
+          fi
+
+          curl -s -o $LATEST_VERSION.tar.gz https://github.com/ivandokov/phockup/archive/$LATEST_VERSION.tar.gz
+          SHASUM=`shasum -a 256 $LATEST_VERSION.tar.gz | awk '{print $1}'`
+          rm $LATEST_VERSION.tar.gz
+
+          cd ../homebrew-contrib
+
+          sed -i "s/archive\/[0-9.]*\.tar/archive\/$LATEST_VERSION\.tar/" Formula/phockup.rb
+          sed -i "s/sha256 \".*\"/sha256 "$SHASUM"/" Formula/phockup.rb
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m $LATEST_VERSION
+          git push
+
+
