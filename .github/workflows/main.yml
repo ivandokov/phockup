@@ -33,6 +33,8 @@ jobs:
           pytest
 
   deploy:
+    needs: test
+
     runs-on: ubuntu-18.04
 
     steps:
