@@ -140,6 +140,9 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.12`
+* Merged [#87](https://github.com/ivandokov/phockup/issues/87)
+* Merged [#88](https://github.com/ivandokov/phockup/issues/88)
 ##### `1.5.11`
 * Added Docker support [#75](https://github.com/ivandokov/phockup/issues/75)
 ##### `1.5.10`
