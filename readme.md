@@ -1,6 +1,6 @@
 # Phockup
 
-[![Tests](https://github.com/ivandokov/phockup/workflows/Tests/badge.svg)](https://github.com/ivandokov/phockup/actions)
+[![Tests](https://github.com/ivandokov/phockup/workflows/Test%20and%20Deploy/badge.svg)](https://github.com/ivandokov/phockup/actions)
 
 
 Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
