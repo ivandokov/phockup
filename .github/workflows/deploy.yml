@@ -21,6 +21,7 @@ jobs:
         with:
           repository: ivandokov/homebrew-contrib
           path: homebrew-contrib
+          ssh-key: ${{ secrets.HOMEBREW_PUSH_KEY }}
 
 #      - name: Deploy to Snapcraft
 #        uses: samuelmeuli/action-snapcraft@v1
