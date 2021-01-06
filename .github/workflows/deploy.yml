@@ -22,13 +22,13 @@ jobs:
           repository: ivandokov/homebrew-contrib
           path: homebrew-contrib
 
-      - name: Deploy to Snapcraft
-        uses: samuelmeuli/action-snapcraft@v1
-        with:
-          snapcraft_token: ${{ secrets.SNAPCRAFT_LOGIN }}
-          use_lxd: true
-        run: |
-          echo "TODO"
+#      - name: Deploy to Snapcraft
+#        uses: samuelmeuli/action-snapcraft@v1
+#        with:
+#          snapcraft_token: ${{ secrets.SNAPCRAFT_LOGIN }}
+#          use_lxd: true
+#        run: |
+#          echo "TODO"
 #          sudo apt-get install jq
 #
 #          cd phockup
