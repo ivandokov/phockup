@@ -144,7 +144,7 @@ pytest
 ##### `1.5.15`
 * Fixed snap build volume directory
 ##### `1.5.14`
-* Automatic snap deployment
+* Automatic snap deployment thanks to [Daniel Llewellyn's blog post](https://snapcraft.ninja/2020/08/03/snapcraft-continuous-integration-github-actions/)
 ##### `1.5.13`
 * Fix snapcraft version extraction by [#87](https://github.com/ivandokov/phockup/issues/87)
 ##### `1.5.12`
