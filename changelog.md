@@ -1,4 +1,7 @@
 # Changelog
+##### `1.5.23`
+* Removed s930x architecture
+* Update snapcraft.yml to more simple setup
 ##### `1.5.22`
 * Fix quotes
 ##### `1.5.21`
