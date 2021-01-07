@@ -1,4 +1,6 @@
 # Changelog
+##### `1.5.20`
+* When taking the current version for snaps get the version for the current architecture and for stable channel
 ##### `1.5.19`
 * Fixed Homebrew sha256 replacing in the deployment workflow job
 ##### `1.5.18`
