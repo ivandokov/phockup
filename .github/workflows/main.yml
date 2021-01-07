@@ -50,7 +50,7 @@ jobs:
         run: |
           LATEST_VERSION=`git tag | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -1`
 
-          CURRENT_VERSION=`echo -e "import urllib.request, json\n\nrequest = urllib.request.Request('http://api.snapcraft.io/v2/snaps/info/phockup')\nrequest.add_header('Snap-Device-Series', '16')\narchitectures = {'amd64': 'linux/amd64', 'i386': 'linux/386', 'arm64': 'linux/arm64', 'armhf': 'linux/arm/v7', 'ppc64el': 'linux/ppc64le', 's390x': 'linux/s390x'}\nwith urllib.request.urlopen(request) as url:\n    data = json.loads(url.read().decode())\n    for c in data['channel-map']:\n        channel = c['channel']\n        if architectures.get(channel['architecture']) == 'linux/amd64' and channel['name'] == 'stable':\n            print(c['version'])" | python3`
+          CURRENT_VERSION=`echo -e "import urllib.request, json\n\nrequest = urllib.request.Request('http://api.snapcraft.io/v2/snaps/info/phockup')\nrequest.add_header('Snap-Device-Series', '16')\narchitectures = {'amd64': 'linux/amd64', 'i386': 'linux/386', 'arm64': 'linux/arm64', 'armhf': 'linux/arm/v7', 'ppc64el': 'linux/ppc64le', 's390x': 'linux/s390x'}\nwith urllib.request.urlopen(request) as url:\n    data = json.loads(url.read().decode())\n    for c in data['channel-map']:\n        channel = c['channel']\n        if architectures.get(channel['architecture']) == ${{ matrix.architecture }} and channel['name'] == 'stable':\n            print(c['version'])" | python3`
 
           if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
             echo ::set-output name=deploy::0

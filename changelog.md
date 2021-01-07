@@ -1,4 +1,6 @@
 # Changelog
+##### `1.5.21`
+* Fix hard coded variable
 ##### `1.5.20`
 * When taking the current version for snaps get the version for the current architecture and for stable channel
 ##### `1.5.19`
