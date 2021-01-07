@@ -139,6 +139,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.16`
+* Fixed snap deploy condition
 ##### `1.5.15`
 * Fixed snap build volume directory
 ##### `1.5.14`
