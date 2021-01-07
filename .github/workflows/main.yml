@@ -6,16 +6,15 @@ on:
       - "*"
 
 jobs:
-
   test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         python-version: [ 3.6, 3.7, 3.8, 3.9 ]
-
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -29,10 +28,9 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Run tests
-        run: |
-          pytest
+        run: pytest
 
-  deploy:
+  deploy-snap:
     needs: test
 
     runs-on: ubuntu-18.04
@@ -42,26 +40,14 @@ jobs:
         architecture: [ linux/amd64, linux/386, linux/arm64, linux/arm/v7 ]
 
     steps:
-      - name: Set up main repository
+      - name: Checkout the repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          path: phockup
-
-      - name: Set up Homebrew repository
-        uses: actions/checkout@v2
-        with:
-          repository: ivandokov/homebrew-contrib
-          path: homebrew-contrib
-          ssh-key: ${{ secrets.HOMEBREW_PUSH_KEY }}
 
       - id: snapcraft
         name: Build Snap
         run: |
-          sudo apt-get install jq
-
-          cd phockup
-
           LATEST_VERSION=`git tag | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -1`
 
           CURRENT_VERSION=`curl -H 'Snap-Device-Series: 16' http://api.snapcraft.io/v2/snaps/info/phockup | jq '."channel-map" | .[0].version' | sed -e 's/^"//' -e 's/"$//'`
@@ -85,13 +71,13 @@ jobs:
             --device /dev/fuse \
             --volume /sys \
             --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
-            --volume $GITHUB_WORKSPACE/phockup:$GITHUB_WORKSPACE/phockup \
-            --workdir $GITHUB_WORKSPACE/phockup \
+            --volume $GITHUB_WORKSPACE:$GITHUB_WORKSPACE \
+            --workdir $GITHUB_WORKSPACE \
             --platform "${{ matrix.architecture }}" \
             --env PLAYTEST="${{ matrix.playtest }}" \
             diddledan/snapcraft:core18
 
-          SNAP=`find $GITHUB_WORKSPACE/phockup -maxdepth 1 -type f -name '*.snap' | head -n1`
+          SNAP=`find $GITHUB_WORKSPACE -maxdepth 1 -type f -name '*.snap' | head -n1`
           echo ::set-output name=snap::"$SNAP"
           echo ::set-output name=deploy::1
 
@@ -103,8 +89,24 @@ jobs:
           snap: ${{ steps.snapcraft.outputs.snap }}
           release: stable
 
-      - name: Remove deployed snap
-        run: rm ${{ steps.snapcraft.outputs.snap }}
+  deploy-brew:
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the main repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: phockup
+
+      - name: Checkout the Homebrew repository
+        uses: actions/checkout@v2
+        with:
+          repository: ivandokov/homebrew-contrib
+          path: homebrew-contrib
+          ssh-key: ${{ secrets.HOMEBREW_PUSH_KEY }}
 
       - name: Deploy to Homebrew
         run: |
@@ -132,5 +134,3 @@ jobs:
           git add .
           git commit -m $LATEST_VERSION
           git push
-
-

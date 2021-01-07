@@ -139,7 +139,9 @@ pytest
 ```
 
 ## Changelog
-##### `1.5.16`
+##### `1.5.18`
+* Move Homebrew deployment in a separate job because it was executed multiple times because of the python matrix
+##### `1.5.17`
 * Fixed workflow wrong step id
 ##### `1.5.16`
 * Fixed snap deploy condition
