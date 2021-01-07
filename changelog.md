@@ -1,4 +1,6 @@
 # Changelog
+##### `1.5.22`
+* Fix quotes
 ##### `1.5.21`
 * Fix hard coded variable
 ##### `1.5.20`
