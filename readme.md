@@ -139,7 +139,7 @@ pytest
 ```
 
 ## Changelog
-##### `1.5.14`
+##### `1.5.15`
 * Fixed snap build volume directory
 ##### `1.5.14`
 * Automatic snap deployment
