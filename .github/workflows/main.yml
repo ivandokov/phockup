@@ -37,6 +37,10 @@ jobs:
 
     runs-on: ubuntu-18.04
 
+    strategy:
+      matrix:
+        architecture: [ linux/amd64, linux/386, linux/arm64, linux/arm/v7 ]
+
     steps:
       - name: Set up main repository
         uses: actions/checkout@v2
@@ -51,26 +55,52 @@ jobs:
           path: homebrew-contrib
           ssh-key: ${{ secrets.HOMEBREW_PUSH_KEY }}
 
-#      - name: Deploy to Snapcraft
-#        uses: samuelmeuli/action-snapcraft@v1
-#        with:
-#          snapcraft_token: ${{ secrets.SNAPCRAFT_LOGIN }}
-#          use_lxd: true
-#        run: |
-#          echo "TODO"
-#          sudo apt-get install jq
-#
-#          cd phockup
-#
-#          LATEST_VERSION=`git tag | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -1`
-#
-#          CURRENT_VERSION=`curl -H 'Snap-Device-Series: 16' http://api.snapcraft.io/v2/snaps/info/phockup | jq '."channel-map" | .[0].version' | sed -e 's/^"//' -e 's/"$//'`
-#
-#          if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
-#            exit
-#          fi
-#
-#          sg lxd -c 'snapcraft --use-lxd'
+      - id: snapcraft
+        name: Build Snap
+        run: |
+          sudo apt-get install jq
+
+          cd phockup
+
+          LATEST_VERSION=`git tag | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -1`
+
+          CURRENT_VERSION=`curl -H 'Snap-Device-Series: 16' http://api.snapcraft.io/v2/snaps/info/phockup | jq '."channel-map" | .[0].version' | sed -e 's/^"//' -e 's/"$//'`
+
+          if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
+            echo ::set-output name=deploy::0
+            exit
+          fi
+
+          echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json > /dev/null
+          sudo systemctl restart docker
+
+          docker run --rm --tty \
+            --security-opt apparmor:unconfined \
+            --cap-add SYS_ADMIN \
+            multiarch/qemu-user-static --reset -p yes
+
+          docker run --rm --tty \
+            --security-opt apparmor:unconfined \
+            --cap-add SYS_ADMIN \
+            --device /dev/fuse \
+            --volume /sys \
+            --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
+            --volume $GITHUB_WORKSPACE:$GITHUB_WORKSPACE \
+            --workdir $GITHUB_WORKSPACE \
+            --platform "${{ matrix.architecture }}" \
+            --env PLAYTEST="${{ matrix.playtest }}" \
+            diddledan/snapcraft:core18
+
+          echo ::set-output name=snap::$(find $GITHUB_WORKSPACE -maxdepth 1 -type f -name "*.snap" | head -n1)
+          echo ::set-output name=deploy::1
+
+      - name: Deploy to Snap Store
+        uses: snapcore/action-publish@v1
+        if: ${{ steps.build.outputs.deploy }}
+        with:
+          store_login: ${{ secrets.SNAPCRAFT_LOGIN }}
+          snap: ${{ steps.build.outputs.snap }}
+          release: stable
 
       - name: Deploy to Homebrew
         run: |

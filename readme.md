@@ -139,6 +139,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.14`
+* Automatic snap deployment
 ##### `1.5.13`
 * Fix snapcraft version extraction by [#87](https://github.com/ivandokov/phockup/issues/87)
 ##### `1.5.12`
