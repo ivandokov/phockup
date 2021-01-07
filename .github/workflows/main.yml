@@ -91,16 +91,20 @@ jobs:
             --env PLAYTEST="${{ matrix.playtest }}" \
             diddledan/snapcraft:core18
 
-          echo ::set-output name=snap::$(find $GITHUB_WORKSPACE/phockup -maxdepth 1 -type f -name "*.snap" | head -n1)
+          SNAP=`find $GITHUB_WORKSPACE/phockup -maxdepth 1 -type f -name '*.snap' | head -n1`
+          echo ::set-output name=snap::"$SNAP"
           echo ::set-output name=deploy::1
 
       - name: Deploy to Snap Store
         uses: snapcore/action-publish@v1
-        if: ${{ steps.build.outputs.deploy }}
+        if: ${{ steps.build.outputs.deploy == 1 }}
         with:
           store_login: ${{ secrets.SNAPCRAFT_LOGIN }}
           snap: ${{ steps.build.outputs.snap }}
           release: stable
+
+      - name: Remove deployed snap
+        run: rm ${{ steps.build.outputs.snap }}
 
       - name: Deploy to Homebrew
         run: |
