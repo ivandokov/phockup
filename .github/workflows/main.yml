@@ -84,7 +84,7 @@ jobs:
             exit
           fi
 
-          curl -s -o $LATEST_VERSION.tar.gz https://github.com/ivandokov/phockup/archive/$LATEST_VERSION.tar.gz
+          curl -sLo $LATEST_VERSION.tar.gz https://github.com/ivandokov/phockup/archive/$LATEST_VERSION.tar.gz
           SHASUM=`shasum -a 256 $LATEST_VERSION.tar.gz | awk '{print $1}'`
           rm $LATEST_VERSION.tar.gz
 
