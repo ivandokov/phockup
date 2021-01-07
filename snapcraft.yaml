@@ -1,7 +1,7 @@
 base: core18
 name: phockup
 version: latest
-version-script: cat $SNAPCRAFT_STAGE/lib/phockup/phockup.py | grep 'version = ' | sed "s/.*'\(.*\)'/\1/"
+version-script: cat $SNAPCRAFT_STAGE/lib/phockup/phockup.py | grep '__version__ = ' | sed 's/.*"\(.*\)"/\1/'
 summary: Photo and video sorting tool
 description: |
   Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
