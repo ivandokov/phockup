@@ -85,13 +85,13 @@ jobs:
             --device /dev/fuse \
             --volume /sys \
             --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
-            --volume $GITHUB_WORKSPACE:$GITHUB_WORKSPACE \
-            --workdir $GITHUB_WORKSPACE \
+            --volume $GITHUB_WORKSPACE/phockup:$GITHUB_WORKSPACE/phockup \
+            --workdir $GITHUB_WORKSPACE/phockup \
             --platform "${{ matrix.architecture }}" \
             --env PLAYTEST="${{ matrix.playtest }}" \
             diddledan/snapcraft:core18
 
-          echo ::set-output name=snap::$(find $GITHUB_WORKSPACE -maxdepth 1 -type f -name "*.snap" | head -n1)
+          echo ::set-output name=snap::$(find $GITHUB_WORKSPACE/phockup -maxdepth 1 -type f -name "*.snap" | head -n1)
           echo ::set-output name=deploy::1
 
       - name: Deploy to Snap Store
