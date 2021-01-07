@@ -1,3 +1,4 @@
+base: core18
 name: phockup
 version: latest
 version-script: cat $SNAPCRAFT_STAGE/lib/phockup/phockup.py | grep 'version = ' | sed "s/.*'\(.*\)'/\1/"
