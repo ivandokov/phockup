@@ -1,15 +1,13 @@
 base: core18
 name: phockup
-version: latest
-version-script: cat $SNAPCRAFT_STAGE/lib/phockup/phockup.py | grep '__version__ = ' | sed 's/.*"\(.*\)"/\1/'
+grade: stable
+confinement: strict
+adopt-info: set-version
 summary: Photo and video sorting tool
 description: |
   Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
   The software will collect all files from the input directory and copy them to the output directory without
   changing the files content. It will only rename the files and place them in the proper directory for year, month and day.
-
-confinement: strict
-grade: stable
 
 apps:
   phockup:
@@ -17,26 +15,18 @@ apps:
     plugs: [home, removable-media, raw-usb]
 
 parts:
+  set-version:
+    plugin: nil
+    source: .
+    override-pull: |
+      snapcraftctl pull
+      VERSION=`cat phockup.py | grep '__version__ = ' | sed 's/.*"\(.*\)"/\1/'`
+      snapcraftctl set-version $VERSION
+
   files:
     plugin: dump
     source: .
-    organize:
-      phockup.py: lib/phockup/phockup.py
-      src/: lib/phockup/src/
-      license: lib/phockup/license
-    after: [integration]
-
-  integration:
-    plugin: nil
     stage-packages:
       - locales-all
       - python3
       - libimage-exiftool-perl
-      - libc-bin
-      - libbz2-dev
-      - liblzma5
-      - libncursesw5
-      - libreadline-dev
-      - libtinfo-dev
-      - libz-dev
-      - libdb5.3
