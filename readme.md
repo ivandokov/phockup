@@ -140,6 +140,8 @@ pytest
 
 ## Changelog
 ##### `1.5.16`
+* Fixed workflow wrong step id
+##### `1.5.16`
 * Fixed snap deploy condition
 ##### `1.5.15`
 * Fixed snap build volume directory

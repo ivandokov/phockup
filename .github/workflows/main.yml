@@ -97,14 +97,14 @@ jobs:
 
       - name: Deploy to Snap Store
         uses: snapcore/action-publish@v1
-        if: ${{ steps.build.outputs.deploy == 1 }}
+        if: ${{ steps.snapcraft.outputs.deploy == 1 }}
         with:
           store_login: ${{ secrets.SNAPCRAFT_LOGIN }}
-          snap: ${{ steps.build.outputs.snap }}
+          snap: ${{ steps.snapcraft.outputs.snap }}
           release: stable
 
       - name: Remove deployed snap
-        run: rm ${{ steps.build.outputs.snap }}
+        run: rm ${{ steps.snapcraft.outputs.snap }}
 
       - name: Deploy to Homebrew
         run: |
