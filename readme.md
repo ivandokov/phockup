@@ -139,6 +139,8 @@ pytest
 ```
 
 ## Changelog
+##### `1.5.19`
+* Fixed Homebrew sha256 replacing in the deployment workflow job
 ##### `1.5.18`
 * Move Homebrew deployment in a separate job because it was executed multiple times because of the python matrix
 ##### `1.5.17`

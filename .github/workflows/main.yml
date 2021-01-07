@@ -127,7 +127,7 @@ jobs:
           cd ../homebrew-contrib
 
           sed -i "s/archive\/[0-9.]*\.tar/archive\/$LATEST_VERSION\.tar/" Formula/phockup.rb
-          sed -i "s/sha256 \".*\"/sha256 "$SHASUM"/" Formula/phockup.rb
+          sed -i "s/sha256 .*/sha256 \"$SHASUM\"/" Formula/phockup.rb
 
           git config user.name github-actions
           git config user.email github-actions@github.com
