@@ -3,9 +3,7 @@ name: Test and Deploy
 on:
   push:
     tags:
-      - "*"
-    tags-ignore:
-      - "latest"
+      - "*.*"
 
 jobs:
   test:
