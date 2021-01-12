@@ -10,7 +10,7 @@ from src.phockup import Phockup
 from src.printer import Printer
 
 
-__version__ = "1.5.23"
+__version__ = "1.5.24"
 
 printer = Printer()
 
@@ -160,7 +160,7 @@ To get all date fields available for a file, do:
     return Phockup(
         args.input_dir,
         args.output_dir,
-        dir_format=os.path.sep.join(DEFAULT_DIR_FORMAT),
+        dir_format=args.date,
         move=args.move,
         link=args.link,
         date_regex=args.regex,

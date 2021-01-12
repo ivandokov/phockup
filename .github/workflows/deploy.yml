@@ -32,13 +32,10 @@ jobs:
 
   deploy-snap:
     needs: test
-
     runs-on: ubuntu-18.04
-
     strategy:
       matrix:
         architecture: [ linux/amd64, linux/386, linux/arm64, linux/arm/v7, linux/ppc64le ]
-
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -91,9 +88,7 @@ jobs:
 
   deploy-brew:
     needs: test
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout the main repository
         uses: actions/checkout@v2
