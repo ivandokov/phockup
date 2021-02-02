@@ -1,4 +1,6 @@
 # Changelog
+##### `1.5.25`
+* Fixed [#97](https://github.com/ivandokov/phockup/issues/97)
 ##### `1.5.24`
 * Fixed broken `--date` after the merge of [#87](https://github.com/ivandokov/phockup/issues/87)
 ##### `1.5.23`
