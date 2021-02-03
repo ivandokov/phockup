@@ -1,4 +1,7 @@
 # Changelog
+##### `1.5.26`
+* Fixed [#98](https://github.com/ivandokov/phockup/issues/98)
+* [Disabled automated snap build and deploy for linux/arm64](https://github.com/ivandokov/phockup/issues/99).
 ##### `1.5.25`
 * Fixed [#97](https://github.com/ivandokov/phockup/issues/97)
 ##### `1.5.24`
