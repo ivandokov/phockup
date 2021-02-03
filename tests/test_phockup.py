@@ -7,7 +7,6 @@ from src.dependency import check_dependencies
 from src.exif import Exif
 from src.phockup import Phockup
 
-
 os.chdir(os.path.dirname(__file__))
 
 
@@ -61,9 +60,9 @@ def test_error_for_no_write_access_when_creating_output_dir(mocker, capsys):
 def test_walking_directory():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output')
-    dir1='output/2017/01/01'
-    dir2='output/2017/10/06'
-    dir3='output/unknown'
+    dir1 = 'output/2017/01/01'
+    dir2 = 'output/2017/10/06'
+    dir3 = 'output/unknown'
     assert os.path.isdir(dir1)
     assert os.path.isdir(dir2)
     assert os.path.isdir(dir3)
@@ -77,9 +76,9 @@ def test_dry_run():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', dry_run=True)
     assert not os.path.isdir('output')
-    dir1='output/2017/01/01'
-    dir2='output/2017/10/06'
-    dir3='output/unknown'
+    dir1 = 'output/2017/01/01'
+    dir2 = 'output/2017/10/06'
+    dir3 = 'output/unknown'
     assert not os.path.isdir(dir1)
     assert not os.path.isdir(dir2)
     assert not os.path.isdir(dir3)
