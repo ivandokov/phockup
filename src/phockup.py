@@ -25,7 +25,7 @@ class Phockup():
 
         self.input_dir = input_dir
         self.output_dir = output_dir
-        self.dir_format = args.get('dir_format', os.path.sep.join(['%Y', '%m', '%d']))
+        self.dir_format = args.get('dir_format') or os.path.sep.join(['%Y', '%m', '%d'])
         self.move = args.get('move', False)
         self.link = args.get('link', False)
         self.original_filenames = args.get('original_filenames', False)
