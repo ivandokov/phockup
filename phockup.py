@@ -127,7 +127,6 @@ Example:
         "-f",
         "--date-field",
         action="store",
-        type=re.compile,
         help="""Use a custom date extracted from the exif field specified.
 To set multiple fields to try in order until finding a valid date,
 use spaces to separate fields inside a string.
