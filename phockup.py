@@ -111,6 +111,22 @@ nevertheless it can be useful if no other date information can be obtained.
     )
 
     parser.add_argument(
+        "-p",
+        "--prefix",
+        action="store",
+        default='',
+        help="Prefix to be inserted before file name",
+    )
+
+    parser.add_argument(
+        "-s",
+        "--suffix",
+        action="store",
+        default='',
+        help="Suffix to be inserted after file name before the extension",
+    )
+
+    parser.add_argument(
         "-r",
         "--regex",
         action="store",
@@ -166,6 +182,8 @@ To get all date fields available for a file, do:
         original_filenames=args.original_names,
         timestamp=args.timestamp,
         date_field=args.date_field,
+        prefix=args.prefix,
+        suffix=args.suffix,
         dry_run=args.dry_run,
     )
 

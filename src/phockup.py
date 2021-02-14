@@ -33,6 +33,8 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
+        self.prefix = args.get('prefix','')
+        self.suffix = args.get('suffix','')
 
         self.check_directories()
         self.walk_directory()
@@ -111,8 +113,11 @@ class Phockup():
         Generate file name based on exif data unless it is missing or
         original filenames are required. Then use original file name
         """
+        local_path_filename, local_file_extension = os.path.splitext(original_filename)
+        local_filename = os.path.basename(local_path_filename)
+
         if self.original_filenames:
-            return os.path.basename(original_filename)
+            return (self.prefix + local_filename + self.suffix + local_file_extension)
 
         try:
             filename = [
@@ -128,7 +133,7 @@ class Phockup():
             if date['subseconds']:
                 filename.append(date['subseconds'])
 
-            return ''.join(filename) + os.path.splitext(original_filename)[1]
+            return self.prefix + ''.join(filename) + self.suffix + local_file_extension
         except:
             return os.path.basename(original_filename)
 
@@ -160,6 +165,12 @@ class Phockup():
                     except FileNotFoundError:
                         printer.line(' => skipped, no such file or directory')
                         break
+                    except OSError:
+                        if os.path.isfile(target_file):
+                            if self.checksum(filename) == self.checksum(target_file):
+                                printer.line('File copied, looks the same: {0}'.format(target_file))
+                        break
+
                 elif self.link and not self.dry_run:
                     os.link(filename, target_file)
                 else:
@@ -169,6 +180,11 @@ class Phockup():
                     except FileNotFoundError:
                         printer.line(' => skipped, no such file or directory')
                         break
+                                        
+                    except OSError:
+                        if os.path.isfile(target_file):
+                            if self.checksum(filename) == self.checksum(target_file):
+                                printer.line('File copied, looks the same: {0}'.format(target_file))
 
                 printer.line(' => %s' % target_file)
                 self.process_xmp(filename, target_file_name, suffix, output)
