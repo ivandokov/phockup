@@ -12,7 +12,7 @@ def test_exif_reads_valid_file():
 
 
 def test_exif_reads_files_with_illegal_characters():
-    exif = Exif("input/!#$%&'\"*+-.^_`|~:.jpg")
+    exif = Exif("input/!#$%'+-.^_`~.jpg")
     assert exif.data()['CreateDate'] == '2017:01:01 01:01:01'
 
 
