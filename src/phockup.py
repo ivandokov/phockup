@@ -33,6 +33,7 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
+        self.quiet = args.get('quiet', False)
 
         self.check_directories()
         self.walk_directory()
@@ -140,7 +141,8 @@ class Phockup():
         if str.endswith(filename, '.xmp'):
             return None
 
-        printer.line(filename, True)
+        if not self.quiet:
+            printer.line(filename, True)
 
         output, target_file_name, target_file_path = self.get_file_name_and_path(filename)
 
@@ -150,7 +152,8 @@ class Phockup():
         while True:
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
-                    printer.line(' => skipped, duplicated file %s' % target_file)
+                    if not self.quiet:
+                        printer.line(' => skipped, duplicated file %s' % target_file)
                     break
             else:
                 if self.move:
@@ -158,7 +161,8 @@ class Phockup():
                         if not self.dry_run:
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
-                        printer.line(' => skipped, no such file or directory')
+                        if not self.quiet:
+                            printer.line(' => skipped, no such file or directory')
                         break
                 elif self.link and not self.dry_run:
                     os.link(filename, target_file)
@@ -167,10 +171,12 @@ class Phockup():
                         if not self.dry_run:
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
-                        printer.line(' => skipped, no such file or directory')
+                        if not self.quiet:
+                            printer.line(' => skipped, no such file or directory')
                         break
 
-                printer.line(' => %s' % target_file)
+                if not self.quiet:
+                    printer.line(' => %s' % target_file)
                 self.process_xmp(filename, target_file_name, suffix, output)
                 break
 
@@ -217,7 +223,8 @@ class Phockup():
 
         for original, target in xmp_files.items():
             xmp_path = os.path.sep.join([output, target])
-            printer.line('%s => %s' % (original, xmp_path))
+            if not self.quiet:
+                printer.line('%s => %s' % (original, xmp_path))
 
             if not self.dry_run:
                 if self.move:

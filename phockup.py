@@ -10,7 +10,7 @@ from src.phockup import Phockup
 from src.printer import Printer
 
 
-__version__ = "1.5.26"
+__version__ = "1.5.27"
 
 printer = Printer()
 
@@ -144,6 +144,14 @@ To get all date fields available for a file, do:
     )
 
     parser.add_argument(
+        "-q",
+        "--quiet",
+        action="store_true",
+        help="""Run without output
+        """,
+    )
+
+    parser.add_argument(
         "input_dir",
         metavar="INPUTDIR",
         help="Specify the source directory where your photos are located.",
@@ -167,6 +175,7 @@ To get all date fields available for a file, do:
         timestamp=args.timestamp,
         date_field=args.date_field,
         dry_run=args.dry_run,
+        quiet=args.quiet,
     )
 
 
