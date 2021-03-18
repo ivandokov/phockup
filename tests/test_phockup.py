@@ -36,7 +36,10 @@ def test_exit_if_missing_input_directory(mocker):
 def test_removing_trailing_slash_for_input_output(mocker):
     mocker.patch('os.makedirs')
     mocker.patch('sys.exit')
-    phockup = Phockup('in/', 'out/')
+    if sys.platform == 'win32':
+        phockup = Phockup('in\\', 'out\\')
+    else:
+        phockup = Phockup('in/', 'out/')
     assert phockup.input_dir == 'in'
     assert phockup.output_dir == 'out'
 
