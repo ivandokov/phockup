@@ -2,11 +2,16 @@ import sys
 
 
 class Printer(object):
+    
+    def __init__(self):
+        self.quiet = False
+    
     def line(self, message, skip_end=False):
-        if skip_end:
-            print(message, end="", flush=True)
-        else:
-            print(message)
+        if not self.quiet:
+            if skip_end:
+                print(message, end="", flush=True)
+            else:
+                print(message)
 
     def error(self, message):
         self.line('')
@@ -18,3 +23,6 @@ class Printer(object):
         for i in range(times):
             print('')
         return self
+
+    def should_print(self, quiet):
+        self.quiet = quiet

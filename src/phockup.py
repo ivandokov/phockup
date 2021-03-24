@@ -33,7 +33,10 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
+        self.quiet = args.get('quiet', False)
 
+        printer.should_print(self.quiet)
+        
         self.check_directories()
         self.walk_directory()
 
