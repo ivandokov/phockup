@@ -35,6 +35,8 @@ class Phockup():
         self.dry_run = args.get('dry_run', False)
         self.quiet = args.get('quiet', False)
 
+        printer.should_print(self.quiet)
+        
         self.check_directories()
         self.walk_directory()
 
