@@ -143,8 +143,7 @@ class Phockup():
         if str.endswith(filename, '.xmp'):
             return None
 
-        if not self.quiet:
-            printer.line(filename, True)
+        printer.line(filename, True)
 
         output, target_file_name, target_file_path = self.get_file_name_and_path(filename)
 
@@ -154,8 +153,7 @@ class Phockup():
         while True:
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
-                    if not self.quiet:
-                        printer.line(' => skipped, duplicated file %s' % target_file)
+                    printer.line(' => skipped, duplicated file %s' % target_file)
                     break
             else:
                 if self.move:
@@ -163,8 +161,7 @@ class Phockup():
                         if not self.dry_run:
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
-                        if not self.quiet:
-                            printer.line(' => skipped, no such file or directory')
+                        printer.line(' => skipped, no such file or directory')
                         break
                 elif self.link and not self.dry_run:
                     os.link(filename, target_file)
@@ -173,12 +170,10 @@ class Phockup():
                         if not self.dry_run:
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
-                        if not self.quiet:
-                            printer.line(' => skipped, no such file or directory')
+                        printer.line(' => skipped, no such file or directory')
                         break
 
-                if not self.quiet:
-                    printer.line(' => %s' % target_file)
+                printer.line(' => %s' % target_file)
                 self.process_xmp(filename, target_file_name, suffix, output)
                 break
 
@@ -225,8 +220,7 @@ class Phockup():
 
         for original, target in xmp_files.items():
             xmp_path = os.path.sep.join([output, target])
-            if not self.quiet:
-                printer.line('%s => %s' % (original, xmp_path))
+            printer.line('%s => %s' % (original, xmp_path))
 
             if not self.dry_run:
                 if self.move:
