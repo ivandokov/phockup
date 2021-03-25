@@ -35,6 +35,10 @@ class Phockup():
         self.dry_run = args.get('dry_run', False)
         self.max_depth = args.get('max_depth', 0)
         self.stop_depth = self.input_dir.count(os.sep) + self.max_depth if self.max_depth else sys.maxsize
+        self.quiet = args.get('quiet', False)
+
+        printer.should_print(self.quiet)
+
         self.check_directories()
         self.walk_directory()
 
