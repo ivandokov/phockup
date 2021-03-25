@@ -111,6 +111,15 @@ nevertheless it can be useful if no other date information can be obtained.
     )
 
     parser.add_argument(
+        "--maxdepth",
+        type=int,
+        default=0,
+        choices=range(1, 255),
+        metavar="1-255",
+        help="Descend at most levels (a non-negative integer) of directories",
+    )
+
+    parser.add_argument(
         "-r",
         "--regex",
         action="store",
@@ -167,6 +176,7 @@ To get all date fields available for a file, do:
         timestamp=args.timestamp,
         date_field=args.date_field,
         dry_run=args.dry_run,
+        max_depth=args.maxdepth
     )
 
 

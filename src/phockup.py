@@ -33,7 +33,8 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
-
+        self.max_depth = args.get('max_depth', 0)
+        self.stop_depth = self.input_dir.count(os.sep) + self.max_depth if self.max_depth else sys.maxsize
         self.check_directories()
         self.walk_directory()
 
@@ -58,7 +59,7 @@ class Phockup():
         """
         Walk input directory recursively and call process_file for each file except the ignored ones
         """
-        for root, _, files in os.walk(self.input_dir):
+        for root, dirnames, files in os.walk(self.input_dir):
             files.sort()
             for filename in files:
                 if filename in ignored_files:
@@ -66,6 +67,8 @@ class Phockup():
 
                 filepath = os.path.join(root, filename)
                 self.process_file(filepath)
+            if root.count(os.sep) >= self.stop_depth:
+                del dirnames[:]
 
     def checksum(self, filename):
         """
