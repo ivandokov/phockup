@@ -116,7 +116,7 @@ nevertheless it can be useful if no other date information can be obtained.
         default=0,
         choices=range(1, 255),
         metavar="1-255",
-        help="Descend at most levels (a non-negative integer) of directories",
+        help="Descend at most 'maxdepth' levels (a non-negative integer) of directories",
     )
 
     parser.add_argument(
@@ -151,6 +151,7 @@ To get all date fields available for a file, do:
     exiftool -time:all -mimetype -j <file>
         """,
     )
+
 
     parser.add_argument(
         "-q",
