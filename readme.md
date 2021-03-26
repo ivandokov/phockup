@@ -124,6 +124,10 @@ The output may look like this, but with more fields:
 If the correct date is in `DateTimeOriginal`, you can include the option `--date-field=DateTimeOriginal` to get date information from it.
 To set multiple fields to be tried in order until a valid date is found, just join them with spaces in a quoted string like `"CreateDate FileModifyDate"`.
 
+### Limit directory traversal depth
+If you would like to limit how deep the directories are traversed, you can use the `--maxdepth` option to specify the maximum number of levels below the input directory to process.  In order to process only the input directory, you can disable sub-directory processing with:
+`--maxdepth=0`  The current implementation is limited to a maximum depth of 255. 
+
 ## Development
 
 ### Running tests

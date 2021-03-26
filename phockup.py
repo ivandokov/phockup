@@ -113,8 +113,8 @@ nevertheless it can be useful if no other date information can be obtained.
     parser.add_argument(
         "--maxdepth",
         type=int,
-        default=0,
-        choices=range(1, 255),
+        default=-1,
+        choices=range(0, 255),
         metavar="1-255",
         help="Descend at most 'maxdepth' levels (a non-negative integer) of directories",
     )

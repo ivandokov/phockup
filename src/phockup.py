@@ -33,8 +33,8 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
-        self.max_depth = args.get('max_depth', 0)
-        self.stop_depth = self.input_dir.count(os.sep) + self.max_depth if self.max_depth else sys.maxsize
+        self.max_depth = args.get('max_depth', -1)
+        self.stop_depth = self.input_dir.count(os.sep) + self.max_depth if self.max_depth > -1 else sys.maxsize
         self.quiet = args.get('quiet', False)
 
         printer.should_print(self.quiet)
