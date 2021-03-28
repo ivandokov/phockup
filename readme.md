@@ -71,7 +71,7 @@ phockup ~/Pictures/camera ~/Pictures/sorted
 ```
 
 ### Version
-If you want view the version of phockup use the flag `-v | --version`.
+If you want to view the version of phockup use the flag `-v | --version`.
 
 ### Date format
 If you want to change the output directories date format you can do it by passing the format as `-d | --date` argument.
