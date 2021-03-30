@@ -10,7 +10,7 @@ from src.phockup import Phockup
 from src.printer import Printer
 
 
-__version__ = "1.5.26"
+__version__ = "1.6.0"
 
 printer = Printer()
 

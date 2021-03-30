@@ -1,4 +1,9 @@
 # Changelog
+##### `1.6.0`
+* Added `--maxdepth` mode [#104](https://github.com/ivandokov/phockup/issues/104)
+* Added `--quiet` mode to hide generic output [#103](https://github.com/ivandokov/phockup/issues/103)
+* Fixed tests comatibility for Windows [#102](https://github.com/ivandokov/phockup/issues/102)
+* Readme updates
 ##### `1.5.26`
 * Fixed [#98](https://github.com/ivandokov/phockup/issues/98)
 * [Disabled automated snap build and deploy for linux/arm64](https://github.com/ivandokov/phockup/issues/99).
