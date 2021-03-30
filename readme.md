@@ -70,6 +70,9 @@ Example:
 phockup ~/Pictures/camera ~/Pictures/sorted
 ```
 
+### Version
+If you want to view the version of phockup use the flag `-v | --version`.
+
 ### Date format
 If you want to change the output directories date format you can do it by passing the format as `-d | --date` argument.
 You can choose different year format (e.g. 17 instead of 2017) or decide
@@ -98,7 +101,7 @@ If any of the photos does not have date information you can use the `-r | --rege
 --regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"
 ```
 
-As a last resort, specify the `-t` option to use the file modification timestamp. This may not be accurate in all cases but can provide some kind of date if you'd rather it not go into the `unknown` folder. 
+As a last resort, specify the `-t | --timestamp` option to use the file modification timestamp. This may not be accurate in all cases but can provide some kind of date if you'd rather it not go into the `unknown` folder. 
 
 ### Move files
 Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR by using the flag `-m | --move`. This is useful when working with a big collection of files and the remaining free space is not enough to make a copy of the INPUTDIR.
@@ -123,6 +126,12 @@ The output may look like this, but with more fields:
 ```
 If the correct date is in `DateTimeOriginal`, you can include the option `--date-field=DateTimeOriginal` to get date information from it.
 To set multiple fields to be tried in order until a valid date is found, just join them with spaces in a quoted string like `"CreateDate FileModifyDate"`.
+
+### Dry run
+If you want phockup to run without any changes (don't copy/move any files) but just show which changes would be done, enable this feature by using the flag `-y | --dry-run`.
+
+### Quiet run
+If you want phockup to run without any output (displaying only error messages, and muting all progress messages) use the flag `-q | --quiet`.
 
 ## Development
 
