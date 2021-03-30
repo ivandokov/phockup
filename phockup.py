@@ -111,6 +111,15 @@ nevertheless it can be useful if no other date information can be obtained.
     )
 
     parser.add_argument(
+        "--maxdepth",
+        type=int,
+        default=-1,
+        choices=range(0, 255),
+        metavar="1-255",
+        help="Descend at most 'maxdepth' levels (a non-negative integer) of directories",
+    )
+
+    parser.add_argument(
         "-r",
         "--regex",
         action="store",
@@ -142,6 +151,7 @@ To get all date fields available for a file, do:
     exiftool -time:all -mimetype -j <file>
         """,
     )
+
 
     parser.add_argument(
         "-q",
@@ -176,6 +186,7 @@ To get all date fields available for a file, do:
         date_field=args.date_field,
         dry_run=args.dry_run,
         quiet=args.quiet,
+        max_depth=args.maxdepth
     )
 
 
