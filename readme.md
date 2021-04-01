@@ -133,6 +133,10 @@ If you want phockup to run without any changes (don't copy/move any files) but j
 ### Quiet run
 If you want phockup to run without any output (displaying only error messages, and muting all progress messages) use the flag `-q | --quiet`.
 
+### Limit directory traversal depth
+If you would like to limit how deep the directories are traversed, you can use the `--maxdepth` option to specify the maximum number of levels below the input directory to process.  In order to process only the input directory, you can disable sub-directory processing with:
+`--maxdepth=0`  The current implementation is limited to a maximum depth of 255. 
+
 ## Development
 
 ### Running tests
