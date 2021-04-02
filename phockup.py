@@ -152,6 +152,13 @@ To get all date fields available for a file, do:
         """,
     )
 
+    parser.add_argument(
+        "--log",
+        action="store",
+        help="""TODO: logfile
+        """,
+    )
+
 
     parser.add_argument(
         "-q",
@@ -186,7 +193,8 @@ To get all date fields available for a file, do:
         date_field=args.date_field,
         dry_run=args.dry_run,
         quiet=args.quiet,
-        max_depth=args.maxdepth
+        max_depth=args.maxdepth,
+        logfile=args.log,
     )
 
 

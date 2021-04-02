@@ -130,6 +130,12 @@ To set multiple fields to be tried in order until a valid date is found, just jo
 ### Dry run
 If you want phockup to run without any changes (don't copy/move any files) but just show which changes would be done, enable this feature by using the flag `-y | --dry-run`.
 
+### Log
+If you want phockup to run and store the output in a log file use the flag `--log`. This flag can be used in conjunction with the flag `-q | --quiet`.
+```
+--log=<PATH>/log.txt
+```
+
 ### Quiet run
 If you want phockup to run without any output (displaying only error messages, and muting all progress messages) use the flag `-q | --quiet`.
 
