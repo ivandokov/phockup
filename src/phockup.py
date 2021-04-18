@@ -4,13 +4,16 @@ import os
 import re
 import shutil
 import sys
+import logging
 
 from src.date import Date
 from src.exif import Exif
-from src.printer import Printer
 
-printer = Printer()
-ignored_files = (".DS_Store", "Thumbs.db")
+
+logger = logging.getLogger("phockup")
+
+
+ignored_files = ('.DS_Store', 'Thumbs.db')
 
 
 class Phockup():
@@ -25,7 +28,8 @@ class Phockup():
 
         self.input_dir = input_dir
         self.output_dir = output_dir
-        self.dir_format = args.get('dir_format') or os.path.sep.join(['%Y', '%m', '%d'])
+        self.dir_format = args.get('dir_format') or os.path.sep.join(
+                            ['%Y', '%m', '%d'])
         self.move = args.get('move', False)
         self.link = args.get('link', False)
         self.original_filenames = args.get('original_filenames', False)
@@ -34,12 +38,8 @@ class Phockup():
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
         self.max_depth = args.get('max_depth', -1)
-        self.stop_depth = self.input_dir.count(os.sep) + self.max_depth if self.max_depth > -1 else sys.maxsize
-        self.logfile = args.get('logfile')
-        self.quiet = args.get('quiet', False)
-
-        printer.set_logfile(self.logfile)
-        printer.should_print(self.quiet)
+        self.stop_depth = self.input_dir.count(os.sep) + self.max_depth \
+            if self.max_depth > -1 else sys.maxsize
 
         self.check_directories()
         self.walk_directory()
@@ -47,23 +47,26 @@ class Phockup():
     def check_directories(self):
         """
         Check if input and output directories exist.
-        If input does not exists it exits the process
-        If output does not exists it tries to create it or exit with error
+        If input does not exists it exits the process.
+        If output does not exists it tries to create it or exit with error.
         """
+
         if not os.path.isdir(self.input_dir) or not os.path.exists(self.input_dir):
-            printer.error('Input directory "%s" does not exist or cannot be accessed' % self.input_dir)
-            return
+            raise RuntimeError("Input directory {} does not exist or cannot be accessed".format(self.input_dir))
         if not os.path.exists(self.output_dir):
-            printer.line('Output directory "%s" does not exist, creating now' % self.output_dir)
+            logger.info("Output directory {} does not exist, creating now".format(self.output_dir))
             try:
                 if not self.dry_run:
                     os.makedirs(self.output_dir)
-            except Exception:
-                printer.error('Cannot create output directory. No write access!')
+            except OSError:
+                logger.info("Cannot create output directory. No write access!")
+                raise
+
 
     def walk_directory(self):
         """
-        Walk input directory recursively and call process_file for each file except the ignored ones
+        Walk input directory recursively and call process_file for each file
+        except the ignored ones.
         """
         for root, dirnames, files in os.walk(self.input_dir):
             files.sort()
@@ -79,7 +82,7 @@ class Phockup():
     def checksum(self, filename):
         """
         Calculate checksum for a file.
-        Used to match if duplicated file name is actually a duplicated file
+        Used to match if duplicated file name is actually a duplicated file.
         """
         block_size = 65536
         sha256 = hashlib.sha256()
@@ -90,22 +93,25 @@ class Phockup():
 
     def is_image_or_video(self, mimetype):
         """
-        Use mimetype to determine if the file is an image or video
+        Use mimetype to determine if the file is an image or video.
         """
-        pattern = re.compile('^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
+        pattern = re.compile(
+            '^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
         if pattern.match(mimetype):
             return True
         return False
 
     def get_output_dir(self, date):
         """
-        Generate output directory path based on the extracted date and formatted using dir_format
-        If date is missing from the exifdata the file is going to "unknown" directory
-        unless user included a regex from filename or uses timestamp
+        Generate output directory path based on the extracted date and
+        formatted using dir_format.
+        If date is missing from the exifdata the file is going to "unknown"
+        directory unless user included a regex from filename or uses timestamp.
         """
         try:
-            path = [self.output_dir, date['date'].date().strftime(self.dir_format)]
-        except:
+            path = [self.output_dir,
+                    date['date'].date().strftime(self.dir_format)]
+        except (TypeError, ValueError):
             path = [self.output_dir, 'unknown']
 
         fullpath = os.path.sep.join(path)
@@ -125,20 +131,15 @@ class Phockup():
 
         try:
             filename = [
-                '%04d' % date['date'].year,
-                '%02d' % date['date'].month,
-                '%02d' % date['date'].day,
-                '-',
-                '%02d' % date['date'].hour,
-                '%02d' % date['date'].minute,
-                '%02d' % date['date'].second,
+                "-",
             ]
 
             if date['subseconds']:
                 filename.append(date['subseconds'])
 
             return ''.join(filename) + os.path.splitext(original_filename)[1]
-        except:
+        # TODO: Double check if this is correct!
+        except TypeError:
             return os.path.basename(original_filename)
 
     def process_file(self, filename):
@@ -148,10 +149,11 @@ class Phockup():
         """
         if str.endswith(filename, '.xmp'):
             return None
-
-        printer.line(filename, True)
-
-        output, target_file_name, target_file_path = self.get_file_name_and_path(filename)
+        
+        progress = filename
+        
+        output, target_file_name, target_file_path = \
+            self.get_file_name_and_path(filename)
 
         suffix = 1
         target_file = target_file_path
@@ -159,7 +161,7 @@ class Phockup():
         while True:
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
-                    printer.line(' => skipped, duplicated file %s' % target_file)
+                    progress = "{} => skipped, duplicated file {}".format(progress, target_file)                    
                     break
             else:
                 if self.move:
@@ -167,7 +169,7 @@ class Phockup():
                         if not self.dry_run:
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
-                        printer.line(' => skipped, no such file or directory')
+                        progress = "{} => no such file or directory".format(progress)
                         break
                 elif self.link and not self.dry_run:
                     os.link(filename, target_file)
@@ -176,24 +178,29 @@ class Phockup():
                         if not self.dry_run:
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
-                        printer.line(' => skipped, no such file or directory')
+                        progress = "{} => no such file or directory".format(progress)
                         break
 
-                printer.line(' => %s' % target_file)
+                progress = "{} => {}".format(progress, target_file)
+                logger.info(progress)
+
                 self.process_xmp(filename, target_file_name, suffix, output)
                 break
 
             suffix += 1
             target_split = os.path.splitext(target_file_path)
-            target_file = "%s-%d%s" % (target_split[0], suffix, target_split[1])
+            target_file = "{}-{}{}".format(target_split[0], suffix,
+                                           target_split[1])
 
     def get_file_name_and_path(self, filename):
         """
         Returns target file name and path
         """
         exif_data = Exif(filename).data()
-        if exif_data and 'MIMEType' in exif_data and self.is_image_or_video(exif_data['MIMEType']):
-            date = Date(filename).from_exif(exif_data, self.timestamp, self.date_regex, self.date_field)
+        if exif_data and 'MIMEType' in exif_data \
+                and self.is_image_or_video(exif_data['MIMEType']):
+            date = Date(filename).from_exif(exif_data, self.timestamp,
+                                            self.date_regex, self.date_field)
             output = self.get_output_dir(date)
             target_file_name = self.get_file_name(filename, date)
             if not self.original_filenames:
@@ -211,22 +218,23 @@ class Phockup():
         Process xmp files. These are meta data for RAW images
         """
         xmp_original_with_ext = original_filename + '.xmp'
-        xmp_original_without_ext = os.path.splitext(original_filename)[0] + '.xmp'
+        xmp_original_without_ext = os.path.splitext(original_filename)[0] \
+            + '.xmp'
 
-        suffix = '-%s' % suffix if suffix > 1 else ''
+        suffix = "-{}".format(suffix) if suffix > 1 else ''
 
         xmp_files = {}
 
         if os.path.isfile(xmp_original_with_ext):
-            xmp_target = '%s%s.xmp' % (file_name, suffix)
+            xmp_target = "{}{}.xmp".format(file_name, suffix)
             xmp_files[xmp_original_with_ext] = xmp_target
         if os.path.isfile(xmp_original_without_ext):
-            xmp_target = '%s%s.xmp' % (os.path.splitext(file_name)[0], suffix)
+            xmp_target = "{}{}.xmp".format(os.path.splitext(file_name)[0], suffix)
             xmp_files[xmp_original_without_ext] = xmp_target
 
         for original, target in xmp_files.items():
             xmp_path = os.path.sep.join([output, target])
-            printer.line('%s => %s' % (original, xmp_path))
+            logger.info("{} => {}".format(original, xmp_path))
 
             if not self.dry_run:
                 if self.move:
