@@ -5,7 +5,6 @@ import re
 import sys
 import logging
 import logging.handlers
-import time
 
 from src.date import Date
 from src.dependency import check_dependencies
@@ -24,7 +23,6 @@ the proper directory for year, month and day.
 
 DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
 
-# logger = logging.getLogger(os.path.splitext(os.path.basename(sys.argv[0]))[0])
 logger = logging.getLogger("phockup")
 
 
@@ -232,6 +230,7 @@ def setup_logging(options):
     logger.setLevel(options.debug and logging.DEBUG or logging.INFO)
     formatter = logging.Formatter(
         "[%(asctime)s] - [%(levelname)s] - %(message)s", "%Y-%m-%d %H:%M:%S")
+    # TODO check https://stackoverflow.com/questions/4673373/logging-within-pytest-tests    # noqa: E501
     if not options.quiet:
         ch = logging.StreamHandler()
         ch.setFormatter(formatter)
@@ -243,18 +242,8 @@ def setup_logging(options):
         logger.addHandler(fh)
 
 
-
 def main(options):
     check_dependencies()
-
-
-    # TODO: Remove dummy code and replace for Phockup
-#    counter = 1
-#    while counter < 5:
-#        logger.info(counter)
-#        logger.debug(counter)
-#        time.sleep(1)
-#        counter = counter + 1
 
     return Phockup(
         options.input_dir,
@@ -271,15 +260,15 @@ def main(options):
         max_depth=options.maxdepth,
     )
 
-# TODO: Check all % for printing
 
+# TODO: Check all % for printing
 if __name__ == '__main__':
     try:
         options = parse_args()
         setup_logging(options)
         main(options)
     except Exception as e:
-        logger.exception("%s", e)
+        logger.info(e)
         sys.exit(1)
     except KeyboardInterrupt:
         logger.error("Exiting phockup...")

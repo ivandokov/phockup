@@ -28,8 +28,8 @@ class Phockup():
 
         self.input_dir = input_dir
         self.output_dir = output_dir
-        self.dir_format = args.get('dir_format') or os.path.sep.join(
-                            ['%Y', '%m', '%d'])
+        self.dir_format = args.get('dir_format') or \
+            os.path.sep.join(['%Y', '%m', '%d'])
         self.move = args.get('move', False)
         self.link = args.get('link', False)
         self.original_filenames = args.get('original_filenames', False)
@@ -51,17 +51,19 @@ class Phockup():
         If output does not exists it tries to create it or exit with error.
         """
 
-        if not os.path.isdir(self.input_dir) or not os.path.exists(self.input_dir):
-            raise RuntimeError("Input directory {} does not exist or cannot be accessed".format(self.input_dir))
+        if not os.path.isdir(self.input_dir) or not \
+                os.path.exists(self.input_dir):
+            raise RuntimeError("Input directory '{}' does not exist or \
+cannot be accessed".format(self.input_dir))
         if not os.path.exists(self.output_dir):
-            logger.info("Output directory {} does not exist, creating now".format(self.output_dir))
+            logger.info("Output directory {} does not exist, creating now"
+                        .format(self.output_dir))
             try:
                 if not self.dry_run:
                     os.makedirs(self.output_dir)
             except OSError:
-                logger.info("Cannot create output directory. No write access!")
-                raise
-
+                raise OSError("Cannot create output '{}' directory. No write \
+access!".format(self.output_dir))
 
     def walk_directory(self):
         """
@@ -96,7 +98,7 @@ class Phockup():
         Use mimetype to determine if the file is an image or video.
         """
         pattern = re.compile(
-            '^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
+                    '^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
         if pattern.match(mimetype):
             return True
         return False
@@ -109,8 +111,8 @@ class Phockup():
         directory unless user included a regex from filename or uses timestamp.
         """
         try:
-            path = [self.output_dir,
-                    date['date'].date().strftime(self.dir_format)]
+            path = [self.output_dir, date['date'].date()
+                    .strftime(self.dir_format)]
         except (TypeError, ValueError):
             path = [self.output_dir, 'unknown']
 
@@ -131,7 +133,13 @@ class Phockup():
 
         try:
             filename = [
-                "-",
+                '%04d' % date['date'].year,
+                '%02d' % date['date'].month,
+                '%02d' % date['date'].day,
+                '-',
+                '%02d' % date['date'].hour,
+                '%02d' % date['date'].minute,
+                '%02d' % date['date'].second,
             ]
 
             if date['subseconds']:
@@ -149,9 +157,9 @@ class Phockup():
         """
         if str.endswith(filename, '.xmp'):
             return None
-        
-        progress = filename
-        
+
+        progress = "{}".format(filename)
+
         output, target_file_name, target_file_path = \
             self.get_file_name_and_path(filename)
 
@@ -161,7 +169,9 @@ class Phockup():
         while True:
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
-                    progress = "{} => skipped, duplicated file {}".format(progress, target_file)                    
+                    progress = "{} => skipped, duplicated file {}"\
+                            .format(progress, target_file)
+                    logger.info(progress)
                     break
             else:
                 if self.move:
@@ -169,7 +179,9 @@ class Phockup():
                         if not self.dry_run:
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
-                        progress = "{} => no such file or directory".format(progress)
+                        progress = "{} => skipped, no such file or directory"\
+                                .format(progress)
+                        logger.warning(progress)
                         break
                 elif self.link and not self.dry_run:
                     os.link(filename, target_file)
@@ -178,7 +190,9 @@ class Phockup():
                         if not self.dry_run:
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
-                        progress = "{} => no such file or directory".format(progress)
+                        progress = "{} => skipped, no such file or directory"\
+                                .format(progress)
+                        logger.warning(progress)
                         break
 
                 progress = "{} => {}".format(progress, target_file)
@@ -189,8 +203,8 @@ class Phockup():
 
             suffix += 1
             target_split = os.path.splitext(target_file_path)
-            target_file = "{}-{}{}".format(target_split[0], suffix,
-                                           target_split[1])
+            target_file = "{}-{}{}"\
+                .format(target_split[0], suffix, target_split[1])
 
     def get_file_name_and_path(self, filename):
         """
@@ -229,7 +243,8 @@ class Phockup():
             xmp_target = "{}{}.xmp".format(file_name, suffix)
             xmp_files[xmp_original_with_ext] = xmp_target
         if os.path.isfile(xmp_original_without_ext):
-            xmp_target = "{}{}.xmp".format(os.path.splitext(file_name)[0], suffix)
+            xmp_target = "{}{}.xmp"\
+                .format(os.path.splitext(file_name)[0], suffix)
             xmp_files[xmp_original_without_ext] = xmp_target
 
         for original, target in xmp_files.items():

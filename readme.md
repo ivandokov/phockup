@@ -157,3 +157,11 @@ Then run the tests using
 ```bash
 pytest
 ```
+
+To run the tests with coverage reports run
+```bash
+pytest --cov-report term-missing:skip-covered --cov=src tests/
+```
+
+
+
