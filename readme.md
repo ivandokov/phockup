@@ -2,7 +2,8 @@
 
 [![Tests](https://github.com/ivandokov/phockup/workflows/Tests/badge.svg)](https://github.com/ivandokov/phockup/actions)
 [![Deploy](https://github.com/ivandokov/phockup/workflows/Deploy/badge.svg)](https://github.com/ivandokov/phockup/actions)
-
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](license)
+[![Checked with flake8](https://img.shields.io/badge/flake8-checked-blue)](http://flake8.pycqa.org/)
 
 Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
 
@@ -163,5 +164,10 @@ To run the tests with coverage reports run
 pytest --cov-report term-missing:skip-covered --cov=src tests/
 ```
 
+### PEP 8 is used as Style Guide Ruleset
 
+We use flake8 to check the PEP 8 ruleset. First install flake8 and then run
 
+```bash
+flake8
+```

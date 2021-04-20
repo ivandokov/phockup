@@ -41,6 +41,10 @@ class Phockup():
         self.stop_depth = self.input_dir.count(os.sep) + self.max_depth \
             if self.max_depth > -1 else sys.maxsize
 
+        if self.dry_run:
+            logger.warning("Dry-run phockup (does a trial run with no \
+permanent changes)...")
+
         self.check_directories()
         self.walk_directory()
 
@@ -56,8 +60,8 @@ class Phockup():
             raise RuntimeError("Input directory '{}' does not exist or \
 cannot be accessed".format(self.input_dir))
         if not os.path.exists(self.output_dir):
-            logger.info("Output directory {} does not exist, creating now"
-                        .format(self.output_dir))
+            logger.warning("Output directory {} does not exist, creating now"
+                           .format(self.output_dir))
             try:
                 if not self.dry_run:
                     os.makedirs(self.output_dir)
@@ -133,13 +137,13 @@ access!".format(self.output_dir))
 
         try:
             filename = [
-                '%04d' % date['date'].year,
-                '%02d' % date['date'].month,
-                '%02d' % date['date'].day,
+                '{:04d}'.format(date['date'].year),
+                '{:02d}'.format(date['date'].month),
+                '{:02d}'.format(date['date'].day),
                 '-',
-                '%02d' % date['date'].hour,
-                '%02d' % date['date'].minute,
-                '%02d' % date['date'].second,
+                '{:02d}'.format(date['date'].hour),
+                '{:02d}'.format(date['date'].minute),
+                '{:02d}'.format(date['date'].second),
             ]
 
             if date['subseconds']:

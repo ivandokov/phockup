@@ -31,7 +31,7 @@ def parse_args(args=sys.argv[1:]):
         description=PROGRAM_DESCRIPTION,
         formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.version = "v%s" % __version__
+    parser.version = "v{}".format(__version__)
 
     parser.add_argument(
         "-v",
@@ -122,8 +122,9 @@ nevertheless it can be useful if no other date information can be obtained.
         "-y",
         "--dry-run",
         action="store_true",
-        help=""""\
-Don't move any files, just show which changes would be done.
+        help="""\
+Does a trial run with no permanent changes to the filesystem.
+So it will not move any files, just shows which changes would be done.
 """,
     )
 
@@ -196,7 +197,7 @@ Run without output.
     )
 
     parser.add_argument(
-        "--log",
+        "--log-file",
         action="store",
         help="""\
 Specify the output directory where your log file should be exported.
@@ -227,14 +228,15 @@ def setup_logging(options):
     """Configure logging."""
     root = logging.getLogger("")
     root.setLevel(logging.WARNING)
-    logger.setLevel(options.debug and logging.DEBUG or logging.INFO)
     formatter = logging.Formatter(
         "[%(asctime)s] - [%(levelname)s] - %(message)s", "%Y-%m-%d %H:%M:%S")
-    # TODO check https://stackoverflow.com/questions/4673373/logging-within-pytest-tests    # noqa: E501
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    root.addHandler(ch)
     if not options.quiet:
-        ch = logging.StreamHandler()
-        ch.setFormatter(formatter)
-        root.addHandler(ch)
+        logger.setLevel(options.debug and logging.DEBUG or logging.INFO)
+    else:
+        logger.setLevel(logging.WARNING)
     if options.log:
         logfile = os.path.expanduser(options.log)
         fh = logging.FileHandler(logfile)
@@ -261,14 +263,13 @@ def main(options):
     )
 
 
-# TODO: Check all % for printing
 if __name__ == '__main__':
     try:
         options = parse_args()
         setup_logging(options)
         main(options)
     except Exception as e:
-        logger.info(e)
+        logger.warning(e)
         sys.exit(1)
     except KeyboardInterrupt:
         logger.error("Exiting phockup...")
