@@ -164,6 +164,8 @@ To run the tests with coverage reports run
 pytest --cov-report term-missing:skip-covered --cov=src tests/
 ```
 
+Please add the necessary tests when committing a feature or improvement.
+
 ### PEP 8 is used as Style Guide Ruleset
 
 We use flake8 to check the PEP 8 ruleset. First install flake8 and then run
@@ -171,3 +173,5 @@ We use flake8 to check the PEP 8 ruleset. First install flake8 and then run
 ```bash
 flake8
 ```
+
+Please make sure that the code is PEP 8 compliant when committing a feature or improvement.
