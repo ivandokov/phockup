@@ -22,6 +22,7 @@ def test_exif_reads_file_with_spaces_punctuation():
 
 
 def test_exif_handles_exception(mocker):
-    mocker.patch('subprocess.check_output', side_effect=CalledProcessError(2, 'cmd'))
+    mocker.patch('subprocess.check_output',
+                 side_effect=CalledProcessError(2, 'cmd'))
     exif = Exif("not-existing.jpg")
     assert exif.data() is None

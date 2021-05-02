@@ -2,7 +2,8 @@
 
 [![Tests](https://github.com/ivandokov/phockup/workflows/Tests/badge.svg)](https://github.com/ivandokov/phockup/actions)
 [![Deploy](https://github.com/ivandokov/phockup/workflows/Deploy/badge.svg)](https://github.com/ivandokov/phockup/actions)
-
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](license)
+[![Checked with flake8](https://img.shields.io/badge/flake8-checked-blue)](http://flake8.pycqa.org/)
 
 Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
 
@@ -130,6 +131,12 @@ To set multiple fields to be tried in order until a valid date is found, just jo
 ### Dry run
 If you want phockup to run without any changes (don't copy/move any files) but just show which changes would be done, enable this feature by using the flag `-y | --dry-run`.
 
+### Log
+If you want phockup to run and store the output in a log file use the flag `--log`. This flag can be used in conjunction with the flag `-q | --quiet`.
+```
+--log=<PATH>/log.txt
+```
+
 ### Quiet run
 If you want phockup to run without any output (displaying only error messages, and muting all progress messages) use the flag `-q | --quiet`.
 
@@ -151,3 +158,20 @@ Then run the tests using
 ```bash
 pytest
 ```
+
+To run the tests with coverage reports run
+```bash
+pytest --cov-report term-missing:skip-covered --cov=src tests/
+```
+
+Please add the necessary tests when committing a feature or improvement.
+
+### PEP 8 is used as Style Guide Ruleset
+
+We use flake8 to check the PEP 8 ruleset. First install flake8 and then run
+
+```bash
+flake8
+```
+
+Please make sure that the code is PEP 8 compliant when committing a feature or improvement.
