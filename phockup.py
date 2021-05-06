@@ -11,7 +11,7 @@ from src.dependency import check_dependencies
 from src.phockup import Phockup
 
 
-__version__ = "1.6.0"
+__version__ = '1.6.0'
 
 PROGRAM_DESCRIPTION = """Media sorting tool to organize photos and videos \
 from your camera in folders by year, month and day.
@@ -23,7 +23,7 @@ the proper directory for year, month and day.
 
 DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
 
-logger = logging.getLogger("phockup")
+logger = logging.getLogger('phockup')
 
 
 def parse_args(args=sys.argv[1:]):
@@ -31,18 +31,18 @@ def parse_args(args=sys.argv[1:]):
         description=PROGRAM_DESCRIPTION,
         formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.version = "v{}".format(__version__)
+    parser.version = f"v{__version__}"
 
     parser.add_argument(
-        "-v",
-        "--version",
-        action="version",
+        '-v',
+        '--version',
+        action='version',
     )
 
     parser.add_argument(
-        "-d",
-        "--date",
-        action="store",
+        '-d',
+        '--date',
+        action='store',
         type=Date().parse,
         help="""\
 Specify date format for OUTPUTDIR directories.
@@ -70,9 +70,9 @@ Example:
     exclusive_group_link_move = parser.add_mutually_exclusive_group()
 
     exclusive_group_link_move.add_argument(
-        "-m",
-        "--move",
-        action="store_true",
+        '-m',
+        '--move',
+        action='store_true',
         help="""\
 Instead of copying the process will move all files from the INPUTDIR to the \
 OUTPUTDIR.
@@ -82,9 +82,9 @@ remaining free space is not enough to make a copy of the INPUTDIR.
     )
 
     exclusive_group_link_move.add_argument(
-        "-l",
-        "--link",
-        action="store_true",
+        '-l',
+        '--link',
+        action='store_true',
         help="""\
 Instead of copying the process will make hard links to all files in INPUTDIR \
 and place them in the OUTPUTDIR.
@@ -94,9 +94,9 @@ YYYY/MM/DD structure to point to same files.
     )
 
     parser.add_argument(
-        "-o",
-        "--original-names",
-        action="store_true",
+        '-o',
+        '--original-names',
+        action='store_true',
         help="""\
 Organize the files in selected format or using the default year/month/day \
 format but keep original filenames.
@@ -104,9 +104,9 @@ format but keep original filenames.
     )
 
     parser.add_argument(
-        "-t",
-        "--timestamp",
-        action="store_true",
+        '-t',
+        '--timestamp',
+        action='store_true',
         help="""\
 Use the timestamp of the file (last modified date) if there is no EXIF date \
 information.
@@ -119,9 +119,9 @@ nevertheless it can be useful if no other date information can be obtained.
     )
 
     parser.add_argument(
-        "-y",
-        "--dry-run",
-        action="store_true",
+        '-y',
+        '--dry-run',
+        action='store_true',
         help="""\
 Does a trial run with no permanent changes to the filesystem.
 So it will not move any files, just shows which changes would be done.
@@ -129,20 +129,20 @@ So it will not move any files, just shows which changes would be done.
     )
 
     parser.add_argument(
-        "--maxdepth",
+        '--maxdepth',
         type=int,
         default=-1,
         choices=range(0, 255),
-        metavar="1-255",
+        metavar='1-255',
         help="""\
 Descend at most 'maxdepth' levels (a non-negative integer) of directories
 """,
     )
 
     parser.add_argument(
-        "-r",
-        "--regex",
-        action="store",
+        '-r',
+        '--regex',
+        action='store',
         type=re.compile,
         help="""\
 Specify date format for date extraction from filenames if there is no EXIF \
@@ -156,9 +156,9 @@ Example:
     )
 
     parser.add_argument(
-        "-f",
-        "--date-field",
-        action="store",
+        '-f',
+        '--date-field',
+        action='store',
         help="""\
 Use a custom date extracted from the exif field specified.
 To set multiple fields to try in order until finding a valid date,
@@ -179,8 +179,8 @@ To get all date fields available for a file, do:
     exclusive_group_debug_silent = parser.add_mutually_exclusive_group()
 
     exclusive_group_debug_silent.add_argument(
-        "--debug",
-        action="store_true",
+        '--debug',
+        action='store_true',
         default=False,
         help="""\
 Enable debugging.
@@ -188,8 +188,8 @@ Enable debugging.
     )
 
     exclusive_group_debug_silent.add_argument(
-        "--quiet",
-        action="store_true",
+        '--quiet',
+        action='store_true',
         default=False,
         help="""\
 Run without output.
@@ -197,8 +197,8 @@ Run without output.
     )
 
     parser.add_argument(
-        "--log-file",
-        action="store",
+        '--log-file',
+        action='store',
         help="""\
 Specify the output directory where your log file should be exported.
 This flag can be used in conjunction with the flag `-q | --quiet`.
@@ -206,16 +206,16 @@ This flag can be used in conjunction with the flag `-q | --quiet`.
     )
 
     parser.add_argument(
-        "input_dir",
-        metavar="INPUTDIR",
+        'input_dir',
+        metavar='INPUTDIR',
         help="""\
 Specify the source directory where your photos are located.
 """,
     )
 
     parser.add_argument(
-        "output_dir",
-        metavar="OUTPUTDIR",
+        'output_dir',
+        metavar='OUTPUTDIR',
         help="""\
 Specify the output directory where your photos should be exported.
 """,
@@ -226,10 +226,10 @@ Specify the output directory where your photos should be exported.
 
 def setup_logging(options):
     """Configure logging."""
-    root = logging.getLogger("")
+    root = logging.getLogger('')
     root.setLevel(logging.WARNING)
     formatter = logging.Formatter(
-        "[%(asctime)s] - [%(levelname)s] - %(message)s", "%Y-%m-%d %H:%M:%S")
+        '[%(asctime)s] - [%(levelname)s] - %(message)s', '%Y-%m-%d %H:%M:%S')
     ch = logging.StreamHandler()
     ch.setFormatter(formatter)
     root.addHandler(ch)

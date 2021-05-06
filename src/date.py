@@ -8,15 +8,15 @@ class Date():
         self.filename = filename
 
     def parse(self, date):
-        date = date.replace("YYYY", "%Y")  # 2017 (year)
-        date = date.replace("YY", "%y")  # 17 (year)
-        date = date.replace("m", "%b")  # Dec (month)
-        date = date.replace("MM", "%m")  # 12 (month)
-        date = date.replace("M", "%B")  # December (month)
-        date = date.replace("DDD", "%j")  # 123 (day or year)
-        date = date.replace("DD", "%d")  # 25 (day)
-        date = date.replace("\\", os.path.sep)  # path separator
-        date = date.replace("/", os.path.sep)  # path separator
+        date = date.replace('YYYY', '%Y')  # 2017 (year)
+        date = date.replace('YY', '%y')  # 17 (year)
+        date = date.replace('m', '%b')  # Dec (month)
+        date = date.replace('MM', '%m')  # 12 (month)
+        date = date.replace('M', '%B')  # December (month)
+        date = date.replace('DDD', '%j')  # 123 (day or year)
+        date = date.replace('DD', '%d')  # 25 (day)
+        date = date.replace('\\', os.path.sep)  # path separator
+        date = date.replace('/', os.path.sep)  # path separator
         return date
 
     def strptime(self, date, date_format):
@@ -24,10 +24,10 @@ class Date():
 
     def build(self, date_object):
         return datetime(
-            date_object["year"], date_object["month"], date_object["day"],
-            date_object["hour"] if date_object.get("hour") else 0,
-            date_object["minute"] if date_object.get("minute") else 0,
-            date_object["second"] if date_object.get("second") else 0)
+            date_object['year'], date_object['month'], date_object['day'],
+            date_object['hour'] if date_object.get('hour') else 0,
+            date_object['minute'] if date_object.get('minute') else 0,
+            date_object['second'] if date_object.get('second') else 0)
 
     def from_exif(self, exif, timestamp=None, user_regex=None,
                   date_field=None):
@@ -53,7 +53,7 @@ class Date():
         else:
             parsed_date = {'date': None, 'subseconds': ''}
 
-        if parsed_date.get("date") is not None:
+        if parsed_date.get('date') is not None:
             return parsed_date
         else:
             if self.filename:
@@ -72,10 +72,10 @@ class Date():
         if re.search(search, date) is not None:
             date = re.sub(search, r'\1', date)
         try:
-            parsed_date_time = self.strptime(date, "%Y:%m:%d %H:%M:%S")
+            parsed_date_time = self.strptime(date, '%Y:%m:%d %H:%M:%S')
         except ValueError:
             try:
-                parsed_date_time = self.strptime(date, "%Y-%m-%d %H:%M:%S")
+                parsed_date_time = self.strptime(date, '%Y-%m-%d %H:%M:%S')
             except ValueError:
                 parsed_date_time = None
         if re.search(search, subseconds) is not None:
