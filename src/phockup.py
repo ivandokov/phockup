@@ -10,7 +10,7 @@ from src.date import Date
 from src.exif import Exif
 
 
-logger = logging.getLogger("phockup")
+logger = logging.getLogger('phockup')
 
 
 ignored_files = ('.DS_Store', 'Thumbs.db')
@@ -57,17 +57,16 @@ permanent changes)...")
 
         if not os.path.isdir(self.input_dir) or not \
                 os.path.exists(self.input_dir):
-            raise RuntimeError("Input directory '{}' does not exist or \
-cannot be accessed".format(self.input_dir))
+            raise RuntimeError(f"Input directory '{self.input_dir}' does not exist or \
+cannot be accessed")
         if not os.path.exists(self.output_dir):
-            logger.warning("Output directory {} does not exist, creating now"
-                           .format(self.output_dir))
+            logger.warning(f"Output directory '{self.output_dir}' does not exist, creating now")
             try:
                 if not self.dry_run:
                     os.makedirs(self.output_dir)
             except OSError:
-                raise OSError("Cannot create output '{}' directory. No write \
-access!".format(self.output_dir))
+                raise OSError(f"Cannot create output '{self.output_dir}' directory. No write \
+access!")
 
     def walk_directory(self):
         """
@@ -137,13 +136,13 @@ access!".format(self.output_dir))
 
         try:
             filename = [
-                '{:04d}'.format(date['date'].year),
-                '{:02d}'.format(date['date'].month),
-                '{:02d}'.format(date['date'].day),
+                f'{(date["date"].year):04d}',
+                f'{(date["date"].month):02d}',
+                f'{(date["date"].day):02d}',
                 '-',
-                '{:02d}'.format(date['date'].hour),
-                '{:02d}'.format(date['date'].minute),
-                '{:02d}'.format(date['date'].second),
+                f'{(date["date"].hour):02d}',
+                f'{(date["date"].minute):02d}',
+                f'{(date["date"].second):02d}',
             ]
 
             if date['subseconds']:
@@ -162,7 +161,7 @@ access!".format(self.output_dir))
         if str.endswith(filename, '.xmp'):
             return None
 
-        progress = "{}".format(filename)
+        progress = f'{filename}'
 
         output, target_file_name, target_file_path = \
             self.get_file_name_and_path(filename)
@@ -173,8 +172,7 @@ access!".format(self.output_dir))
         while True:
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
-                    progress = "{} => skipped, duplicated file {}"\
-                            .format(progress, target_file)
+                    progress = f'{progress} => skipped, duplicated file {target_file}'
                     logger.info(progress)
                     break
             else:
@@ -183,8 +181,7 @@ access!".format(self.output_dir))
                         if not self.dry_run:
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
-                        progress = "{} => skipped, no such file or directory"\
-                                .format(progress)
+                        progress = f'{progress} => skipped, no such file or directory'
                         logger.warning(progress)
                         break
                 elif self.link and not self.dry_run:
@@ -194,12 +191,11 @@ access!".format(self.output_dir))
                         if not self.dry_run:
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
-                        progress = "{} => skipped, no such file or directory"\
-                                .format(progress)
+                        progress = f'{progress} => skipped, no such file or directory'
                         logger.warning(progress)
                         break
 
-                progress = "{} => {}".format(progress, target_file)
+                progress = f'{progress} => {target_file}'
                 logger.info(progress)
 
                 self.process_xmp(filename, target_file_name, suffix, output)
@@ -207,8 +203,7 @@ access!".format(self.output_dir))
 
             suffix += 1
             target_split = os.path.splitext(target_file_path)
-            target_file = "{}-{}{}"\
-                .format(target_split[0], suffix, target_split[1])
+            target_file = f'{target_split[0]}-{suffix}{target_split[1]}'
 
     def get_file_name_and_path(self, filename):
         """
@@ -239,21 +234,20 @@ access!".format(self.output_dir))
         xmp_original_without_ext = os.path.splitext(original_filename)[0] \
             + '.xmp'
 
-        suffix = "-{}".format(suffix) if suffix > 1 else ''
+        suffix = f'-{suffix}' if suffix > 1 else ''
 
         xmp_files = {}
 
         if os.path.isfile(xmp_original_with_ext):
-            xmp_target = "{}{}.xmp".format(file_name, suffix)
+            xmp_target = f'{file_name}{suffix}.xmp'
             xmp_files[xmp_original_with_ext] = xmp_target
         if os.path.isfile(xmp_original_without_ext):
-            xmp_target = "{}{}.xmp"\
-                .format(os.path.splitext(file_name)[0], suffix)
+            xmp_target = f'{(os.path.splitext(file_name)[0])}{suffix}.xmp'
             xmp_files[xmp_original_without_ext] = xmp_target
 
         for original, target in xmp_files.items():
             xmp_path = os.path.sep.join([output, target])
-            logger.info("{} => {}".format(original, xmp_path))
+            logger.info(f'{original} => {xmp_path}')
 
             if not self.dry_run:
                 if self.move:

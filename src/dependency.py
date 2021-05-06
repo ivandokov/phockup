@@ -1,7 +1,7 @@
 import shutil
 import logging
 
-logger = logging.getLogger("phockup")
+logger = logging.getLogger('phockup')
 
 
 def check_dependencies():
