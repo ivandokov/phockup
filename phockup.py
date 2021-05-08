@@ -14,7 +14,7 @@ __version__ = '1.6.0'
 
 PROGRAM_DESCRIPTION = """\
 Media sorting tool to organize photos and videos from your camera in folders by year, \
-month and day. 
+month and day.
 The software will collect all files from the input directory and copy them to the output
 directory without changing the files content. It will only rename the files and  place
 them in the proper directory for year, month and day.
@@ -26,7 +26,7 @@ logger = logging.getLogger('phockup')
 
 
 def parse_args(args=sys.argv[1:]):
-    parser = argparse.ArgumentParser( 
+    parser = argparse.ArgumentParser(
         description=PROGRAM_DESCRIPTION,
         formatter_class=argparse.RawTextHelpFormatter)
 
@@ -74,7 +74,7 @@ Example:
         action='store_true',
         help="""\
 Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR.
-This is useful when working with a big collection of files and the remaining free space 
+This is useful when working with a big collection of files and the remaining free space
 is not enough to make a copy of the INPUTDIR.
 """,
     )

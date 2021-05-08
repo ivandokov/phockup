@@ -34,7 +34,7 @@ class Date():
         if date_field:
             keys = [date_field]
         else:
-            keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 
+            keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate',
                     'DateTimeOriginal']
 
         datestr = None
