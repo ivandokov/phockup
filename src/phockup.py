@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 import hashlib
+import logging
 import os
 import re
 import shutil
 import sys
-import logging
 
 from src.date import Date
 from src.exif import Exif
-
 
 logger = logging.getLogger('phockup')
 
@@ -28,8 +27,7 @@ class Phockup():
 
         self.input_dir = input_dir
         self.output_dir = output_dir
-        self.dir_format = args.get('dir_format') or \
-            os.path.sep.join(['%Y', '%m', '%d'])
+        self.dir_format = args.get('dir_format') or os.path.sep.join(['%Y', '%m', '%d'])
         self.move = args.get('move', False)
         self.link = args.get('link', False)
         self.original_filenames = args.get('original_filenames', False)
@@ -42,8 +40,7 @@ class Phockup():
             if self.max_depth > -1 else sys.maxsize
 
         if self.dry_run:
-            logger.warning("Dry-run phockup (does a trial run with no \
-permanent changes)...")
+            logger.warning("Dry-run phockup (does a trial run with no permanent changes)...")
 
         self.check_directories()
         self.walk_directory()
@@ -55,8 +52,7 @@ permanent changes)...")
         If output does not exists it tries to create it or exit with error.
         """
 
-        if not os.path.isdir(self.input_dir) or not \
-                os.path.exists(self.input_dir):
+        if not os.path.isdir(self.input_dir) or not os.path.exists(self.input_dir):
             raise RuntimeError(f"Input directory '{self.input_dir}' does not exist or \
 cannot be accessed")
         if not os.path.exists(self.output_dir):
@@ -100,8 +96,7 @@ access!")
         """
         Use mimetype to determine if the file is an image or video.
         """
-        pattern = re.compile(
-                    '^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
+        pattern = re.compile('^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
         if pattern.match(mimetype):
             return True
         return False
@@ -114,8 +109,7 @@ access!")
         directory unless user included a regex from filename or uses timestamp.
         """
         try:
-            path = [self.output_dir, date['date'].date()
-                    .strftime(self.dir_format)]
+            path = [self.output_dir, date['date'].date().strftime(self.dir_format)]
         except (TypeError, ValueError):
             path = [self.output_dir, 'unknown']
 
@@ -163,8 +157,7 @@ access!")
 
         progress = f'{filename}'
 
-        output, target_file_name, target_file_path = \
-            self.get_file_name_and_path(filename)
+        output, target_file_name, target_file_path = self.get_file_name_and_path(filename)
 
         suffix = 1
         target_file = target_file_path
@@ -212,8 +205,8 @@ access!")
         exif_data = Exif(filename).data()
         if exif_data and 'MIMEType' in exif_data \
                 and self.is_image_or_video(exif_data['MIMEType']):
-            date = Date(filename).from_exif(exif_data, self.timestamp,
-                                            self.date_regex, self.date_field)
+            date = Date(filename).from_exif(exif_data, self.timestamp, self.date_regex,
+                                            self.date_field)
             output = self.get_output_dir(date)
             target_file_name = self.get_file_name(filename, date)
             if not self.original_filenames:
@@ -231,8 +224,7 @@ access!")
         Process xmp files. These are meta data for RAW images
         """
         xmp_original_with_ext = original_filename + '.xmp'
-        xmp_original_without_ext = os.path.splitext(original_filename)[0] \
-            + '.xmp'
+        xmp_original_without_ext = os.path.splitext(original_filename)[0] + '.xmp'
 
         suffix = f'-{suffix}' if suffix > 1 else ''
 

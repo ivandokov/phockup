@@ -34,7 +34,7 @@ class Date():
         if date_field:
             keys = [date_field]
         else:
-            keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate',
+            keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate', 
                     'DateTimeOriginal']
 
         datestr = None
@@ -89,7 +89,7 @@ class Date():
         # If missing datetime from EXIF data check if filename is in datetime
         # format. For this use a user provided regex if possible. Otherwise
         # assume a filename such as IMG_20160915_123456.jpg as default.
-        default_regex = re.compile(r'.*[_-](?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})[_-]?(?P<hour>\d{2})(?P<minute>\d{2})(?P<second>\d{2})')    # noqa: E501
+        default_regex = re.compile(r'.*[_-](?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})[_-]?(?P<hour>\d{2})(?P<minute>\d{2})(?P<second>\d{2})')
         regex = user_regex or default_regex
         matches = regex.search(os.path.basename(self.filename))
 
