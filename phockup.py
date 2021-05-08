@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
 import argparse
+import logging
+import logging.handlers
 import os
 import re
 import sys
-import logging
-import logging.handlers
 
 from src.date import Date
 from src.dependency import check_dependencies
 from src.phockup import Phockup
 
-
 __version__ = '1.6.0'
 
-PROGRAM_DESCRIPTION = """Media sorting tool to organize photos and videos \
-from your camera in folders by year, month and day.
-The software will collect all files from the input directory and copy them to \
-the output directory without
-changing the files content. It will only rename the files and place them in \
-the proper directory for year, month and day.
+PROGRAM_DESCRIPTION = """\
+Media sorting tool to organize photos and videos from your camera in folders by year, \
+month and day.
+The software will collect all files from the input directory and copy them to the output
+directory without changing the files content. It will only rename the files and  place
+them in the proper directory for year, month and day.
 """
 
 DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
@@ -47,8 +46,8 @@ def parse_args(args=sys.argv[1:]):
         help="""\
 Specify date format for OUTPUTDIR directories.
 
-You can choose different year format (e.g. 17 instead of 2017) or decide to
-skip the day directories and have all photos sorted in year/month.
+You can choose different year format (e.g. 17 instead of 2017) or decide to skip the
+day directories and have all photos sorted in year/month.
 
 Supported formats:
     YYYY - 2016, 2017 ...
@@ -74,10 +73,9 @@ Example:
         '--move',
         action='store_true',
         help="""\
-Instead of copying the process will move all files from the INPUTDIR to the \
-OUTPUTDIR.
-This is useful when working with a big collection of files and the
-remaining free space is not enough to make a copy of the INPUTDIR.
+Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR.
+This is useful when working with a big collection of files and the remaining free space
+is not enough to make a copy of the INPUTDIR.
 """,
     )
 
@@ -86,10 +84,10 @@ remaining free space is not enough to make a copy of the INPUTDIR.
         '--link',
         action='store_true',
         help="""\
-Instead of copying the process will make hard links to all files in INPUTDIR \
-and place them in the OUTPUTDIR.
-This is useful when working with working structure and want to create \
-YYYY/MM/DD structure to point to same files.
+Instead of copying the process will make hard links to all files in INPUTDIR and place
+them in the OUTPUTDIR.
+This is useful when working with working structure and want to create YYYY/MM/DD
+structure to point to same files.
 """,
     )
 
@@ -98,8 +96,8 @@ YYYY/MM/DD structure to point to same files.
         '--original-names',
         action='store_true',
         help="""\
-Organize the files in selected format or using the default year/month/day \
-format but keep original filenames.
+Organize the files in selected format or using the default year/month/day format but
+keep original filenames.
 """,
     )
 
@@ -108,13 +106,10 @@ format but keep original filenames.
         '--timestamp',
         action='store_true',
         help="""\
-Use the timestamp of the file (last modified date) if there is no EXIF date \
-information.
-If the user supplies a regex, it will be used if it finds a match in the |
-filename.
-This option is intended as "last resort" since the file modified date may not \
-be accurate,
-nevertheless it can be useful if no other date information can be obtained.
+Use the timestamp of the file (last modified date) if there is no EXIF date information.
+If the user supplies a regex, it will be used if it finds a match in the filename.
+This option is intended as "last resort" since the file modified date may not be
+accurate, nevertheless it can be useful if no other date information can be obtained.
 """,
     )
 
@@ -145,12 +140,12 @@ Descend at most 'maxdepth' levels (a non-negative integer) of directories
         action='store',
         type=re.compile,
         help="""\
-Specify date format for date extraction from filenames if there is no EXIF \
-date information.
+Specify date format for date extraction from filenames if there is no EXIF date
+information.
 
 Example:
     {regex}
-    can be used to extract the date from file names like the following \
+    can be used to extract the date from file names like the following
     IMG_27.01.2015-19.20.00.jpg.
 """,
     )
@@ -161,8 +156,8 @@ Example:
         action='store',
         help="""\
 Use a custom date extracted from the exif field specified.
-To set multiple fields to try in order until finding a valid date,
-use spaces to separate fields inside a string.
+To set multiple fields to try in order until finding a valid date, use spaces to
+separate fields inside a string.
 
 Example:
     DateTimeOriginal

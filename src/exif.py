@@ -1,7 +1,7 @@
-from subprocess import check_output, CalledProcessError
 import json
 import shlex
 import sys
+from subprocess import CalledProcessError, check_output
 
 
 class Exif(object):

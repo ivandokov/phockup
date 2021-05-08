@@ -1,5 +1,5 @@
-import shutil
 import logging
+import shutil
 
 logger = logging.getLogger('phockup')
 

@@ -2,8 +2,8 @@
 
 [![Tests](https://github.com/ivandokov/phockup/workflows/Tests/badge.svg)](https://github.com/ivandokov/phockup/actions)
 [![Deploy](https://github.com/ivandokov/phockup/workflows/Deploy/badge.svg)](https://github.com/ivandokov/phockup/actions)
+[![All lints status](https://github.com/ivandokov/phockup/workflows/workflows/All-lints/badge.svg)](https://github.com/ivandokov/phockup/workflows/actions)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](license)
-[![Checked with flake8](https://img.shields.io/badge/flake8-checked-blue)](http://flake8.pycqa.org/)
 
 Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
 
@@ -166,12 +166,20 @@ pytest --cov-report term-missing:skip-covered --cov=src tests/
 
 Please add the necessary tests when committing a feature or improvement.
 
-### PEP 8 is used as Style Guide Ruleset
+### Style Guide Ruleset
+Please make sure that the code is compliant as described below when committing a feature or improvement.
 
-We use flake8 to check the PEP 8 ruleset. First install flake8 and then run
+#### Flake8
+We use [flake8](https://flake8.pycqa.org/en/latest/) to check the PEP 8 ruleset.
 
-```bash
-flake8
-```
+Code style for the line length are following the description of the tool [black](https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length)
+In a nutshell, this comes down to to 88 characters per line. This number was found to produce significantly shorter files.
 
-Please make sure that the code is PEP 8 compliant when committing a feature or improvement.
+#### isort
+We also use [isort](https://github.com/PyCQA/isort to check if import are sorted alphabetically, separated into sections and by type.
+
+##### single-quotes and double-quotes 
+We try to adhere to the following as much as possible:
+Use single-quotes for string literals, e.g. 'my-identifier', but use double-quotes for strings that are likely to contain single-quote characters as part of the string itself (such as error messages, or any strings containing natural language), e.g. "You've got an error!".
+
+Single-quotes are easier to read and to type, but if a string contains single-quote characters then double-quotes are better than escaping the single-quote characters or wrapping the string in double single-quotes.
