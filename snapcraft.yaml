@@ -20,7 +20,7 @@ parts:
     source: .
     override-pull: |
       snapcraftctl pull
-      VERSION=`cat phockup.py | grep '__version__ = ' | sed sed "s/.*'\(.*\)'/\1/"`
+      VERSION=`cat phockup.py | grep '__version__ = ' | sed "s/.*'\(.*\)'/\1/"`
       snapcraftctl set-version $VERSION
 
   files:

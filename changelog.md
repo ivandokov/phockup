@@ -1,4 +1,6 @@
 # Changelog
+##### `1.6.3`
+* Fixed double `sed`
 ##### `1.6.2`
 * Fixed version extraction for snaps
 ##### `1.6.1`
