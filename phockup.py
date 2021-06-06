@@ -192,7 +192,7 @@ Run without output.
     )
 
     parser.add_argument(
-        '--log-file',
+        '--log',
         action='store',
         help="""\
 Specify the output directory where your log file should be exported.
