@@ -1,4 +1,6 @@
 # Changelog
+##### `1.6.2`
+* Fixed version extraction for snaps
 ##### `1.6.1`
 * Fixed `--log` argument ([discussion](https://github.com/ivandokov/phockup/pull/106#discussion_r642048830))
 * Fixed multiple custom date fields (`-f|--date-field`) [#113](https://github.com/ivandokov/phockup/issues/113)
