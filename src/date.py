@@ -32,7 +32,7 @@ class Date():
     def from_exif(self, exif, timestamp=None, user_regex=None,
                   date_field=None):
         if date_field:
-            keys = [date_field]
+            keys = date_field.split()
         else:
             keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate',
                     'DateTimeOriginal']
