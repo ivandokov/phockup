@@ -1,4 +1,7 @@
 # Changelog
+##### `1.6.1`
+* Fixed `--log` argument ([discussion](https://github.com/ivandokov/phockup/pull/106#discussion_r642048830))
+* Fixed multiple custom date fields (`-f|--date-field`) [#113](https://github.com/ivandokov/phockup/issues/113)
 ##### `1.6.0`
 * Added `--maxdepth` mode [#104](https://github.com/ivandokov/phockup/issues/104)
 * Added `--quiet` mode to hide generic output [#103](https://github.com/ivandokov/phockup/issues/103)
