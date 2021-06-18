@@ -219,10 +219,12 @@ Specify the output directory where your photos should be exported.
     parser.add_argument(
         '--file-type',
         action='store_true',
+        choices=['image', 'video'],
+        metavar='image|video',
         help="""\
 By default, Phockup addresses both image and video files.
 If you want to restrict your command to either images or
-videos only, use `-x | --file-type=[image|video]`.
+videos only, use `--file-type=[image|video]`.
 """,
     )
 
