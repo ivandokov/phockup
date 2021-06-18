@@ -114,7 +114,7 @@ Instead of copying the process will create hard link all files from the INPUTDIR
 Organize the files in selected format or using the default year/month/day format but keep original filenames by using the flag `-o | --original-names`.
 
 ### File Type
-By default, Phockup addresses both image and video files. If you want to restrict your command to either images or videos only, use `-x | --file-type=[image|video]`. 
+By default, Phockup addresses both image and video files. If you want to restrict your command to either images or videos only, use `--file-type=[image|video]`. 
 
 ### Fix incorrect dates
 If date extracted from photos is incorrect, you can use the `-f | --date-field` option to set the correct exif field to get date information from. Use this command to list which fields are available for a file:
