@@ -218,7 +218,7 @@ Specify the output directory where your photos should be exported.
 
     parser.add_argument(
         '--file-type',
-        action='store_true',
+        type=str,
         choices=['image', 'video'],
         metavar='image|video',
         help="""\
