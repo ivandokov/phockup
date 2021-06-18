@@ -108,7 +108,6 @@ access!")
             return 'video'
         return None
 
-
     def get_output_dir(self, date):
         """
         Generate output directory path based on the extracted date and
@@ -173,7 +172,8 @@ access!")
         while True:
             if self.file_type is not None \
                     and self.file_type != target_file_type:
-                progress = f' => skipped, file is %s but should be %s' % (target_file_type, self.file_type)
+                progress = f"'{progress}' => skipped, file is '{target_file_type}' \
+but looking for be '{self.file_type}'"
                 logger.info(progress)
                 break
 
