@@ -1,18 +1,19 @@
-from subprocess import check_output, CalledProcessError
 import json
 import shlex
 import sys
+from subprocess import CalledProcessError, check_output
 
 
 class Exif(object):
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, filename):
+        self.filename = filename
 
     def data(self):
         try:
-            exif_command = 'exiftool -time:all -mimetype -j %s' % shlex.quote(self.file)
             if sys.platform == 'win32':
-                exif_command = exif_command.replace("\'", "\"")
+                exif_command = f'exiftool -time:all -mimetype -j "{self.filename}"'
+            else:
+                exif_command = f'exiftool -time:all -mimetype -j {shlex.quote(self.filename)}'
             data = check_output(exif_command, shell=True).decode('UTF-8')
             exif = json.loads(data)[0]
         except (CalledProcessError, UnicodeDecodeError):

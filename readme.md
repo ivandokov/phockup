@@ -1,8 +1,9 @@
 # Phockup
 
-[![Phockup](https://snapcraft.io/phockup/badge.svg)](https://snapcraft.io/phockup)
-[![Snap Status](https://build.snapcraft.io/badge/ivandokov/phockup.svg)](https://build.snapcraft.io/user/ivandokov/phockup)
-[![Build Status](https://travis-ci.org/ivandokov/phockup.svg?branch=master)](https://travis-ci.org/ivandokov/phockup)
+[![Tests](https://github.com/ivandokov/phockup/workflows/Tests/badge.svg)](https://github.com/ivandokov/phockup/actions)
+[![Deploy](https://github.com/ivandokov/phockup/workflows/Deploy/badge.svg)](https://github.com/ivandokov/phockup/actions)
+[![All lints status](https://github.com/ivandokov/phockup/workflows/All-lints/badge.svg)](https://github.com/ivandokov/phockup/workflows/actions)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](license)
 
 Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
 
@@ -70,6 +71,9 @@ Example:
 phockup ~/Pictures/camera ~/Pictures/sorted
 ```
 
+### Version
+If you want to view the version of phockup use the flag `-v | --version`.
+
 ### Date format
 If you want to change the output directories date format you can do it by passing the format as `-d | --date` argument.
 You can choose different year format (e.g. 17 instead of 2017) or decide
@@ -98,7 +102,7 @@ If any of the photos does not have date information you can use the `-r | --rege
 --regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"
 ```
 
-As a last resort, specify the `-t` option to use the file modification timestamp. This may not be accurate in all cases but can provide some kind of date if you'd rather it not go into the `unknown` folder. 
+As a last resort, specify the `-t | --timestamp` option to use the file modification timestamp. This may not be accurate in all cases but can provide some kind of date if you'd rather it not go into the `unknown` folder. 
 
 ### Move files
 Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR by using the flag `-m | --move`. This is useful when working with a big collection of files and the remaining free space is not enough to make a copy of the INPUTDIR.
@@ -127,6 +131,22 @@ The output may look like this, but with more fields:
 If the correct date is in `DateTimeOriginal`, you can include the option `--date-field=DateTimeOriginal` to get date information from it.
 To set multiple fields to be tried in order until a valid date is found, just join them with spaces in a quoted string like `"CreateDate FileModifyDate"`.
 
+### Dry run
+If you want phockup to run without any changes (don't copy/move any files) but just show which changes would be done, enable this feature by using the flag `-y | --dry-run`.
+
+### Log
+If you want phockup to run and store the output in a log file use the flag `--log`. This flag can be used in conjunction with the flag `-q | --quiet`.
+```
+--log=<PATH>/log.txt
+```
+
+### Quiet run
+If you want phockup to run without any output (displaying only error messages, and muting all progress messages) use the flag `-q | --quiet`.
+
+### Limit directory traversal depth
+If you would like to limit how deep the directories are traversed, you can use the `--maxdepth` option to specify the maximum number of levels below the input directory to process.  In order to process only the input directory, you can disable sub-directory processing with:
+`--maxdepth=0`  The current implementation is limited to a maximum depth of 255. 
+
 ## Development
 
 ### Running tests
@@ -142,63 +162,27 @@ Then run the tests using
 pytest
 ```
 
-## Changelog
-##### `1.5.11`
-* Added Docker support [#75](https://github.com/ivandokov/phockup/issues/75)
-##### `1.5.10`
-* Merged [#78](https://github.com/ivandokov/phockup/issues/78)
-* Merged [#81](https://github.com/ivandokov/phockup/issues/81)
-##### `1.5.9`
-* Fixed [#70](https://github.com/ivandokov/phockup/issues/70) related to Windows issues 
-##### `1.5.8` 
-* Add `--date-field` option to set date extraction fields  [#54](https://github.com/ivandokov/phockup/issues/54)
-* Handle regex with optional hour information  [#62](https://github.com/ivandokov/phockup/issues/62)
-* Fix regex support for incomplete time on filename  [#55](https://github.com/ivandokov/phockup/issues/55)
-* Fix to handle files with illegal characters [#53](https://github.com/ivandokov/phockup/issues/53)
-##### `1.5.7` 
-* Resolved [#44](https://github.com/ivandokov/phockup/issues/44)
-##### `1.5.6` 
-* Add `-o | --original-names` option to allow keeping the original filenames
-##### `1.5.5` 
-* Add `-t` option to allow using file modification time as a last resort
-* Workaround EXIF DateTaken time of all-zeros
-##### `1.5.4`
-* Handle gracefully files without MIMEType
-##### `1.5.3`
-* Handle broken symlinks
-##### `1.5.2`
-* Add `SubSecCreateDate` and `SubSecDateTimeOriginal` EXIF dates to the list of allowed ones because exiftool changed the default behavior to not include the subseconds for `CreateDate` and `DateTimeOriginal`
-##### `1.5.1`
-* Handle filenames with spaces
-##### `1.5.0`
-* Major refactoring.
-* Updated all tests.
-* Added TravisCI.
-##### `1.4.1`
-* Add `-l | --link` flag to link files instead of copy.
-##### `1.4.0`
-* Add `-m | --move` flag to move files instead of copy.
-##### `1.3.2`
-* More snapcraft.yaml fixes (removed architecture which were producing wrong snaps for amd64).
-* Catch some possible write permission for directories and expand absolute path and home directory on *nix
-##### `1.3.1`
-* Fixed issue with the snap application and simplified the snapcraft.yaml
-##### `1.3.0`
-* Allow different output directories date format with `-d | --date` option.
-##### `1.2.2`
-* Allow access to removable media (external HDD, USB, etc) for snap the application
-* Continue execution even if date attribute is not present [[#6](https://github.com/ivandokov/phockup/pull/6)]
-##### `1.2.1`
-* Windows compatibility fixes
-##### `1.2.0`
-* Changed synopsis of the script. `-i|--inputdir` and `-o|--outputdir` are not required anymore. Use first argument for input directory and second for output directory.
-* Do not process duplicated files located in different directories.
-* Suffix duplicated file names of different files. Sha256 checksum is used for comparison of the source and target files to see if they are identical.
-* Ignore `.DS_Store` and `Thumbs.db` files
-* Handle case when `exiftool` returns exit code > 0.
-* Use `os.walk` instead of `iglob` to support Python < 3.5
-* Handle some different date formats from exif data.
-##### `1.1.0`
-* Collect all files instead only specified file types. This also enables video sorting.
-##### `1.0.0`
-Initial version.
+To run the tests with coverage reports run
+```bash
+pytest --cov-report term-missing:skip-covered --cov=src tests/
+```
+
+Please add the necessary tests when committing a feature or improvement.
+
+### Style Guide Ruleset
+Please make sure that the code is compliant as described below when committing a feature or improvement.
+
+#### Flake8
+We use [flake8](https://flake8.pycqa.org/en/latest/) to check the PEP 8 ruleset.
+
+Code style for the line length are following the description of the tool [black](https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length)
+In a nutshell, this comes down to to 88 characters per line. This number was found to produce significantly shorter files.
+
+#### isort
+We also use [isort](https://github.com/PyCQA/isort to check if import are sorted alphabetically, separated into sections and by type.
+
+##### single-quotes and double-quotes 
+We try to adhere to the following as much as possible:
+Use single-quotes for string literals, e.g. 'my-identifier', but use double-quotes for strings that are likely to contain single-quote characters as part of the string itself (such as error messages, or any strings containing natural language), e.g. "You've got an error!".
+
+Single-quotes are easier to read and to type, but if a string contains single-quote characters then double-quotes are better than escaping the single-quote characters or wrapping the string in double single-quotes.

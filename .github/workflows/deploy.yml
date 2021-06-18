@@ -1,0 +1,131 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - "*.*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.6, 3.7, 3.8, 3.9 ]
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y libimage-exiftool-perl
+          python -m pip install --upgrade pip
+          pip install pytest
+          pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: pytest
+
+  deploy-snap:
+    needs: test
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        architecture: [ linux/amd64, linux/386, linux/arm/v7, linux/ppc64le ]
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - id: snapcraft
+        name: Build Snap
+        run: |
+          LATEST_VERSION=`git tag | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -1`
+
+          CURRENT_VERSION=`echo -e "import urllib.request, json\n\nrequest = urllib.request.Request('http://api.snapcraft.io/v2/snaps/info/phockup')\nrequest.add_header('Snap-Device-Series', '16')\narchitectures = {'amd64': 'linux/amd64', 'i386': 'linux/386', 'arm64': 'linux/arm64', 'armhf': 'linux/arm/v7', 'ppc64el': 'linux/ppc64le', 's390x': 'linux/s390x'}\nwith urllib.request.urlopen(request) as url:\n    data = json.loads(url.read().decode())\n    for c in data['channel-map']:\n        channel = c['channel']\n        if architectures.get(channel['architecture']) == '${{ matrix.architecture }}' and channel['name'] == 'stable':\n            print(c['version'])" | python3`
+
+          if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
+            echo ::set-output name=deploy::0
+            exit
+          fi
+
+          echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json > /dev/null
+          sudo systemctl restart docker
+
+          docker run --rm --tty \
+            --security-opt apparmor:unconfined \
+            --cap-add SYS_ADMIN \
+            multiarch/qemu-user-static --reset -p yes
+
+          docker run --rm --tty \
+            --security-opt apparmor:unconfined \
+            --cap-add SYS_ADMIN \
+            --device /dev/fuse \
+            --volume /sys \
+            --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
+            --volume $GITHUB_WORKSPACE:$GITHUB_WORKSPACE \
+            --workdir $GITHUB_WORKSPACE \
+            --platform "${{ matrix.architecture }}" \
+            --env PLAYTEST="${{ matrix.playtest }}" \
+            diddledan/snapcraft:core18
+
+          SNAP=`find $GITHUB_WORKSPACE -maxdepth 1 -type f -name '*.snap' | head -n1`
+          echo ::set-output name=snap::"$SNAP"
+          echo ::set-output name=deploy::1
+
+      - name: Deploy to Snap Store
+        uses: snapcore/action-publish@v1
+        if: ${{ steps.snapcraft.outputs.deploy == 1 }}
+        with:
+          store_login: ${{ secrets.SNAPCRAFT_LOGIN }}
+          snap: ${{ steps.snapcraft.outputs.snap }}
+          release: stable
+
+  deploy-brew:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the main repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: phockup
+
+      - name: Checkout the Homebrew repository
+        uses: actions/checkout@v2
+        with:
+          repository: ivandokov/homebrew-contrib
+          path: homebrew-contrib
+          ssh-key: ${{ secrets.HOMEBREW_PUSH_KEY }}
+
+      - name: Deploy to Homebrew
+        run: |
+          cd phockup
+
+          LATEST_VERSION=`git tag | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -1`
+
+          CURRENT_VERSION=`cat ../homebrew-contrib/Formula/phockup.rb | tr '\n' '\r' | sed 's/.*archive\/\([0-9.]*\)\.tar.*/\1/g'`
+
+          if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
+            exit
+          fi
+
+          curl -sLo $LATEST_VERSION.tar.gz https://github.com/ivandokov/phockup/archive/$LATEST_VERSION.tar.gz
+          SHASUM=`shasum -a 256 $LATEST_VERSION.tar.gz | awk '{print $1}'`
+          rm $LATEST_VERSION.tar.gz
+
+          cd ../homebrew-contrib
+
+          sed -i "s/archive\/[0-9.]*\.tar/archive\/$LATEST_VERSION\.tar/" Formula/phockup.rb
+          sed -i "s/sha256 .*/sha256 \"$SHASUM\"/" Formula/phockup.rb
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m $LATEST_VERSION
+          git push
