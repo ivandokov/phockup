@@ -217,7 +217,6 @@ Specify the output directory where your photos should be exported.
     )
 
     parser.add_argument(
-        '-r',
         '--file-type',
         action='store_true',
         help="""\
