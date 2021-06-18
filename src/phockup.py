@@ -172,7 +172,7 @@ access!")
         while True:
             if self.file_type is not None \
                     and self.file_type != target_file_type:
-                progress = f"'{progress}' => skipped, file is '{target_file_type}' \
+                progress = f"{progress} => skipped, file is '{target_file_type}' \
 but looking for '{self.file_type}'"
                 logger.info(progress)
                 break
