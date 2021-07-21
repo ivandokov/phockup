@@ -30,6 +30,7 @@ class Phockup():
         self.dir_format = args.get('dir_format') or os.path.sep.join(['%Y', '%m', '%d'])
         self.move = args.get('move', False)
         self.link = args.get('link', False)
+        self.no_unknown = args.get('no_unknown', False)
         self.original_filenames = args.get('original_filenames', False)
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
@@ -111,6 +112,8 @@ access!")
         try:
             path = [self.output_dir, date['date'].date().strftime(self.dir_format)]
         except (TypeError, ValueError):
+            if self.no_unknown:
+                raise FileNotFoundError
             path = [self.output_dir, 'unknown']
 
         fullpath = os.path.sep.join(path)
@@ -157,7 +160,12 @@ access!")
 
         progress = f'{filename}'
 
-        output, target_file_name, target_file_path = self.get_file_name_and_path(filename)
+        try:
+            output, target_file_name, target_file_path = self.get_file_name_and_path(filename)
+        except FileNotFoundError:
+            progress = f'{progress} => skipped, no processing unknowns'
+            logger.info(progress)
+            return
 
         suffix = 1
         target_file = target_file_path

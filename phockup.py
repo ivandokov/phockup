@@ -92,6 +92,15 @@ structure to point to same files.
     )
 
     parser.add_argument(
+        '-n',
+        '--no-unknown',
+        action='store_true',
+        help="""\
+Do not process files which would otherwise go into the 'unknown' folder.
+""",
+    )
+
+    parser.add_argument(
         '-o',
         '--original-names',
         action='store_true',
@@ -255,6 +264,7 @@ def main(options):
         dry_run=options.dry_run,
         quiet=options.quiet,
         max_depth=options.maxdepth,
+        no_unknown=options.no_unknown,
     )
 
 
