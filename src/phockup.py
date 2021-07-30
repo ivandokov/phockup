@@ -53,7 +53,8 @@ class Phockup():
         self.check_directories()
         files_proccesed = self.walk_directory()
         run_time = time.time() - start_time
-        logger.debug(f"Processed {files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {files_proccesed/run_time:.2f} files/second")
+        if files_proccesed and run_time:
+            logger.debug(f"Processed {files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {files_proccesed/run_time:.2f} files/second")
 
     def check_directories(self):
         """
