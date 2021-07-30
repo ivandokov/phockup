@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+import concurrent.futures
 import hashlib
 import logging
 import os
 import re
 import shutil
 import sys
+import time
 
 from src.date import Date
 from src.exif import Exif
@@ -17,6 +19,7 @@ ignored_files = ('.DS_Store', 'Thumbs.db')
 
 class Phockup():
     def __init__(self, input_dir, output_dir, **args):
+        start_time = time.time()
         input_dir = os.path.expanduser(input_dir)
         output_dir = os.path.expanduser(output_dir)
 
@@ -36,6 +39,11 @@ class Phockup():
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
         self.max_depth = args.get('max_depth', -1)
+        # default to concurrency of one to retain existing behavior
+        self.max_concurrency = args.get("max_concurrency", 1)
+        if self.max_concurrency > 1:
+            logger.warning(f"Using {self.max_concurrency} workers to process files.")
+
         self.stop_depth = self.input_dir.count(os.sep) + self.max_depth \
             if self.max_depth > -1 else sys.maxsize
         self.file_type = args.get('file_type', None)
@@ -44,7 +52,9 @@ class Phockup():
             logger.warning("Dry-run phockup (does a trial run with no permanent changes)...")
 
         self.check_directories()
-        self.walk_directory()
+        files_proccesed = self.walk_directory()
+        run_time = time.time() - start_time
+        logger.debug(f"Processed {files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {files_proccesed/run_time:.2f} files/second")
 
     def check_directories(self):
         """
@@ -70,17 +80,22 @@ access!")
         Walk input directory recursively and call process_file for each file
         except the ignored ones.
         """
+        file_count = 0
         for root, dirnames, files in os.walk(self.input_dir):
             files.sort()
+            file_paths_to_process = []
             for filename in files:
+                file_count += 1
                 if filename in ignored_files:
                     continue
 
-                filepath = os.path.join(root, filename)
-                self.process_file(filepath)
+                file_paths_to_process.append(os.path.join(root, filename))
+                with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
+                    executor.map(self.process_file, file_paths_to_process)
+
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
-
+        return file_count
     def checksum(self, filename):
         """
         Calculate checksum for a file.

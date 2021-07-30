@@ -53,30 +53,19 @@ def test_removing_trailing_slash_for_input_output(mocker):
 
 def test_exception_for_no_write_access_when_creating_output_dir(mocker):
     mocker.patch.object(Phockup, 'walk_directory')
-    with pytest.raises(OSError, match="Cannot create output '/root/phockup' \
-directory. No write access!"):
-        Phockup('input', '/root/phockup')
+    if sys.platform == 'win32':
+        protected_dir = f"{os.getenv('WINDIR')}/phockup"
+    else:
+        protected_dir = '/root/phockup'
+    with pytest.raises(OSError, match="Cannot create output.*"):
+
+        Phockup('input', protected_dir)
 
 
 def test_walking_directory():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output')
-    dir1 = 'output/2017/01/01'
-    dir2 = 'output/2017/10/06'
-    dir3 = 'output/unknown'
-    dir4 = 'output/2018/01/01/'
-    assert os.path.isdir(dir1)
-    assert os.path.isdir(dir2)
-    assert os.path.isdir(dir3)
-    assert os.path.isdir(dir4)
-    assert len([name for name in os.listdir(dir1) if
-                os.path.isfile(os.path.join(dir1, name))]) == 3
-    assert len([name for name in os.listdir(dir2) if
-                os.path.isfile(os.path.join(dir2, name))]) == 1
-    assert len([name for name in os.listdir(dir3) if
-                os.path.isfile(os.path.join(dir3, name))]) == 1
-    assert len([name for name in os.listdir(dir4) if
-                os.path.isfile(os.path.join(dir4, name))]) == 1
+    validate_copy_operation()
     shutil.rmtree('output', ignore_errors=True)
 
 
@@ -359,6 +348,24 @@ def test_maxdepth_zero():
 def test_maxdepth_one():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', maxdepth=1)
+    validate_copy_operation()
+    shutil.rmtree('output', ignore_errors=True)
+
+
+def test_maxconcurrency_zero():
+    shutil.rmtree('output', ignore_errors=True)
+    with pytest.raises(ValueError, match="max_workers must be greater than 0"):
+        Phockup('input', 'output', max_concurrency=0)
+
+
+def test_maxconcurrency_five():
+    shutil.rmtree('output', ignore_errors=True)
+    Phockup('input', 'output', max_concurrency=5)
+    validate_copy_operation()
+    shutil.rmtree('output', ignore_errors=True)
+
+
+def validate_copy_operation():
     dir1 = 'output/2017/01/01'
     dir2 = 'output/2017/10/06'
     dir3 = 'output/unknown'
@@ -375,4 +382,3 @@ def test_maxdepth_one():
                 os.path.isfile(os.path.join(dir3, name))]) == 1
     assert len([name for name in os.listdir(dir4) if
                 os.path.isfile(os.path.join(dir4, name))]) == 1
-    shutil.rmtree('output', ignore_errors=True)
