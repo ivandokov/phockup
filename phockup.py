@@ -124,6 +124,18 @@ So it will not move any files, just shows which changes would be done.
     )
 
     parser.add_argument(
+        '-c',
+        '--max-concurrency',
+        type=int,
+        default=1,
+        choices=range(1,255),
+        metavar='1-255',
+        help="Sets the level of concurrency for processing files in a "
+             "directory.  Defaults to 1.  Higher values can improve "
+             "throughput of file operations"
+    )
+
+    parser.add_argument(
         '--maxdepth',
         type=int,
         default=-1,
@@ -178,7 +190,7 @@ To get all date fields available for a file, do:
         action='store_true',
         default=False,
         help="""\
-Enable debugging.
+Enable debugging.  Alternately, set the LOGLEVEL environment variable to DEBUG
 """,
     )
 
@@ -228,15 +240,18 @@ def setup_logging(options):
     ch = logging.StreamHandler()
     ch.setFormatter(formatter)
     root.addHandler(ch)
-    if not options.quiet:
-        logger.setLevel(options.debug and logging.DEBUG or logging.INFO)
-    else:
+    if options.quiet:
         logger.setLevel(logging.WARNING)
+    else:
+        # Allow for the LOGLEVEL environment variable to control logging level
+        logger.setLevel(options.debug and logging.DEBUG
+                        or os.environ.get("LOGLEVEL", "INFO").upper())
     if options.log:
         logfile = os.path.expanduser(options.log)
         fh = logging.FileHandler(logfile)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
+    logger.debug("Debug logging output enabled.")
 
 
 def main(options):
@@ -255,6 +270,7 @@ def main(options):
         dry_run=options.dry_run,
         quiet=options.quiet,
         max_depth=options.maxdepth,
+        max_concurrency=options.max_concurrency
     )
 
 
