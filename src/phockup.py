@@ -55,7 +55,14 @@ class Phockup():
         files_proccesed = self.walk_directory()
         run_time = time.time() - start_time
         if files_proccesed and run_time:
-            logger.debug(f"Processed {files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {files_proccesed/run_time:.2f} files/second")
+            # Legacy string formatting syntax
+            # pytest-mock v3.6.1  that was introduced recently.  When tests
+            # are run, it throww the following error:
+            # TypeError: unsupported format string passed to MagicMock.__format__
+            # Revert to preferred syntax once MagicMock is updated
+            logger.debug("Processed %d files in %1.2f  seconds. Average Throughput: %1.2f files/second" % (files_proccesed, run_time, files_proccesed/run_time))
+            # Preferred syntax
+            # logger.debug(f"Processed {files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {files_proccesed/run_time:.2f} files/second")
 
     def check_directories(self):
         """
