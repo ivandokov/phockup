@@ -92,6 +92,15 @@ structure to point to same files.
     )
 
     parser.add_argument(
+        '-x',
+        '--delete-duplicate',
+        action='store_true',
+        help="""\
+Delete input file if it is a duplicate and the move option (-m/--move) is in use.
+""",
+    )
+
+    parser.add_argument(
         '-n',
         '--no-unknown',
         action='store_true',
@@ -265,6 +274,7 @@ def main(options):
         quiet=options.quiet,
         max_depth=options.maxdepth,
         no_unknown=options.no_unknown,
+        delete_duplicate=options.delete_duplicate,
     )
 
 

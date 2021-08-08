@@ -31,6 +31,7 @@ class Phockup():
         self.move = args.get('move', False)
         self.link = args.get('link', False)
         self.no_unknown = args.get('no_unknown', False)
+        self.delete_duplicate = args.get('delete_duplicate', False)
         self.original_filenames = args.get('original_filenames', False)
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
@@ -173,7 +174,16 @@ access!")
         while True:
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
-                    progress = f'{progress} => skipped, duplicated file {target_file}'
+                    if self.delete_duplicate:
+                        if not os.path.samefile(target_file, filename):
+                            progress = f'{progress} => deleted, duplicated file {target_file}'
+                            if not self.dry_run:
+                                os.remove(filename)
+                        else:
+                            progress = f'{progress} => skipped, same file {target_file}'
+                    else:
+                        progress = f'{progress} => skipped, duplicated file {target_file}'
+
                     logger.info(progress)
                     break
             else:
