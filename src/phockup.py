@@ -6,6 +6,7 @@ import re
 import shutil
 import sys
 
+from tqdm import tqdm
 from src.date import Date
 from src.exif import Exif
 
@@ -35,6 +36,7 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
+        self.progressbar = args.get('progressbar', False)
         self.max_depth = args.get('max_depth', -1)
         self.stop_depth = self.input_dir.count(os.sep) + self.max_depth \
             if self.max_depth > -1 else sys.maxsize
@@ -69,16 +71,36 @@ access!")
         Walk input directory recursively and call process_file for each file
         except the ignored ones.
         """
+        # Get the number of files
+        if self.progressbar:
+            file_count = 0
+            for root, dirnames, files in os.walk(self.input_dir):
+                file_count += len(files)
+                if root.count(os.sep) >= self.stop_depth:
+                    del dirnames[:]
+
+        if self.progressbar:
+            pbar = tqdm(desc=f"Progressing: '{self.input_dir}' ", total=file_count, unit="file",
+                        position=0, leave=False)
+
+        # Walk the directory
         for root, dirnames, files in os.walk(self.input_dir):
             files.sort()
             for filename in files:
                 if filename in ignored_files:
                     continue
 
+                # Increment the progress bar
+                if self.progressbar:
+                    pbar.update(1)
+                # Process the file in the walk
                 filepath = os.path.join(root, filename)
                 self.process_file(filepath)
+
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
+        if self.progressbar:
+            pbar.close()
 
     def checksum(self, filename):
         """
