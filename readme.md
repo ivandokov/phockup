@@ -52,7 +52,7 @@ brew install phockup
 
 ### Docker
 ```
-docker run -v ~/Pictures:/mnt ivandokov/phockup:latest phockup /mnt/Input /mnt/Output [PHOCKUP ARGUMENTS]
+docker run -v ~/Pictures:/mnt ivandokov/phockup:latest /mnt/Input /mnt/Output [PHOCKUP ARGUMENTS]
 ```
 
 The `-v ~/Pictures:/mnt` part of the command mounts your `~/Pictures` directory to `/mnt` inside the container. You can pass any **absolute** path to be mounted to the container and later on be used as paths for the `phockup` command. The example above provides your `~/Pictures/Input` as `INPUTDIR` and `~/Pictures/Output` as `OUTPUDIR`. You can pass additional arguments afterwards.

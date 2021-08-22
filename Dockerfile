@@ -1,7 +1,13 @@
-FROM python:3.8.7-alpine
+FROM python:3.9-alpine
 
-RUN apk --no-cache add exiftool curl \
+RUN  apk add --no-cache --virtual .build-dependencies \
+        curl \
+    && apk --no-cache add exiftool \
     && curl -L https://github.com/ivandokov/phockup/archive/latest.tar.gz -o phockup.tar.gz \
     && tar -zxf phockup.tar.gz \
     && mv phockup-* /opt/phockup \
-    && ln -s /opt/phockup/phockup.py /usr/local/bin/phockup
+    && ln -s /opt/phockup/phockup.py /usr/local/bin/phockup \
+    && apk del --no-cache --purge .build-dependencies \
+    && rm phockup.tar.gz
+
+ENTRYPOINT [ "phockup" ]
