@@ -1,4 +1,8 @@
 # Changelog
+##### `1.6.4`
+* Add argument "--file-type" to be able to choose between image or video [#114](https://github.com/ivandokov/phockup/issues/114)
+* Improved Docker image [#117](https://github.com/ivandokov/phockup/issues/117)
+* Automatically deploy new Docker image to Docker Hub [#120](https://github.com/ivandokov/phockup/issues/120)
 ##### `1.6.3`
 * Fixed double `sed`
 ##### `1.6.2`
