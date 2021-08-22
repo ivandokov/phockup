@@ -216,6 +216,18 @@ Specify the output directory where your photos should be exported.
 """,
     )
 
+    parser.add_argument(
+        '--file-type',
+        type=str,
+        choices=['image', 'video'],
+        metavar='image|video',
+        help="""\
+By default, Phockup addresses both image and video files.
+If you want to restrict your command to either images or
+videos only, use `--file-type=[image|video]`.
+""",
+    )
+
     return parser.parse_args(args)
 
 
@@ -255,6 +267,7 @@ def main(options):
         dry_run=options.dry_run,
         quiet=options.quiet,
         max_depth=options.maxdepth,
+        file_type=options.file_type,
     )
 
 

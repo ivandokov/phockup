@@ -38,6 +38,7 @@ class Phockup():
         self.max_depth = args.get('max_depth', -1)
         self.stop_depth = self.input_dir.count(os.sep) + self.max_depth \
             if self.max_depth > -1 else sys.maxsize
+        self.file_type = args.get('file_type', None)
 
         if self.dry_run:
             logger.warning("Dry-run phockup (does a trial run with no permanent changes)...")
@@ -92,14 +93,20 @@ access!")
                 sha256.update(block)
         return sha256.hexdigest()
 
-    def is_image_or_video(self, mimetype):
+    def get_file_type(self, mimetype):
         """
+        Check if given file_type is image or video
+        Return None if other
         Use mimetype to determine if the file is an image or video.
         """
-        pattern = re.compile('^(image/.+|video/.+|application/vnd.adobe.photoshop)$')
-        if pattern.match(mimetype):
-            return True
-        return False
+        patternImage = re.compile('^(image/.+|application/vnd.adobe.photoshop)$')
+        if patternImage.match(mimetype):
+            return 'image'
+
+        patternVideo = re.compile('^(video/.*)$')
+        if patternVideo.match(mimetype):
+            return 'video'
+        return None
 
     def get_output_dir(self, date):
         """
@@ -157,12 +164,19 @@ access!")
 
         progress = f'{filename}'
 
-        output, target_file_name, target_file_path = self.get_file_name_and_path(filename)
+        output, target_file_name, target_file_path, target_file_type = self.get_file_name_and_path(filename)
 
         suffix = 1
         target_file = target_file_path
 
         while True:
+            if self.file_type is not None \
+                    and self.file_type != target_file_type:
+                progress = f"{progress} => skipped, file is '{target_file_type}' \
+but looking for '{self.file_type}'"
+                logger.info(progress)
+                break
+
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
@@ -203,8 +217,12 @@ access!")
         Returns target file name and path
         """
         exif_data = Exif(filename).data()
-        if exif_data and 'MIMEType' in exif_data \
-                and self.is_image_or_video(exif_data['MIMEType']):
+        target_file_type = None
+
+        if exif_data and 'MIMEType' in exif_data:
+            target_file_type = self.get_file_type(exif_data['MIMEType'])
+
+        if target_file_type in ['image', 'video']:
             date = Date(filename).from_exif(exif_data, self.timestamp, self.date_regex,
                                             self.date_field)
             output = self.get_output_dir(date)
@@ -217,7 +235,7 @@ access!")
             target_file_name = os.path.basename(filename)
             target_file_path = os.path.sep.join([output, target_file_name])
 
-        return output, target_file_name, target_file_path
+        return output, target_file_name, target_file_path, target_file_type
 
     def process_xmp(self, original_filename, file_name, suffix, output):
         """
