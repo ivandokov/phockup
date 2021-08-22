@@ -129,3 +129,14 @@ jobs:
           git add .
           git commit -m $LATEST_VERSION
           git push
+
+  deploy-dockerhub:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish to Dockerhub
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ivandokov/phockup
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
