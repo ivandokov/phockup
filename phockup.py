@@ -10,7 +10,7 @@ from src.date import Date
 from src.dependency import check_dependencies
 from src.phockup import Phockup
 
-__version__ = '1.6.4'
+__version__ = '1.6.5'
 
 PROGRAM_DESCRIPTION = """\
 Media sorting tool to organize photos and videos from your camera in folders by year, \
