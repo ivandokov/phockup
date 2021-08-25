@@ -7,6 +7,7 @@ import shutil
 import sys
 
 from tqdm import tqdm
+
 from src.date import Date
 from src.exif import Exif
 
