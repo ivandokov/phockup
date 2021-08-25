@@ -70,7 +70,7 @@ access!")
         """
         Walk input directory recursively and call process_file for each file
         except the ignored ones.
-        """       
+        """
         # Get the number of files
         if self.progressbar:
             file_count = 0
@@ -172,7 +172,7 @@ access!")
         except TypeError:
             return os.path.basename(original_filename)
 
-    def process_file(self, filename, pbar = None):
+    def process_file(self, filename, pbar=None):
         """
         Process the file using the selected strategy
         If file is .xmp skip it so process_xmp method can handle it
@@ -220,7 +220,7 @@ access!")
                         break
 
                 progress = f'{progress} => {target_file}'
-                if self.progressbar:                
+                if self.progressbar:
                     pbar.write(progress)
                 logger.info(progress)
 
