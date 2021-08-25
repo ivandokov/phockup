@@ -70,7 +70,7 @@ access!")
         """
         Walk input directory recursively and call process_file for each file
         except the ignored ones.
-        """
+        """       
         # Get the number of files
         if self.progressbar:
             file_count = 0
@@ -95,7 +95,10 @@ access!")
                     pbar.update(1)
                 # Process the file in the walk
                 filepath = os.path.join(root, filename)
-                self.process_file(filepath)
+                if self.progressbar:
+                    self.process_file(filepath, pbar)
+                else:
+                    self.process_file(filepath)
 
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
@@ -169,7 +172,7 @@ access!")
         except TypeError:
             return os.path.basename(original_filename)
 
-    def process_file(self, filename):
+    def process_file(self, filename, pbar = None):
         """
         Process the file using the selected strategy
         If file is .xmp skip it so process_xmp method can handle it
@@ -188,6 +191,8 @@ access!")
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
+                    if self.progressbar:
+                        pbar.write(progress)
                     logger.info(progress)
                     break
             else:
@@ -197,6 +202,8 @@ access!")
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
+                        if self.progressbar:
+                            pbar.write(progress)
                         logger.warning(progress)
                         break
                 elif self.link and not self.dry_run:
@@ -207,10 +214,14 @@ access!")
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
+                        if self.progressbar:
+                            pbar.write(progress)
                         logger.warning(progress)
                         break
 
                 progress = f'{progress} => {target_file}'
+                if self.progressbar:                
+                    pbar.write(progress)
                 logger.info(progress)
 
                 self.process_xmp(filename, target_file_name, suffix, output)
