@@ -12,9 +12,16 @@ on:
       - "*.txt"
 
 jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt 
+      - name: Run pre-commit
+        run: pre-commit run -a
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
       - uses: ricardochaves/python-lint@master

@@ -18,7 +18,7 @@ Requires [snapd](https://snapcraft.io/docs/core/install)
 ```
 sudo snap install phockup
 ```
-*Note: snap applications can access files only in your **home and `/media` directories** for security reasons. If your media files are not located in these directories you should use the installation method below.  
+*Note: snap applications can access files only in your **home and `/media` directories** for security reasons. If your media files are not located in these directories you should use the installation method below.
 If your files are in `/media` you should run the following command to allow access:*
 ```
 sudo snap connect phockup:removable-media
@@ -102,7 +102,7 @@ If any of the photos does not have date information you can use the `-r | --rege
 --regex="(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})[_-]?(?P<hour>\d{2})\.(?P<minute>\d{2})\.(?P<second>\d{2})"
 ```
 
-As a last resort, specify the `-t | --timestamp` option to use the file modification timestamp. This may not be accurate in all cases but can provide some kind of date if you'd rather it not go into the `unknown` folder. 
+As a last resort, specify the `-t | --timestamp` option to use the file modification timestamp. This may not be accurate in all cases but can provide some kind of date if you'd rather it not go into the `unknown` folder.
 
 ### Move files
 Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR by using the flag `-m | --move`. This is useful when working with a big collection of files and the remaining free space is not enough to make a copy of the INPUTDIR.
@@ -114,7 +114,7 @@ Instead of copying the process will create hard link all files from the INPUTDIR
 Organize the files in selected format or using the default year/month/day format but keep original filenames by using the flag `-o | --original-names`.
 
 ### File Type
-By default, Phockup addresses both image and video files. If you want to restrict your command to either images or videos only, use `--file-type=[image|video]`. 
+By default, Phockup addresses both image and video files. If you want to restrict your command to either images or videos only, use `--file-type=[image|video]`.
 
 ### Fix incorrect dates
 If date extracted from photos is incorrect, you can use the `-f | --date-field` option to set the correct exif field to get date information from. Use this command to list which fields are available for a file:
@@ -145,7 +145,7 @@ If you want phockup to run without any output (displaying only error messages, a
 
 ### Limit directory traversal depth
 If you would like to limit how deep the directories are traversed, you can use the `--maxdepth` option to specify the maximum number of levels below the input directory to process.  In order to process only the input directory, you can disable sub-directory processing with:
-`--maxdepth=0`  The current implementation is limited to a maximum depth of 255. 
+`--maxdepth=0`  The current implementation is limited to a maximum depth of 255.
 
 ## Development
 
@@ -181,7 +181,7 @@ In a nutshell, this comes down to to 88 characters per line. This number was fou
 #### isort
 We also use [isort](https://github.com/PyCQA/isort to check if import are sorted alphabetically, separated into sections and by type.
 
-##### single-quotes and double-quotes 
+##### single-quotes and double-quotes
 We try to adhere to the following as much as possible:
 Use single-quotes for string literals, e.g. 'my-identifier', but use double-quotes for strings that are likely to contain single-quote characters as part of the string itself (such as error messages, or any strings containing natural language), e.g. "You've got an error!".
 

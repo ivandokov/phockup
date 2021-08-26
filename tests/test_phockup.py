@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-import pytest
+import logging
+import os
 import shutil
 import sys
-import os
-import logging
 from datetime import datetime
+
+import pytest
+
 from src.dependency import check_dependencies
 from src.exif import Exif
 from src.phockup import Phockup
-
 
 os.chdir(os.path.dirname(__file__))
 

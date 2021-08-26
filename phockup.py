@@ -241,7 +241,7 @@ def setup_logging(options):
     ch.setFormatter(formatter)
     root.addHandler(ch)
     if not options.quiet:
-        logger.setLevel(options.debug and logging.DEBUG or logging.INFO)
+        logger.setLevel(logging.DEBUG if options.debug else logging.INFO)
     else:
         logger.setLevel(logging.WARNING)
     if options.log:
