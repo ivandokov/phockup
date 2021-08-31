@@ -264,6 +264,7 @@ def setup_logging(options):
         fh.setFormatter(formatter)
         logger.addHandler(fh)
     logger.debug("Debug logging output enabled.")
+    logger.debug("Running Phockup version %s", __version__)
 
 
 def main(options):
