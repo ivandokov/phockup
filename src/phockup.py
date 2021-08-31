@@ -20,6 +20,11 @@ ignored_files = ('.DS_Store', 'Thumbs.db')
 class Phockup():
     def __init__(self, input_dir, output_dir, **args):
         start_time = time.time()
+        self.files_processed = 0
+        self.duplicates_found = 0
+        self.files_moved = 0
+        self.files_copied = 0
+
         input_dir = os.path.expanduser(input_dir)
         output_dir = os.path.expanduser(output_dir)
 
@@ -42,7 +47,7 @@ class Phockup():
         # default to concurrency of one to retain existing behavior
         self.max_concurrency = args.get("max_concurrency", 1)
         if self.max_concurrency > 1:
-            logger.warning(f"Using {self.max_concurrency} workers to process files.")
+            logger.info(f"Using {self.max_concurrency} workers to process files.")
 
         self.stop_depth = self.input_dir.count(os.sep) + self.max_depth \
             if self.max_depth > -1 else sys.maxsize
@@ -52,17 +57,35 @@ class Phockup():
             logger.warning("Dry-run phockup (does a trial run with no permanent changes)...")
 
         self.check_directories()
-        files_proccesed = self.walk_directory()
+        self.walk_directory()
+
         run_time = time.time() - start_time
-        if files_proccesed and run_time:
-            # Legacy string formatting syntax
-            # pytest-mock v3.6.1  that was introduced recently.  When tests
-            # are run, it throww the following error:
-            # TypeError: unsupported format string passed to MagicMock.__format__
-            # Revert to preferred syntax once MagicMock is updated
-            logger.debug("Processed %d files in %1.2f  seconds. Average Throughput: %1.2f files/second" % (files_proccesed, run_time, files_proccesed/run_time))
-            # Preferred syntax
-            # logger.debug(f"Processed {files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {files_proccesed/run_time:.2f} files/second")
+        if self.files_processed and run_time:
+            self.print_action_report(run_time)
+
+    def print_action_report(self, run_time):
+        # Legacy string formatting syntax
+        # pytest-mock v3.6.1  that was introduced recently.  When tests
+        # are run, it throww the following error:
+        # TypeError: unsupported format string passed to MagicMock.__format__
+        # Revert to preferred syntax once MagicMock is updated
+        # Preferred syntax
+        # logger.debug(f"Processed {files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {files_proccesed/run_time:.2f} files/second")
+        logger.debug(
+            "Processed %d files in %1.2f seconds. Average Throughput: %1.2f files/second" % (
+            self.files_processed, run_time, self.files_processed / run_time))
+        if self.duplicates_found:
+            logger.debug("Found %d duplicate files." % self.duplicates_found)
+        if self.files_copied:
+            if self.dry_run:
+                logger.debug("Would have copied %d files." % self.files_copied)
+            else:
+                logger.debug("Copied %d files." % self.files_copied)
+        if self.files_moved:
+            if self.dry_run:
+                logger.debug("Would have moved %d files." % self.files_moved)
+            else:
+                logger.debug("Moved %d files." % self.files_moved)
 
     def check_directories(self):
         """
@@ -93,17 +116,18 @@ access!")
             files.sort()
             file_paths_to_process = []
             for filename in files:
-                file_count += 1
+                self.files_processed += 1
                 if filename in ignored_files:
                     continue
-
                 file_paths_to_process.append(os.path.join(root, filename))
-                with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
-                    executor.map(self.process_file, file_paths_to_process)
+            # With all the appropriate files in the directory added to the
+            # list, process the directory concurrently using threads
+            with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
+                executor.map(self.process_file, file_paths_to_process)
 
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
-        return file_count
+
     def checksum(self, filename):
         """
         Calculate checksum for a file.
@@ -203,11 +227,13 @@ but looking for '{self.file_type}'"
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
+                    self.duplicates_found += 1
                     logger.info(progress)
                     break
             else:
                 if self.move:
                     try:
+                        self.files_moved += 1
                         if not self.dry_run:
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
@@ -218,6 +244,7 @@ but looking for '{self.file_type}'"
                     os.link(filename, target_file)
                 else:
                     try:
+                        self.files_copied += 1
                         if not self.dry_run:
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
