@@ -37,7 +37,7 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
-        self.progressbar = args.get('progressbar', False)
+        self.progress = args.get('progress', False)
         self.max_depth = args.get('max_depth', -1)
         self.stop_depth = self.input_dir.count(os.sep) + self.max_depth \
             if self.max_depth > -1 else sys.maxsize
@@ -73,14 +73,14 @@ access!")
         except the ignored ones.
         """
         # Get the number of files
-        if self.progressbar:
+        if self.progress:
             file_count = 0
             for root, dirnames, files in os.walk(self.input_dir):
                 file_count += len(files)
                 if root.count(os.sep) >= self.stop_depth:
                     del dirnames[:]
 
-        if self.progressbar:
+        if self.progress:
             pbar = tqdm(desc=f"Progressing: '{self.input_dir}' ", total=file_count, unit="file",
                         position=0, leave=False)
 
@@ -92,18 +92,18 @@ access!")
                     continue
 
                 # Increment the progress bar
-                if self.progressbar:
+                if self.progress:
                     pbar.update(1)
                 # Process the file in the walk
                 filepath = os.path.join(root, filename)
-                if self.progressbar:
+                if self.progress:
                     self.process_file(filepath, pbar)
                 else:
                     self.process_file(filepath)
 
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
-        if self.progressbar:
+        if self.progress:
             pbar.close()
 
     def checksum(self, filename):
@@ -192,7 +192,7 @@ access!")
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
-                    if self.progressbar:
+                    if self.progress:
                         pbar.write(progress)
                     logger.info(progress)
                     break
@@ -203,7 +203,7 @@ access!")
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
-                        if self.progressbar:
+                        if self.progress:
                             pbar.write(progress)
                         logger.warning(progress)
                         break
@@ -215,13 +215,13 @@ access!")
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
-                        if self.progressbar:
+                        if self.progress:
                             pbar.write(progress)
                         logger.warning(progress)
                         break
 
                 progress = f'{progress} => {target_file}'
-                if self.progressbar:
+                if self.progress:
                     pbar.write(progress)
                 logger.info(progress)
 

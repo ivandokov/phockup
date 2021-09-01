@@ -263,7 +263,7 @@ def main(options):
         date_field=options.date_field,
         dry_run=options.dry_run,
         quiet=options.quiet,
-        progressbar=options.progress,
+        progress=options.progress,
         max_depth=options.maxdepth,
     )
 
