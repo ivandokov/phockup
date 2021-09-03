@@ -8,6 +8,8 @@ import shutil
 import sys
 import time
 
+from tqdm import tqdm
+
 from src.date import Date
 from src.exif import Exif
 
@@ -43,6 +45,7 @@ class Phockup():
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.dry_run = args.get('dry_run', False)
+        self.progress = args.get('progress', False)
         self.max_depth = args.get('max_depth', -1)
         # default to concurrency of one to retain existing behavior
         self.max_concurrency = args.get("max_concurrency", 1)
@@ -111,6 +114,19 @@ access!")
         Walk input directory recursively and call process_file for each file
         except the ignored ones.
         """
+        # Get the number of files
+        if self.progress:
+            file_count = 0
+            for root, dirnames, files in os.walk(self.input_dir):
+                file_count += len(files)
+                if root.count(os.sep) >= self.stop_depth:
+                    del dirnames[:]
+
+        if self.progress:
+            pbar = tqdm(desc=f"Progressing: '{self.input_dir}' ", total=file_count, unit="file",
+                        position=0, leave=False)
+
+        # Walk the directory
         file_count = 0
         for root, dirnames, files in os.walk(self.input_dir):
             files.sort()
@@ -125,8 +141,20 @@ access!")
             with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
                 executor.map(self.process_file, file_paths_to_process)
 
+                # # Increment the progress bar
+                # if self.progress:
+                #     pbar.update(1)
+                # # Process the file in the walk
+                # filepath = os.path.join(root, filename)
+                # if self.progress:
+                #     self.process_file(filepath, pbar)
+                # else:
+                #     self.process_file(filepath)
+
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
+        if self.progress:
+            pbar.close()
 
     def checksum(self, filename):
         """
@@ -201,7 +229,7 @@ access!")
         except TypeError:
             return os.path.basename(original_filename)
 
-    def process_file(self, filename):
+    def process_file(self, filename, pbar=None):
         """
         Process the file using the selected strategy
         If file is .xmp skip it so process_xmp method can handle it
@@ -228,6 +256,8 @@ but looking for '{self.file_type}'"
                 if self.checksum(filename) == self.checksum(target_file):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
                     self.duplicates_found += 1
+                    if self.progress:
+                        pbar.write(progress)
                     logger.info(progress)
                     break
             else:
@@ -238,6 +268,8 @@ but looking for '{self.file_type}'"
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
+                        if self.progress:
+                            pbar.write(progress)
                         logger.warning(progress)
                         break
                 elif self.link and not self.dry_run:
@@ -249,10 +281,14 @@ but looking for '{self.file_type}'"
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
+                        if self.progress:
+                            pbar.write(progress)
                         logger.warning(progress)
                         break
 
                 progress = f'{progress} => {target_file}'
+                if self.progress:
+                    pbar.write(progress)
                 logger.info(progress)
 
                 self.process_xmp(filename, target_file_name, suffix, output)

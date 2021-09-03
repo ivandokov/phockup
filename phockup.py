@@ -203,12 +203,21 @@ Run without output.
 """,
     )
 
+    exclusive_group_debug_silent.add_argument(
+        '--progress',
+        action='store_true',
+        default=False,
+        help="""\
+Run with progressbar output.
+""",
+    )
+
     parser.add_argument(
         '--log',
         action='store',
         help="""\
 Specify the output directory where your log file should be exported.
-This flag can be used in conjunction with the flag `-q | --quiet`.
+This flag can be used in conjunction with the flag `--quiet` or `--progress`.
 """,
     )
 
@@ -282,6 +291,7 @@ def main(options):
         date_field=options.date_field,
         dry_run=options.dry_run,
         quiet=options.quiet,
+        progress=options.progress,
         max_depth=options.maxdepth,
         file_type=options.file_type,
         max_concurrency=options.max_concurrency
