@@ -1,4 +1,5 @@
 pytest
 pytest-mock
 pytest-cov
+tqdm
 pre-commit
