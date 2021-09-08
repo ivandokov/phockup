@@ -177,13 +177,13 @@ Please add the necessary tests when committing a feature or improvement.
 ### Pre-commit checks
 We leverage the [pre-commit](https://pre-commit.com/) framework to automate some general linting/quality checks.
 
-To install the hooks, from within the activated virtualenv run
+To install the hooks, from within the activated virtualenv run:
 
 ```bash
 pre-commit install
 ```
 
-To manually run the hooks run:
+To manually execute the hooks, run:
 
 ``bash
 pre-commit run -a
