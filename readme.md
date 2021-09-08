@@ -169,6 +169,22 @@ pytest --cov-report term-missing:skip-covered --cov=src tests/
 
 Please add the necessary tests when committing a feature or improvement.
 
+
+### Pre-commit checks
+We leverage the [pre-commit](https://pre-commit.com/) framework to automate some general linting/quality checks.
+
+To install the hooks, from within the activated virtualenv run
+
+```bash
+pre-commit install
+```
+
+To manually run the hooks run:
+
+``bash
+pre-commit run -a
+```
+
 ### Style Guide Ruleset
 Please make sure that the code is compliant as described below when committing a feature or improvement.
 
