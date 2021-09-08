@@ -393,7 +393,7 @@ def test_maxdepth_one():
     shutil.rmtree('output', ignore_errors=True)
 
 
-def test_progress_2():
+def test_progress():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', progress=True)
     dir1 = 'output/2017/01/01'
