@@ -20,22 +20,3 @@ jobs:
         run: pip install -r requirements-dev.txt
       - name: Run pre-commit
         run: pre-commit run -a
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: ricardochaves/python-lint@master
-        with:
-          python-root-list: "src phockup.py"
-          use-pylint: false
-          use-pycodestyle: false
-          use-flake8: true
-          use-black: false
-          use-mypy: false
-          use-isort: true
-          extra-pylint-options: ""
-          extra-pycodestyle-options: ""
-          extra-flake8-options: "--max-line-length=88 --select=C,E,F,W,B,B950 --ignore=E203,E501,W503"
-          extra-black-options: ""
-          extra-mypy-options: ""
-          extra-isort-options: ""

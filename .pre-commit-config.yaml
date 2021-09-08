@@ -6,7 +6,11 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
-  - repo: http://github.com/PyCQA/isort
+  - repo: https://github.com/PyCQA/isort
     rev: 5.9.3
     hooks:
       - id: isort
+  - repo: https://github.com/PyCQA/flake8
+    rev: 3.9.2
+    hooks:
+      - id: flake8

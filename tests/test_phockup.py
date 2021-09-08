@@ -94,6 +94,7 @@ def test_dry_run():
     assert not os.path.isdir(dir3)
     assert not os.path.isdir(dir4)
 
+
 def test_progress():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', progress=True)
@@ -106,6 +107,7 @@ def test_progress():
     assert not os.path.isdir(dir2)
     assert not os.path.isdir(dir3)
     assert not os.path.isdir(dir4)
+
 
 def test_get_file_type(mocker):
     mocker.patch.object(Phockup, 'check_directories')
@@ -391,7 +393,7 @@ def test_maxdepth_one():
     shutil.rmtree('output', ignore_errors=True)
 
 
-def test_progress():
+def test_progress_2():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', progress=True)
     dir1 = 'output/2017/01/01'
