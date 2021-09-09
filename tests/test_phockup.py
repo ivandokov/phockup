@@ -94,6 +94,7 @@ def test_dry_run():
     assert not os.path.isdir(dir3)
     assert not os.path.isdir(dir4)
 
+
 def test_progress():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', progress=True)
@@ -394,6 +395,3 @@ def test_maxdepth_one():
     assert len([name for name in os.listdir(dir4) if
                 os.path.isfile(os.path.join(dir4, name))]) == 1
     shutil.rmtree('output', ignore_errors=True)
-
-
-
