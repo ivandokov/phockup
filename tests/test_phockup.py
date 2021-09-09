@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-import pytest
+import logging
+import os
 import shutil
 import sys
-import os
-import logging
 from datetime import datetime
+
+import pytest
+
 from src.dependency import check_dependencies
 from src.exif import Exif
 from src.phockup import Phockup
-
 
 os.chdir(os.path.dirname(__file__))
 
@@ -93,6 +94,7 @@ def test_dry_run():
     assert not os.path.isdir(dir3)
     assert not os.path.isdir(dir4)
 
+
 def test_progress():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', progress=True)
@@ -105,6 +107,7 @@ def test_progress():
     assert not os.path.isdir(dir2)
     assert not os.path.isdir(dir3)
     assert not os.path.isdir(dir4)
+
 
 def test_get_file_type(mocker):
     mocker.patch.object(Phockup, 'check_directories')
