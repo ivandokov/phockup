@@ -1,4 +1,7 @@
 # Changelog
+##### `1.7.0`
+* Add `--progress` functionality [#118](https://github.com/ivandokov/phockup/pull/118)
+* Add pre-commit integration [#121](https://github.com/ivandokov/phockup/pull/121)
 ##### `1.6.5`
 * Add missing checkout step to the dockerhub deployment action
 ##### `1.6.4`
