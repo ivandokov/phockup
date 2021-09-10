@@ -56,17 +56,17 @@ class Phockup():
         If output does not exists it tries to create it or exit with error.
         """
 
-        if not os.path.isdir(self.input_dir) or not os.path.exists(self.input_dir):
-            raise RuntimeError(f"Input directory '{self.input_dir}' does not exist or \
-cannot be accessed")
+        if not os.path.exists(self.input_dir):
+            raise RuntimeError(f"Input directory '{self.input_dir}' does not exist")
+        if not os.path.isdir(self.input_dir):
+            raise RuntimeError(f"Input directory '{self.input_dir}' is not a directory")
         if not os.path.exists(self.output_dir):
             logger.warning(f"Output directory '{self.output_dir}' does not exist, creating now")
             try:
                 if not self.dry_run:
                     os.makedirs(self.output_dir)
             except OSError:
-                raise OSError(f"Cannot create output '{self.output_dir}' directory. No write \
-access!")
+                raise OSError(f"Cannot create output '{self.output_dir}' directory. No write access!")
 
     def walk_directory(self):
         """
