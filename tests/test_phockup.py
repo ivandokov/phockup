@@ -35,9 +35,16 @@ def test_exception_if_missing_input_directory(mocker):
     mocker.patch('os.makedirs')
     mocker.patch('sys.exit')
 
-    with pytest.raises(RuntimeError, match="Input directory 'in' does not \
-exist or cannot be accessed"):
+    with pytest.raises(RuntimeError, match="Input directory 'in' does not exist"):
         Phockup('in', 'out')
+
+
+def test_exception_if_input_not_directory(mocker):
+    mocker.patch('os.makedirs')
+    mocker.patch('sys.exit')
+
+    with pytest.raises(RuntimeError, match="Input directory 'input/exif.jpg' is not a directory"):
+        Phockup('input/exif.jpg', 'out')
 
 
 def test_removing_trailing_slash_for_input_output(mocker):
