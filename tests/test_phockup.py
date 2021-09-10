@@ -101,15 +101,19 @@ def test_progress():
     dir1 = 'output/2017/01/01'
     dir2 = 'output/2017/10/06'
     dir3 = 'output/unknown'
+    dir4 = 'output/2018/01/01/'
     assert os.path.isdir(dir1)
     assert os.path.isdir(dir2)
     assert os.path.isdir(dir3)
+    assert os.path.isdir(dir4)
     assert len([name for name in os.listdir(dir1) if
                 os.path.isfile(os.path.join(dir1, name))]) == 3
     assert len([name for name in os.listdir(dir2) if
                 os.path.isfile(os.path.join(dir2, name))]) == 1
     assert len([name for name in os.listdir(dir3) if
                 os.path.isfile(os.path.join(dir3, name))]) == 1
+    assert len([name for name in os.listdir(dir4) if
+                os.path.isfile(os.path.join(dir4, name))]) == 1
     shutil.rmtree('output', ignore_errors=True)
 
 
