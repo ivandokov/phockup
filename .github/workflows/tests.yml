@@ -15,7 +15,7 @@ on:
       - master
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,3 +37,13 @@ jobs:
 
       - name: Run tests
         run: pytest
+
+  docker-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: ivandokov/phockup:test
