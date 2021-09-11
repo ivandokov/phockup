@@ -6,10 +6,6 @@ on:
       - '*'
     tags-ignore:
       - '*'
-    paths-ignore:
-      - "*.md"
-      - "*.yaml"
-      - "*.txt"
   pull_request:
     branches:
       - master
