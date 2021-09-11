@@ -41,6 +41,8 @@ jobs:
   docker-build-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
       - name: Build
         uses: docker/build-push-action@v2
         with:
