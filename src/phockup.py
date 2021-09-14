@@ -8,8 +8,6 @@ import shutil
 import sys
 import time
 
-from tqdm import tqdm
-
 from src.date import Date
 from src.exif import Exif
 
@@ -73,7 +71,7 @@ class Phockup():
         # TypeError: unsupported format string passed to MagicMock.__format__
         # Revert to preferred syntax once MagicMock is updated
         # Preferred syntax
-        # logger.debug(f"Processed {files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {files_proccesed/run_time:.2f} files/second")
+        # logger.debug(f"Processed {self.files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {self.files_proccesed/run_time:.2f} files/second")
         logger.debug(
             "Processed %d files in %1.2f seconds. Average Throughput: %1.2f files/second" % (
             self.files_processed, run_time, self.files_processed / run_time))
@@ -115,19 +113,17 @@ access!")
         except the ignored ones.
         """
         # Get the number of files
-        if self.progress:
-            file_count = 0
-            for root, dirnames, files in os.walk(self.input_dir):
-                file_count += len(files)
-                if root.count(os.sep) >= self.stop_depth:
-                    del dirnames[:]
-
-        if self.progress:
-            pbar = tqdm(desc=f"Progressing: '{self.input_dir}' ", total=file_count, unit="file",
-                        position=0, leave=False)
+        # if self.progress:
+        #     file_count = 0
+        #     for root, dirnames, files in os.walk(self.input_dir):
+        #         file_count += len(files)
+        #         if root.count(os.sep) >= self.stop_depth:
+        #             del dirnames[:]
+        #     pbar = tqdm(desc=f"Progressing: '{self.input_dir}' ",
+        #                 total=file_count, unit="file",
+        #                 position=0, leave=False)
 
         # Walk the directory
-        file_count = 0
         for root, dirnames, files in os.walk(self.input_dir):
             files.sort()
             file_paths_to_process = []
@@ -139,7 +135,12 @@ access!")
             # With all the appropriate files in the directory added to the
             # list, process the directory concurrently using threads
             with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
-                executor.map(self.process_file, file_paths_to_process)
+                try:
+                    for _ in executor.map(self.process_file, file_paths_to_process):
+                        pass
+                except KeyboardInterrupt:
+                    handle_interrupt(executor)
+                    return
 
                 # # Increment the progress bar
                 # if self.progress:
@@ -153,8 +154,8 @@ access!")
 
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
-        if self.progress:
-            pbar.close()
+        # if self.progress:
+        #     pbar.close()
 
     def checksum(self, filename):
         """
@@ -352,3 +353,15 @@ but looking for '{self.file_type}'"
                     os.link(original, xmp_path)
                 else:
                     shutil.copy2(original, xmp_path)
+
+
+def handle_interrupt(executor):
+    # Explicitly purging the internal queues, as there's no graceful
+    # way to get at them via accessors.  Open to alternatives
+    t_count = len(executor._threads)
+    if t_count == 1:
+        logger.info(f"Received interupt. shutting down...")
+    else:
+        logger.info(f"Received interupt. Shutting down {t_count} workers...")
+    executor._threads.clear()
+    concurrent.futures.thread._threads_queues.clear()
