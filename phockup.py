@@ -261,12 +261,10 @@ def setup_logging(options):
     ch = logging.StreamHandler()
     ch.setFormatter(formatter)
     root.addHandler(ch)
-    if options.quiet:
-        logger.setLevel(logging.WARNING)
+    if not options.quiet ^ options.progress:
+        logger.setLevel(options.debug and logging.DEBUG or logging.INFO)
     else:
-        # Allow for the LOGLEVEL environment variable to control logging level
-        logger.setLevel(options.debug and logging.DEBUG
-                        or os.environ.get("LOGLEVEL", "INFO").upper())
+        logger.setLevel(logging.WARNING)
     if options.log:
         logfile = os.path.expanduser(options.log)
         fh = logging.FileHandler(logfile)
