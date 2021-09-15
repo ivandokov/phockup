@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-import pytest
+import logging
+import os
 import shutil
 import sys
-import os
-import logging
 from datetime import datetime
+
+import pytest
+
 from src.dependency import check_dependencies
 from src.exif import Exif
 from src.phockup import Phockup
-
 
 os.chdir(os.path.dirname(__file__))
 
@@ -34,9 +35,16 @@ def test_exception_if_missing_input_directory(mocker):
     mocker.patch('os.makedirs')
     mocker.patch('sys.exit')
 
-    with pytest.raises(RuntimeError, match="Input directory 'in' does not \
-exist or cannot be accessed"):
+    with pytest.raises(RuntimeError, match="Input directory 'in' does not exist"):
         Phockup('in', 'out')
+
+
+def test_exception_if_input_not_directory(mocker):
+    mocker.patch('os.makedirs')
+    mocker.patch('sys.exit')
+
+    with pytest.raises(RuntimeError, match="Input directory 'input/exif.jpg' is not a directory"):
+        Phockup('input/exif.jpg', 'out')
 
 
 def test_removing_trailing_slash_for_input_output(mocker):
@@ -82,6 +90,7 @@ def test_dry_run():
     assert not os.path.isdir(dir3)
     assert not os.path.isdir(dir4)
 
+
 def test_progress():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', progress=True)
@@ -94,6 +103,7 @@ def test_progress():
     assert not os.path.isdir(dir2)
     assert not os.path.isdir(dir3)
     assert not os.path.isdir(dir4)
+
 
 def test_get_file_type(mocker):
     mocker.patch.object(Phockup, 'check_directories')

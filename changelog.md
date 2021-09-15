@@ -1,4 +1,7 @@
 # Changelog
+##### `1.7.0`
+* Add `--progress` functionality [#118](https://github.com/ivandokov/phockup/pull/118)
+* Add pre-commit integration [#121](https://github.com/ivandokov/phockup/pull/121)
 ##### `1.6.5`
 * Add missing checkout step to the dockerhub deployment action
 ##### `1.6.4`
@@ -56,17 +59,17 @@
 * Merged [#78](https://github.com/ivandokov/phockup/issues/78)
 * Merged [#81](https://github.com/ivandokov/phockup/issues/81)
 ##### `1.5.9`
-* Fixed [#70](https://github.com/ivandokov/phockup/issues/70) related to Windows issues 
-##### `1.5.8` 
+* Fixed [#70](https://github.com/ivandokov/phockup/issues/70) related to Windows issues
+##### `1.5.8`
 * Add `--date-field` option to set date extraction fields  [#54](https://github.com/ivandokov/phockup/issues/54)
 * Handle regex with optional hour information  [#62](https://github.com/ivandokov/phockup/issues/62)
 * Fix regex support for incomplete time on filename  [#55](https://github.com/ivandokov/phockup/issues/55)
 * Fix to handle files with illegal characters [#53](https://github.com/ivandokov/phockup/issues/53)
-##### `1.5.7` 
+##### `1.5.7`
 * Resolved [#44](https://github.com/ivandokov/phockup/issues/44)
-##### `1.5.6` 
+##### `1.5.6`
 * Add `-o | --original-names` option to allow keeping the original filenames
-##### `1.5.5` 
+##### `1.5.5`
 * Add `-t` option to allow using file modification time as a last resort
 * Workaround EXIF DateTaken time of all-zeros
 ##### `1.5.4`
