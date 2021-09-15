@@ -79,28 +79,19 @@ class Phockup():
             self.print_action_report(run_time)
 
     def print_action_report(self, run_time):
-        # Legacy string formatting syntax
-        # pytest-mock v3.6.1  that was introduced recently.  When tests
-        # are run, it throww the following error:
-        # TypeError: unsupported format string passed to MagicMock.__format__
-        # Revert to preferred syntax once MagicMock is updated
-        # Preferred syntax
-        # logger.debug(f"Processed {self.files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {self.files_proccesed/run_time:.2f} files/second")
-        logger.debug(
-            "Processed %d files in %1.2f seconds. Average Throughput: %1.2f files/second" % (
-                self.files_processed, run_time, self.files_processed / run_time))
+        logger.info(f"Processed {self.files_processed} files in {run_time:.2f} seconds. Average Throughput: {self.files_processed/run_time:.2f} files/second")
         if self.duplicates_found:
-            logger.debug("Found %d duplicate files." % self.duplicates_found)
+            logger.info(f"Found {self.duplicates_found} duplicate files.")
         if self.files_copied:
             if self.dry_run:
-                logger.debug("Would have copied %d files." % self.files_copied)
+                logger.info(f"Would have copied {self.files_copied} files.")
             else:
-                logger.debug("Copied %d files." % self.files_copied)
+                logger.info(f"Copied {self.files_copied} files.")
         if self.files_moved:
             if self.dry_run:
-                logger.debug("Would have moved %d files." % self.files_moved)
+                logger.info(f"Would have moved {self.files_moved} files.")
             else:
-                logger.debug("Moved %d files." % self.files_moved)
+                logger.info(f"Moved {self.files_moved} files.")
 
     def check_directories(self):
         """
