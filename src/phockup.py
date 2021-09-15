@@ -8,6 +8,8 @@ import shutil
 import sys
 import time
 
+from tqdm import tqdm
+
 from src.date import Date
 from src.exif import Exif
 
@@ -58,7 +60,19 @@ class Phockup():
             logger.warning("Dry-run phockup (does a trial run with no permanent changes)...")
 
         self.check_directories()
-        self.walk_directory()
+        # Get the number of files
+        if self.progress:
+            file_count = self.get_file_count()
+            with tqdm(desc=f"Progressing: '{self.input_dir}' ",
+                      total=file_count,
+                      unit="file",
+                      position=0,
+                      leave=True,
+                      ascii=(sys.platform == 'win32')) as self.pbar:
+                self.walk_directory()
+        else:
+            self.pbar = None
+            self.walk_directory()
 
         run_time = time.time() - start_time
         if self.files_processed and run_time:
@@ -74,7 +88,7 @@ class Phockup():
         # logger.debug(f"Processed {self.files_proccesed} files in {run_time:.2f} seconds. Average Throughput: {self.files_proccesed/run_time:.2f} files/second")
         logger.debug(
             "Processed %d files in %1.2f seconds. Average Throughput: %1.2f files/second" % (
-            self.files_processed, run_time, self.files_processed / run_time))
+                self.files_processed, run_time, self.files_processed / run_time))
         if self.duplicates_found:
             logger.debug("Found %d duplicate files." % self.duplicates_found)
         if self.files_copied:
@@ -112,16 +126,6 @@ access!")
         Walk input directory recursively and call process_file for each file
         except the ignored ones.
         """
-        # Get the number of files
-        # if self.progress:
-        #     file_count = 0
-        #     for root, dirnames, files in os.walk(self.input_dir):
-        #         file_count += len(files)
-        #         if root.count(os.sep) >= self.stop_depth:
-        #             del dirnames[:]
-        #     pbar = tqdm(desc=f"Progressing: '{self.input_dir}' ",
-        #                 total=file_count, unit="file",
-        #                 position=0, leave=False)
 
         # Walk the directory
         for root, dirnames, files in os.walk(self.input_dir):
@@ -142,20 +146,16 @@ access!")
                     handle_interrupt(executor)
                     return
 
-                # # Increment the progress bar
-                # if self.progress:
-                #     pbar.update(1)
-                # # Process the file in the walk
-                # filepath = os.path.join(root, filename)
-                # if self.progress:
-                #     self.process_file(filepath, pbar)
-                # else:
-                #     self.process_file(filepath)
-
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
-        # if self.progress:
-        #     pbar.close()
+
+    def get_file_count(self):
+        file_count = 0
+        for root, dirnames, files in os.walk(self.input_dir):
+            file_count += len(files)
+            if root.count(os.sep) >= self.stop_depth:
+                del dirnames[:]
+        return file_count
 
     def checksum(self, filename):
         """
@@ -230,7 +230,7 @@ access!")
         except TypeError:
             return os.path.basename(original_filename)
 
-    def process_file(self, filename, pbar=None):
+    def process_file(self, filename):
         """
         Process the file using the selected strategy
         If file is .xmp skip it so process_xmp method can handle it
@@ -246,6 +246,8 @@ access!")
         target_file = target_file_path
 
         while True:
+            if self.pbar:
+                self.pbar.update(1)
             if self.file_type is not None \
                     and self.file_type != target_file_type:
                 progress = f"{progress} => skipped, file is '{target_file_type}' \
@@ -258,7 +260,7 @@ but looking for '{self.file_type}'"
                     progress = f'{progress} => skipped, duplicated file {target_file}'
                     self.duplicates_found += 1
                     if self.progress:
-                        pbar.write(progress)
+                        self.pbar.write(progress)
                     logger.info(progress)
                     break
             else:
@@ -270,7 +272,7 @@ but looking for '{self.file_type}'"
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
                         if self.progress:
-                            pbar.write(progress)
+                            self.pbar.write(progress)
                         logger.warning(progress)
                         break
                 elif self.link and not self.dry_run:
@@ -283,13 +285,13 @@ but looking for '{self.file_type}'"
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
                         if self.progress:
-                            pbar.write(progress)
+                            self.pbar.write(progress)
                         logger.warning(progress)
                         break
 
                 progress = f'{progress} => {target_file}'
                 if self.progress:
-                    pbar.write(progress)
+                    self.pbar.write(progress)
                 logger.info(progress)
 
                 self.process_xmp(filename, target_file_name, suffix, output)
@@ -360,7 +362,7 @@ def handle_interrupt(executor):
     # way to get at them via accessors.  Open to alternatives
     t_count = len(executor._threads)
     if t_count == 1:
-        logger.info(f"Received interupt. shutting down...")
+        logger.info("Received interupt. Shutting down...")
     else:
         logger.info(f"Received interupt. Shutting down {t_count} workers...")
     executor._threads.clear()
