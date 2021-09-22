@@ -123,7 +123,6 @@ class Phockup():
             files.sort()
             file_paths_to_process = []
             for filename in files:
-                self.files_processed += 1
                 if filename in ignored_files:
                     continue
                 file_paths_to_process.append(os.path.join(root, filename))
@@ -134,7 +133,12 @@ class Phockup():
                     for _ in executor.map(self.process_file, file_paths_to_process):
                         pass
                 except KeyboardInterrupt:
-                    handle_interrupt(executor)
+                    executor.shutdown(wait=True)
+                    if self.max_concurrency == 1:
+                        logger.warning("Received interupt. Shutting down...")
+                    else:
+                        logger.warning(
+                            f"Received interupt. Shutting down {self.max_concurrency} workers...")
                     return
 
             if root.count(os.sep) >= self.stop_depth:
@@ -237,8 +241,6 @@ class Phockup():
         target_file = target_file_path
 
         while True:
-            if self.pbar:
-                self.pbar.update(1)
             if self.file_type is not None \
                     and self.file_type != target_file_type:
                 progress = f"{progress} => skipped, file is '{target_file_type}' \
@@ -280,9 +282,11 @@ but looking for '{self.file_type}'"
                         logger.warning(progress)
                         break
 
+                self.files_processed += 1
                 progress = f'{progress} => {target_file}'
                 if self.progress:
                     self.pbar.write(progress)
+                    self.pbar.update(1)
                 logger.info(progress)
 
                 self.process_xmp(filename, target_file_name, suffix, output)
@@ -347,14 +351,3 @@ but looking for '{self.file_type}'"
                 else:
                     shutil.copy2(original, xmp_path)
 
-
-def handle_interrupt(executor):
-    # Explicitly purging the internal queues, as there's no graceful
-    # way to get at them via accessors.  Open to alternatives
-    t_count = len(executor._threads)
-    if t_count == 1:
-        logger.info("Received interupt. Shutting down...")
-    else:
-        logger.info(f"Received interupt. Shutting down {t_count} workers...")
-    executor._threads.clear()
-    concurrent.futures.thread._threads_queues.clear()
