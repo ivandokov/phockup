@@ -130,8 +130,11 @@ class Phockup():
                 if not self.process_files(file_paths_to_process):
                     return
             else:
-                for file_path in file_paths_to_process:
-                    self.process_file(file_path)
+                try:
+                    for file_path in file_paths_to_process:
+                        self.process_file(file_path)
+                except KeyboardInterrupt:
+                    logger.warning("Received interupt. Shutting down...")
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
 
@@ -226,13 +229,8 @@ class Phockup():
                                       file_paths_to_process):
                     pass
             except KeyboardInterrupt:
-                logger.warning("")
-                if self.max_concurrency == 1:
-                    logger.warning("Received interupt. Shutting down...")
-                else:
-                    logger.warning(
+                logger.warning(
                         f"Received interupt. Shutting down {self.max_concurrency} workers...")
-                logger.warning("")
                 executor.shutdown(wait=True)
                 return False
         return True
@@ -294,11 +292,9 @@ but looking for '{self.file_type}'"
                         logger.warning(progress)
                         break
 
-                self.files_processed += 1
                 progress = f'{progress} => {target_file}'
                 if self.progress:
                     self.pbar.write(progress)
-                    self.pbar.update(1)
                 logger.info(progress)
 
                 self.process_xmp(filename, target_file_name, suffix, output)
@@ -307,6 +303,10 @@ but looking for '{self.file_type}'"
             suffix += 1
             target_split = os.path.splitext(target_file_path)
             target_file = f'{target_split[0]}-{suffix}{target_split[1]}'
+
+        self.files_processed += 1
+        if self.progress:
+            self.pbar.update(1)
 
     def get_file_name_and_path(self, filename):
         """
@@ -362,4 +362,3 @@ but looking for '{self.file_type}'"
                     os.link(original, xmp_path)
                 else:
                     shutil.copy2(original, xmp_path)
-
