@@ -126,21 +126,12 @@ class Phockup():
                 if filename in ignored_files:
                     continue
                 file_paths_to_process.append(os.path.join(root, filename))
-            # With all the appropriate files in the directory added to the
-            # list, process the directory concurrently using threads
-            with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
-                try:
-                    for _ in executor.map(self.process_file, file_paths_to_process):
-                        pass
-                except KeyboardInterrupt:
-                    executor.shutdown(wait=True)
-                    if self.max_concurrency == 1:
-                        logger.warning("Received interupt. Shutting down...")
-                    else:
-                        logger.warning(
-                            f"Received interupt. Shutting down {self.max_concurrency} workers...")
+            if self.max_concurrency > 1:
+                if not self.process_files(file_paths_to_process):
                     return
-
+            else:
+                for file_path in file_paths_to_process:
+                    self.process_file(file_path)
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
 
@@ -224,6 +215,27 @@ class Phockup():
         # TODO: Double check if this is correct!
         except TypeError:
             return os.path.basename(original_filename)
+
+    def process_files(self, file_paths_to_process):
+        # With all the appropriate files in the directory added to the
+        # list, process the directory concurrently using threads
+        with concurrent.futures.ThreadPoolExecutor(
+                max_workers=self.max_concurrency) as executor:
+            try:
+                for _ in executor.map(self.process_file,
+                                      file_paths_to_process):
+                    pass
+            except KeyboardInterrupt:
+                logger.warning("")
+                if self.max_concurrency == 1:
+                    logger.warning("Received interupt. Shutting down...")
+                else:
+                    logger.warning(
+                        f"Received interupt. Shutting down {self.max_concurrency} workers...")
+                logger.warning("")
+                executor.shutdown(wait=True)
+                return False
+        return True
 
     def process_file(self, filename):
         """

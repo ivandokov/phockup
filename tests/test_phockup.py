@@ -374,10 +374,11 @@ def test_maxdepth_one():
     shutil.rmtree('output', ignore_errors=True)
 
 
-def test_maxconcurrency_zero():
+def test_maxconcurrency_none():
     shutil.rmtree('output', ignore_errors=True)
-    with pytest.raises(ValueError, match="max_workers must be greater than 0"):
-        Phockup('input', 'output', max_concurrency=0)
+    Phockup('input', 'output', max_concurrency=0)
+    validate_copy_operation()
+    shutil.rmtree('output', ignore_errors=True)
 
 
 def test_maxconcurrency_five():
