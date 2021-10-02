@@ -3,11 +3,12 @@ import re
 from datetime import datetime
 
 
-class Date():
+class Date:
     def __init__(self, filename=None):
         self.filename = filename
 
-    def parse(self, date):
+    @staticmethod
+    def parse(date: str) -> str:
         date = date.replace('YYYY', '%Y')  # 2017 (year)
         date = date.replace('YY', '%y')  # 17 (year)
         date = date.replace('m', '%b')  # Dec (month)
@@ -19,18 +20,19 @@ class Date():
         date = date.replace('/', os.path.sep)  # path separator
         return date
 
-    def strptime(self, date, date_format):
+    @staticmethod
+    def strptime(date, date_format):
         return datetime.strptime(date, date_format)
 
-    def build(self, date_object):
+    @staticmethod
+    def build(date_object):
         return datetime(
             date_object['year'], date_object['month'], date_object['day'],
             date_object['hour'] if date_object.get('hour') else 0,
             date_object['minute'] if date_object.get('minute') else 0,
             date_object['second'] if date_object.get('second') else 0)
 
-    def from_exif(self, exif, timestamp=None, user_regex=None,
-                  date_field=None):
+    def from_exif(self, exif, timestamp=None, user_regex=None, date_field=None):
         if date_field:
             keys = date_field.split()
         else:
@@ -61,7 +63,8 @@ class Date():
             else:
                 return parsed_date
 
-    def from_datestring(self, datestr):
+    @staticmethod
+    def from_datestring(datestr) -> dict:
         datestr = datestr.split('.')
         date = datestr[0]
         if len(datestr) > 1:
@@ -72,10 +75,10 @@ class Date():
         if re.search(search, date) is not None:
             date = re.sub(search, r'\1', date)
         try:
-            parsed_date_time = self.strptime(date, '%Y:%m:%d %H:%M:%S')
+            parsed_date_time = Date.strptime(date, '%Y:%m:%d %H:%M:%S')
         except ValueError:
             try:
-                parsed_date_time = self.strptime(date, '%Y-%m-%d %H:%M:%S')
+                parsed_date_time = Date.strptime(date, '%Y-%m-%d %H:%M:%S')
             except ValueError:
                 parsed_date_time = None
         if re.search(search, subseconds) is not None:
@@ -111,7 +114,7 @@ class Date():
         if timestamp:
             return self.from_timestamp()
 
-    def from_timestamp(self):
+    def from_timestamp(self) -> dict:
         date = datetime.fromtimestamp(os.path.getmtime(self.filename))
         return {
             'date': date,

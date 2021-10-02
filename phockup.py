@@ -42,7 +42,7 @@ def parse_args(args=sys.argv[1:]):
         '-d',
         '--date',
         action='store',
-        type=Date().parse,
+        type=Date.parse,
         help="""\
 Specify date format for OUTPUTDIR directories.
 
