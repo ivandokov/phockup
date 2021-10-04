@@ -134,7 +134,8 @@ class Phockup():
                     for file_path in file_paths_to_process:
                         self.process_file(file_path)
                 except KeyboardInterrupt:
-                    logger.warning("Received interupt. Shutting down...")
+                    logger.warning("Received interrupt. Shutting down...")
+                    return
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
 
@@ -230,7 +231,7 @@ class Phockup():
                     pass
             except KeyboardInterrupt:
                 logger.warning(
-                        f"Received interupt. Shutting down {self.max_concurrency} workers...")
+                        f"Received interrupt. Shutting down {self.max_concurrency} workers...")
                 executor.shutdown(wait=True)
                 return False
         return True
