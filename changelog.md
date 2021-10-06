@@ -1,4 +1,8 @@
 # Changelog
+##### `1.7.1`
+* Fix dependencies due to tqdm [#133](https://github.com/ivandokov/phockup/pull/133)
+* Improve check_directories output on error [#132](https://github.com/ivandokov/phockup/pull/132)
+* Other improvements [#135](https://github.com/ivandokov/phockup/pull/135), [#128](https://github.com/ivandokov/phockup/pull/128)
 ##### `1.7.0`
 * Add `--progress` functionality [#118](https://github.com/ivandokov/phockup/pull/118)
 * Add pre-commit integration [#121](https://github.com/ivandokov/phockup/pull/121)
