@@ -31,6 +31,8 @@ sudo apt-get install python3 libimage-exiftool-perl -y
 curl -L https://github.com/ivandokov/phockup/archive/latest.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
 sudo mv phockup-* /opt/phockup
+cd /opt/phockup
+pip3 install -r requirements.txt
 sudo ln -s /opt/phockup/phockup.py /usr/local/bin/phockup
 ```
 
