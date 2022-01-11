@@ -1,4 +1,6 @@
 # Changelog
+##### `1.8.0`
+* Added support for threads (`--max-concurrency`) to speed up the process [#123](https://github.com/ivandokov/phockup/pull/123)
 ##### `1.7.1`
 * Fix dependencies due to tqdm [#133](https://github.com/ivandokov/phockup/pull/133)
 * Improve check_directories output on error [#132](https://github.com/ivandokov/phockup/pull/132)
