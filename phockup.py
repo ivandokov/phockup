@@ -124,6 +124,18 @@ So it will not move any files, just shows which changes would be done.
     )
 
     parser.add_argument(
+        '-c',
+        '--max-concurrency',
+        type=int,
+        default=1,
+        choices=range(1,255),
+        metavar='1-255',
+        help="Sets the level of concurrency for processing files in a "
+             "directory.  Defaults to 1.  Higher values can improve "
+             "throughput of file operations"
+    )
+
+    parser.add_argument(
         '--maxdepth',
         type=int,
         default=-1,
@@ -178,7 +190,7 @@ To get all date fields available for a file, do:
         action='store_true',
         default=False,
         help="""\
-Enable debugging.
+Enable debugging.  Alternately, set the LOGLEVEL environment variable to DEBUG
 """,
     )
 
@@ -258,6 +270,8 @@ def setup_logging(options):
         fh = logging.FileHandler(logfile)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
+    logger.debug("Debug logging output enabled.")
+    logger.debug("Running Phockup version %s", __version__)
 
 
 def main(options):
@@ -278,6 +292,7 @@ def main(options):
         progress=options.progress,
         max_depth=options.maxdepth,
         file_type=options.file_type,
+        max_concurrency=options.max_concurrency
     )
 
 

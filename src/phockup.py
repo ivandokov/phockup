@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+import concurrent.futures
 import hashlib
 import logging
 import os
 import re
 import shutil
 import sys
+import time
 
 from tqdm import tqdm
 
@@ -19,6 +21,12 @@ ignored_files = ('.DS_Store', 'Thumbs.db')
 
 class Phockup():
     def __init__(self, input_dir, output_dir, **args):
+        start_time = time.time()
+        self.files_processed = 0
+        self.duplicates_found = 0
+        self.files_moved = 0
+        self.files_copied = 0
+
         input_dir = os.path.expanduser(input_dir)
         output_dir = os.path.expanduser(output_dir)
 
@@ -39,6 +47,11 @@ class Phockup():
         self.dry_run = args.get('dry_run', False)
         self.progress = args.get('progress', False)
         self.max_depth = args.get('max_depth', -1)
+        # default to concurrency of one to retain existing behavior
+        self.max_concurrency = args.get("max_concurrency", 1)
+        if self.max_concurrency > 1:
+            logger.info(f"Using {self.max_concurrency} workers to process files.")
+
         self.stop_depth = self.input_dir.count(os.sep) + self.max_depth \
             if self.max_depth > -1 else sys.maxsize
         self.file_type = args.get('file_type', None)
@@ -47,7 +60,38 @@ class Phockup():
             logger.warning("Dry-run phockup (does a trial run with no permanent changes)...")
 
         self.check_directories()
-        self.walk_directory()
+        # Get the number of files
+        if self.progress:
+            file_count = self.get_file_count()
+            with tqdm(desc=f"Progressing: '{self.input_dir}' ",
+                      total=file_count,
+                      unit="file",
+                      position=0,
+                      leave=True,
+                      ascii=(sys.platform == 'win32')) as self.pbar:
+                self.walk_directory()
+        else:
+            self.pbar = None
+            self.walk_directory()
+
+        run_time = time.time() - start_time
+        if self.files_processed and run_time:
+            self.print_action_report(run_time)
+
+    def print_action_report(self, run_time):
+        logger.info(f"Processed {self.files_processed} files in {run_time:.2f} seconds. Average Throughput: {self.files_processed/run_time:.2f} files/second")
+        if self.duplicates_found:
+            logger.info(f"Found {self.duplicates_found} duplicate files.")
+        if self.files_copied:
+            if self.dry_run:
+                logger.info(f"Would have copied {self.files_copied} files.")
+            else:
+                logger.info(f"Copied {self.files_copied} files.")
+        if self.files_moved:
+            if self.dry_run:
+                logger.info(f"Would have moved {self.files_moved} files.")
+            else:
+                logger.info(f"Moved {self.files_moved} files.")
 
     def check_directories(self):
         """
@@ -73,39 +117,35 @@ class Phockup():
         Walk input directory recursively and call process_file for each file
         except the ignored ones.
         """
-        # Get the number of files
-        if self.progress:
-            file_count = 0
-            for root, dirnames, files in os.walk(self.input_dir):
-                file_count += len(files)
-                if root.count(os.sep) >= self.stop_depth:
-                    del dirnames[:]
-
-        if self.progress:
-            pbar = tqdm(desc=f"Progressing: '{self.input_dir}' ", total=file_count, unit="file",
-                        position=0, leave=False)
 
         # Walk the directory
         for root, dirnames, files in os.walk(self.input_dir):
             files.sort()
+            file_paths_to_process = []
             for filename in files:
                 if filename in ignored_files:
                     continue
-
-                # Increment the progress bar
-                if self.progress:
-                    pbar.update(1)
-                # Process the file in the walk
-                filepath = os.path.join(root, filename)
-                if self.progress:
-                    self.process_file(filepath, pbar)
-                else:
-                    self.process_file(filepath)
-
+                file_paths_to_process.append(os.path.join(root, filename))
+            if self.max_concurrency > 1:
+                if not self.process_files(file_paths_to_process):
+                    return
+            else:
+                try:
+                    for file_path in file_paths_to_process:
+                        self.process_file(file_path)
+                except KeyboardInterrupt:
+                    logger.warning("Received interrupt. Shutting down...")
+                    return
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
-        if self.progress:
-            pbar.close()
+
+    def get_file_count(self):
+        file_count = 0
+        for root, dirnames, files in os.walk(self.input_dir):
+            file_count += len(files)
+            if root.count(os.sep) >= self.stop_depth:
+                del dirnames[:]
+        return file_count
 
     def checksum(self, filename):
         """
@@ -180,7 +220,23 @@ class Phockup():
         except TypeError:
             return os.path.basename(original_filename)
 
-    def process_file(self, filename, pbar=None):
+    def process_files(self, file_paths_to_process):
+        # With all the appropriate files in the directory added to the
+        # list, process the directory concurrently using threads
+        with concurrent.futures.ThreadPoolExecutor(
+                max_workers=self.max_concurrency) as executor:
+            try:
+                for _ in executor.map(self.process_file,
+                                      file_paths_to_process):
+                    pass
+            except KeyboardInterrupt:
+                logger.warning(
+                        f"Received interrupt. Shutting down {self.max_concurrency} workers...")
+                executor.shutdown(wait=True)
+                return False
+        return True
+
+    def process_file(self, filename):
         """
         Process the file using the selected strategy
         If file is .xmp skip it so process_xmp method can handle it
@@ -206,37 +262,40 @@ but looking for '{self.file_type}'"
             if os.path.isfile(target_file):
                 if self.checksum(filename) == self.checksum(target_file):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
+                    self.duplicates_found += 1
                     if self.progress:
-                        pbar.write(progress)
+                        self.pbar.write(progress)
                     logger.info(progress)
                     break
             else:
                 if self.move:
                     try:
+                        self.files_moved += 1
                         if not self.dry_run:
                             shutil.move(filename, target_file)
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
                         if self.progress:
-                            pbar.write(progress)
+                            self.pbar.write(progress)
                         logger.warning(progress)
                         break
                 elif self.link and not self.dry_run:
                     os.link(filename, target_file)
                 else:
                     try:
+                        self.files_copied += 1
                         if not self.dry_run:
                             shutil.copy2(filename, target_file)
                     except FileNotFoundError:
                         progress = f'{progress} => skipped, no such file or directory'
                         if self.progress:
-                            pbar.write(progress)
+                            self.pbar.write(progress)
                         logger.warning(progress)
                         break
 
                 progress = f'{progress} => {target_file}'
                 if self.progress:
-                    pbar.write(progress)
+                    self.pbar.write(progress)
                 logger.info(progress)
 
                 self.process_xmp(filename, target_file_name, suffix, output)
@@ -245,6 +304,10 @@ but looking for '{self.file_type}'"
             suffix += 1
             target_split = os.path.splitext(target_file_path)
             target_file = f'{target_split[0]}-{suffix}{target_split[1]}'
+
+        self.files_processed += 1
+        if self.progress:
+            self.pbar.update(1)
 
     def get_file_name_and_path(self, filename):
         """
