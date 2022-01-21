@@ -20,6 +20,9 @@ ignored_files = ('.DS_Store', 'Thumbs.db')
 
 
 class Phockup():
+    DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
+    DEFAULT_NO_DATE_DIRECTORY = "unknown"
+
     def __init__(self, input_dir, output_dir, **args):
         start_time = time.time()
         self.files_processed = 0
@@ -37,7 +40,8 @@ class Phockup():
 
         self.input_dir = input_dir
         self.output_dir = output_dir
-        self.dir_format = args.get('dir_format') or os.path.sep.join(['%Y', '%m', '%d'])
+        self.no_date_dir = args.get('no_date_dir') or Phockup.DEFAULT_NO_DATE_DIRECTORY
+        self.dir_format = args.get('dir_format') or os.path.sep.join(Phockup.DEFAULT_DIR_FORMAT)
         self.move = args.get('move', False)
         self.link = args.get('link', False)
         self.original_filenames = args.get('original_filenames', False)
@@ -184,7 +188,7 @@ class Phockup():
         try:
             path = [self.output_dir, date['date'].date().strftime(self.dir_format)]
         except (TypeError, ValueError):
-            path = [self.output_dir, 'unknown']
+            path = [self.output_dir, self.no_date_dir]
 
         fullpath = os.path.sep.join(path)
 

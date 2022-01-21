@@ -20,7 +20,6 @@ directory without changing the files content. It will only rename the files and 
 them in the proper directory for year, month and day.
 """
 
-DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
 
 logger = logging.getLogger('phockup')
 
@@ -249,6 +248,17 @@ videos only, use `--file-type=[image|video]`.
 """,
     )
 
+    parser.add_argument(
+        '--no-date-dir',
+        type=str,
+        default=Phockup.DEFAULT_NO_DATE_DIRECTORY,
+        help="""\
+Files without EXIF date information are placed in a directory 
+named 'unknown' by default.  This option overrides that
+folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
+""",
+    )
+
     return parser.parse_args(args)
 
 
@@ -292,7 +302,8 @@ def main(options):
         progress=options.progress,
         max_depth=options.maxdepth,
         file_type=options.file_type,
-        max_concurrency=options.max_concurrency
+        max_concurrency=options.max_concurrency,
+        no_date_dir=options.no_date_dir
     )
 
 
