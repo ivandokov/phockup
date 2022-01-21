@@ -127,7 +127,7 @@ So it will not move any files, just shows which changes would be done.
         '--max-concurrency',
         type=int,
         default=1,
-        choices=range(1,255),
+        choices=range(1, 255),
         metavar='1-255',
         help="Sets the level of concurrency for processing files in a "
              "directory.  Defaults to 1.  Higher values can improve "
