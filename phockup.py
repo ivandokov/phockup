@@ -253,7 +253,7 @@ videos only, use `--file-type=[image|video]`.
         type=str,
         default=Phockup.DEFAULT_NO_DATE_DIRECTORY,
         help="""\
-Files without EXIF date information are placed in a directory 
+Files without EXIF date information are placed in a directory
 named 'unknown' by default.  This option overrides that
 folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
 """,
