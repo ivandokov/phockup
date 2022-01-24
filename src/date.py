@@ -16,6 +16,8 @@ class Date:
         date = date.replace('M', '%B')  # December (month)
         date = date.replace('DDD', '%j')  # 123 (day or year)
         date = date.replace('DD', '%d')  # 25 (day)
+        date = date.replace('U', '%U')  # Week number (Sunday as the first day)
+        date = date.replace('W', '%W')  # Week number (Monday as the first day)
         date = date.replace('\\', os.path.sep)  # path separator
         date = date.replace('/', os.path.sep)  # path separator
         return date
