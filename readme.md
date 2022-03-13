@@ -189,7 +189,7 @@ pre-commit install
 
 To manually execute the hooks, run:
 
-``bash
+```bash
 pre-commit run -a
 ```
 
