@@ -56,9 +56,9 @@ brew install phockup
 
 ### Docker
 
-The docker container supports two operation modes. The first allows for a single execution of phocker. In this mdoe, the container will be stopped after the execution is complete. The second mode allows for execution in intervals. In this mode, the container will continue running until the user decides to stop it.
+The docker container supports two operation modes. The first allows for a single execution of . In this mdoe, the container will be stopped after the execution is complete. The second mode allows for execution in intervals. In this mode, the container will continue running until the user decides to stop it.
 
-To execute phocker only once, use the following command:
+To execute phockup only once, use the following command:
 
 ```
 docker run -v ~/Pictures:/mnt ivandokov/phockup:latest /mnt/Input /mnt/Output [PHOCKUP ARGUMENTS]
@@ -66,13 +66,13 @@ docker run -v ~/Pictures:/mnt ivandokov/phockup:latest /mnt/Input /mnt/Output [P
 
 The `-v ~/Pictures:/mnt` part of the command mounts your `~/Pictures` directory to `/mnt` inside the container. You can pass any **absolute** path to be mounted to the container and later on be used as paths for the `phockup` command. The example above provides your `~/Pictures/Input` as `INPUTDIR` and `~/Pictures/Output` as `OUTPUDIR`. You can pass additional arguments afterwards.
 
-To keep the container running and execute phocker in intervals, use the following command:
+To keep the container running and execute phockup in intervals, use the following command:
 
 ```
 docker run -v ~/Pictures/input:/mnt/input -v ~/Pictures/output:/mnt/output -e "CRON=* * * * *" -e "OPTIONS=[PHOCKUP ARGUMENTS]" ivandokov/phockup:latest
 ```
 
-This will execute phocker once every minute (as defined by the [value of the CRON environment variable](https://crontab.guru/#*_*_*_*_*)). However, the container will not spawn a new phocker process if another phocker process is still running. You can define other intervals for execution using the usual cron syntax. If you want to pass further arguments to phockup, use the OPTIONS environment variable. In this execution mode, phockup will always use the directories mounted to `/mnt/input` and `/mnt/output` and ignore arguments passed in the style of the single execution mode.
+This will execute phockup once every minute (as defined by the [value of the CRON environment variable](https://crontab.guru/#*_*_*_*_*)). However, the container will not spawn a new phockup process if another phockup process is still running. You can define other intervals for execution using the usual cron syntax. If you want to pass further arguments to phockup, use the OPTIONS environment variable. In this execution mode, phockup will always use the directories mounted to `/mnt/input` and `/mnt/output` and ignore arguments passed in the style of the single execution mode.
 
 
 ## Usage
