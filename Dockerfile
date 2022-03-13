@@ -3,7 +3,7 @@ FROM python:3.9-alpine
 VOLUME /mnt/input
 VOLUME /mnt/output
 
-ENV CRON "* * * * *"
+ENV CRON ""
 ENV OPTIONS ""
 
 COPY . /opt/phockup
