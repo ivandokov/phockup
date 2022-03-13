@@ -4,6 +4,26 @@ export LANGUAGE=C
 export LC_ALL=C
 export LANG=C
 
-export PERL5LIB="${PERL5LIB}:${SNAP}/usr/local/lib/x86_64-linux-gnu/perl/5.22.1:${SNAP}/usr/local/share/perl/5.22.1:${SNAP}/usr/lib/x86_64-linux-gnu/perl5/5.22:${SNAP}/usr/share/perl5:${SNAP}/usr/lib/x86_64-linux-gnu/perl/5.22:${SNAP}/usr/share/perl/5.22:${SNAP}/usr/local/lib/site_perl:${SNAP}/usr/lib/x86_64-linux-gnu/perl-base"
+# figure out the snap architecture lib name
+case $SNAP_ARCH in
+    amd64)
+        ARCH_LIB_NAME="x86_64-linux-gnu"
+        ;;
+    arm64)
+        ARCH_LIB_NAME="aarch64-linux-gnu"
+        ;;
+    *)
+        # unsupported or unknown architecture
+        exit 1
+        ;;
+esac
+
+PERL_VERSION=$(perl -version | grep -Po '\(v\K([^\)]*)')
+
+PERL5LIB="$PERL5LIB:$SNAP/usr/lib/$ARCH_LIB_NAME/perl/$PERL_VERSION"
+PERL5LIB="$PERL5LIB:$SNAP/usr/share/perl/$PERL_VERSION"
+PERL5LIB="$PERL5LIB:$SNAP/usr/share/perl5"
+
+export PERL5LIB
 
 exec "$SNAP/usr/bin/python3" "$SNAP/phockup.py" "$@"
