@@ -20,8 +20,7 @@ parts:
     source: .
     override-pull: |
       snapcraftctl pull
-      VERSION=`cat phockup.py | grep '__version__ = ' | sed "s/.*'\(.*\)'/\1/"`
-      snapcraftctl set-version $VERSION
+      snapcraftctl set-version `cat phockup.py | grep '__version__ = ' | sed "s/.*'\(.*\)'/\1/"`
 
   files:
     plugin: dump
@@ -29,4 +28,5 @@ parts:
     stage-packages:
       - locales-all
       - python3
+      - python3-tqdm
       - libimage-exiftool-perl
