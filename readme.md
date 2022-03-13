@@ -92,12 +92,16 @@ Supported formats:
     m    - Jul, Aug, Sept ...
     DD   - 27, 28, 29 ... (day of month)
     DDD  - 123, 158, 365 ... (day of year)
+    U    - 00, 01, 53 ... (week of the year, Sunday first day of week)
+    W    - 00, 01, 53 ... (week of the year, Monday first day of week)
 
 Example:
     YYYY/MM/DD -> 2011/07/17
     YYYY/M/DD  -> 2011/July/17
     YYYY/m/DD  -> 2011/Jul/17
     YY/m-DD    -> 11/Jul-17
+    YYYY/U     -> 2011/30
+    YYYY/W     -> 2011/28
 ```
 
 ### Missing date information in EXIF
