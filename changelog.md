@@ -1,4 +1,9 @@
 # Changelog
+##### `1.9.0`
+* Rename `unknown` folder [#141](https://github.com/ivandokov/phockup/pull/141)
+* Week date format [#142](https://github.com/ivandokov/phockup/pull/142)
+* [Update snap to core20](https://github.com/ivandokov/phockup/commit/69783c84fe07b94e9b2c62117cf3c0ae5ca2a29e)
+* [Fixed missing dep for snap](https://github.com/ivandokov/phockup/commit/b865b56f31c6fde1eadf71540bcf66ceb7744dd3)
 ##### `1.8.0`
 * Added support for threads (`--max-concurrency`) to speed up the process [#123](https://github.com/ivandokov/phockup/pull/123)
 ##### `1.7.1`
