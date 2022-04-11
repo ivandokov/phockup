@@ -113,11 +113,11 @@ class Phockup():
         Generate file name based on exif data unless it is missing or
         original filenames are required. Then use original file name
         """
-        local_path_filename, local_file_extension = os.path.splitext(original_filename)
-        local_filename = os.path.basename(local_path_filename)
+        path_filename, file_extension = os.path.splitext(original_filename)
+        filename = os.path.basename(path_filename)
 
         if self.original_filenames:
-            return (self.prefix + local_filename + self.suffix + local_file_extension)
+            return (self.prefix + filename + self.suffix + file_extension)
 
         try:
             filename = [
@@ -133,7 +133,7 @@ class Phockup():
             if date['subseconds']:
                 filename.append(date['subseconds'])
 
-            return self.prefix + ''.join(filename) + self.suffix + local_file_extension
+            return self.prefix + ''.join(filename) + self.suffix + file_extension
         except:
             return os.path.basename(original_filename)
 
