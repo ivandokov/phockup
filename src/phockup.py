@@ -264,7 +264,7 @@ but looking for '{self.file_type}'"
                 break
 
             if os.path.isfile(target_file):
-                if self.checksum(filename) == self.checksum(target_file):
+                if filename != target_file and self.checksum(filename) == self.checksum(target_file):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
                     self.duplicates_found += 1
                     if self.progress:
