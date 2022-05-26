@@ -13,6 +13,8 @@ from tqdm import tqdm
 from src.date import Date
 from src.exif import Exif
 
+UNKNOWN = 'unknown'
+
 logger = logging.getLogger('phockup')
 
 
@@ -27,6 +29,7 @@ class Phockup():
         start_time = time.time()
         self.files_processed = 0
         self.duplicates_found = 0
+        self.unknown_found = 0
         self.files_moved = 0
         self.files_copied = 0
 
@@ -48,6 +51,7 @@ class Phockup():
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
+        self.skip_unknown = args.get("skip_unknown", False)
         self.dry_run = args.get('dry_run', False)
         self.progress = args.get('progress', False)
         self.max_depth = args.get('max_depth', -1)
@@ -84,6 +88,8 @@ class Phockup():
 
     def print_action_report(self, run_time):
         logger.info(f"Processed {self.files_processed} files in {run_time:.2f} seconds. Average Throughput: {self.files_processed/run_time:.2f} files/second")
+        if self.unknown_found:
+            logger.info(f"Found {self.unknown_found} files without EXIF date data.")
         if self.duplicates_found:
             logger.info(f"Found {self.duplicates_found} duplicate files.")
         if self.files_copied:
@@ -251,7 +257,6 @@ class Phockup():
         progress = f'{filename}'
 
         output, target_file_name, target_file_path, target_file_type = self.get_file_name_and_path(filename)
-
         suffix = 1
         target_file = target_file_path
 
@@ -260,6 +265,15 @@ class Phockup():
                     and self.file_type != target_file_type:
                 progress = f"{progress} => skipped, file is '{target_file_type}' \
 but looking for '{self.file_type}'"
+                logger.info(progress)
+                break
+
+            if self.skip_unknown and output.endswith(UNKNOWN):
+                # Skip files that didn't generate a path from EXIF data
+                progress = f"{progress} => skipped, unknown date EXIF information for '{target_file_name}'"
+                self.unknown_found += 1
+                if self.progress:
+                    self.pbar.write(progress)
                 logger.info(progress)
                 break
 
@@ -330,12 +344,11 @@ but looking for '{self.file_type}'"
             target_file_name = self.get_file_name(filename, date)
             if not self.original_filenames:
                 target_file_name = target_file_name.lower()
-            target_file_path = os.path.sep.join([output, target_file_name])
         else:
-            output = self.get_output_dir(False)
+            output = self.get_output_dir([])
             target_file_name = os.path.basename(filename)
-            target_file_path = os.path.sep.join([output, target_file_name])
 
+        target_file_path = os.path.sep.join([output, target_file_name])
         return output, target_file_name, target_file_path, target_file_type
 
     def process_xmp(self, original_filename, file_name, suffix, output):
