@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import concurrent.futures
-import hashlib
+import filecmp
 import logging
 import os
 import re
@@ -151,18 +151,6 @@ class Phockup():
                 del dirnames[:]
         return file_count
 
-    def checksum(self, filename):
-        """
-        Calculate checksum for a file.
-        Used to match if duplicated file name is actually a duplicated file.
-        """
-        block_size = 65536
-        sha256 = hashlib.sha256()
-        with open(filename, 'rb') as f:
-            for block in iter(lambda: f.read(block_size), b''):
-                sha256.update(block)
-        return sha256.hexdigest()
-
     def get_file_type(self, mimetype):
         """
         Check if given file_type is image or video
@@ -264,7 +252,7 @@ but looking for '{self.file_type}'"
                 break
 
             if os.path.isfile(target_file):
-                if self.checksum(filename) == self.checksum(target_file):
+                if filecmp.cmp(filename, target_file, shallow=False):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
                     self.duplicates_found += 1
                     if self.progress:
