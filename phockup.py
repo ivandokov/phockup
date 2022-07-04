@@ -20,6 +20,7 @@ directory without changing the files content. It will only rename the files and 
 them in the proper directory for year, month and day.
 """
 
+DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
 
 logger = logging.getLogger('phockup')
 
@@ -263,6 +264,16 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
 """,
     )
 
+    parser.add_argument(
+        '--skip-unknown',
+        action='store_true',
+        default=False,
+        help="""\
+    Ignore files that don't contain valid EXIF data for the criteria specified.
+    This is useful if you intend to make multiple passes over an input directory
+    with varying and specific EXIF fields that are note checked by default.
+    """, )
+
     return parser.parse_args(args)
 
 
@@ -307,7 +318,8 @@ def main(options):
         max_depth=options.maxdepth,
         file_type=options.file_type,
         max_concurrency=options.max_concurrency,
-        no_date_dir=options.no_date_dir
+        no_date_dir=options.no_date_dir,
+        skip_unknown=options.skip_unknown
     )
 
 

@@ -44,7 +44,8 @@ class Date:
         datestr = None
 
         for key in keys:
-            if key in exif:
+            # Skip 'bad' dates that return integers (-1) or have the format 0000...
+            if key in exif and isinstance(exif[key], str) and not exif[key].startswith('0000'):
                 datestr = exif[key]
                 break
 
