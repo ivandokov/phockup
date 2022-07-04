@@ -266,7 +266,7 @@ but looking for '{self.file_type}'"
                 break
 
             if os.path.isfile(target_file):
-                if filecmp.cmp(filename, target_file, shallow=False):
+                if filename != target_file and filecmp.cmp(filename, target_file, shallow=False):
                     progress = f'{progress} => skipped, duplicated file {target_file}'
                     self.duplicates_found += 1
                     if self.progress:
