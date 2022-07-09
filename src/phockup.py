@@ -187,7 +187,7 @@ class Phockup():
         fullpath = os.path.sep.join(path)
 
         if not os.path.isdir(fullpath) and not self.dry_run:
-            os.makedirs(fullpath)
+            os.makedirs(fullpath, exist_ok=True)
 
         return fullpath
 
