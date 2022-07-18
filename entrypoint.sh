@@ -9,7 +9,7 @@ else
   if [ -f /tmp/phockup.lockfile ]; then
     rm /tmp/phockup.lockfile
   fi
-  
+
   CRON_COMMAND="$CRON flock -n /tmp/phockup.lockfile phockup /mnt/input /mnt/output $OPTIONS"
 
   echo "$CRON_COMMAND" >> /etc/crontabs/root
@@ -17,4 +17,3 @@ else
 
   crond -f -d 8
 fi
-
