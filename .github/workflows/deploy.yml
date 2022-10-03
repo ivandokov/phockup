@@ -141,8 +141,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Publish to Dockerhub
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: ivandokov/phockup
           username: ${{ secrets.DOCKER_USERNAME }}
