@@ -1,4 +1,6 @@
 # Changelog
+##### `1.9.1`
+* Specify platforms for Dockerhub action
 ##### `1.9.0`
 * Rename `unknown` folder [#141](https://github.com/ivandokov/phockup/pull/141)
 * Week date format [#142](https://github.com/ivandokov/phockup/pull/142)
