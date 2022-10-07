@@ -1,6 +1,12 @@
 # Changelog
 ##### `1.9.2`
 * Fix brew SHA256 mismatch [#169](https://github.com/ivandokov/phockup/issues/169)
+* Fix deploy for buildx [#168](https://github.com/ivandokov/phockup/pull/168)
+* Use Python 3.10 for Docker [#167](https://github.com/ivandokov/phockup/pull/167)
+* Add dependabot to project [#166](https://github.com/ivandokov/phockup/pull/166)
+* Update tests.yml [#164](https://github.com/ivandokov/phockup/pull/164)
+* Bump pre-commit packages [#165](https://github.com/ivandokov/phockup/pull/165)
+* Fix "WARNING: --use-feature=2020-resolver no longer has any effect..."
 ##### `1.9.1`
 * Specify platforms for Dockerhub action
 ##### `1.9.0`
