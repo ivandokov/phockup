@@ -1,4 +1,6 @@
 # Changelog
+##### `1.9.2`
+* Fix brew SHA256 mismatch [#169](https://github.com/ivandokov/phockup/issues/169)
 ##### `1.9.1`
 * Specify platforms for Dockerhub action
 ##### `1.9.0`
