@@ -38,6 +38,16 @@ pip3 install -r requirements.txt
 sudo ln -s /opt/phockup/phockup.py /usr/local/bin/phockup
 ```
 
+### Linux (AUR)
+
+If you are an arch user you can install from the [aur](https://aur.archlinux.org/packages/phockup).
+
+For example using [yay](https://github.com/Jguer/yay):
+
+```bash
+yay -S phockup
+```
+
 ### Mac
 Requires [Homebrew](http://brew.sh/)
 ```
