@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Date:
@@ -57,6 +57,12 @@ class Date:
             parsed_date = self.from_datestring(datestr)
         else:
             parsed_date = {'date': None, 'subseconds': ''}
+
+        # apply TimeZone if available
+        if exif['TimeZone']:
+            timezonedata = exif['TimeZone'].split(':')
+            if timezonedata and len(timezonedata) == 2:
+                parsed_date['date'] = parsed_date['date'] + timedelta(hours=int(timezonedata[0]), minutes=int(timezonedata[1]))
 
         if parsed_date.get('date') is not None:
             return parsed_date
