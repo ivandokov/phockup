@@ -24,6 +24,15 @@ def test_get_date_from_exif():
                "subseconds": ""
            }
 
+def test_get_date_from_exif_with_timezone():
+    assert Date().from_exif({
+        "CreateDate": "2023-01-01 01:01:01",
+        "TimeZone": "-07:00",
+    }) == {
+               "date": datetime(2022, 12, 31, 18, 1, 1),
+               "subseconds": ""
+           }
+
 
 def test_get_date_from_custom_date_field():
     assert Date().from_exif({
