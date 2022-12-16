@@ -59,7 +59,7 @@ class Date:
             parsed_date = {'date': None, 'subseconds': ''}
 
         # apply TimeZone if available
-        if exif['TimeZone']:
+        if exif.get('TimeZone') is not None and isinstance(exif['TimeZone'], str):
             timezonedata = exif['TimeZone'].split(':')
             if timezonedata and len(timezonedata) == 2:
                 parsed_date['date'] = parsed_date['date'] + timedelta(hours=int(timezonedata[0]), minutes=int(timezonedata[1]))
