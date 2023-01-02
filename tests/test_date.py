@@ -24,6 +24,7 @@ def test_get_date_from_exif():
                "subseconds": ""
            }
 
+
 def test_get_date_from_exif_with_timezone():
     assert Date().from_exif({
         "CreateDate": "2023-01-01 01:01:01",
