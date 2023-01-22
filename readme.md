@@ -183,6 +183,10 @@ If you want phockup to run with a progressbar (displaying only the progress and 
 If you would like to limit how deep the directories are traversed, you can use the `--maxdepth` option to specify the maximum number of levels below the input directory to process.  In order to process only the input directory, you can disable sub-directory processing with:
 `--maxdepth=0`  The current implementation is limited to a maximum depth of 255.
 
+### Concurrent file processing
+
+If you would like to process multiple files concurrently use the `-c | --max-concurrency` flag. Default is 1, maximum value is 255. Higher values can improve the throughput of file operations.
+
 ## Development
 
 ### Running tests
