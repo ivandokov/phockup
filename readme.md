@@ -183,6 +183,33 @@ If you want phockup to run with a progressbar (displaying only the progress and 
 If you would like to limit how deep the directories are traversed, you can use the `--maxdepth` option to specify the maximum number of levels below the input directory to process.  In order to process only the input directory, you can disable sub-directory processing with:
 `--maxdepth=0`  The current implementation is limited to a maximum depth of 255.
 
+### Improving throughput with concurrency
+If you want to allocate additional CPUs/cores to the image processing
+operations, you can specify additional resources via the
+`--max-concurrency` flag. Specifying `--max-concurrency=n`, where `n`
+represents the maximum number of operations to attempt
+concurrently, will leverage the additional CPU resources to start
+additional file operations while waiting for file I/O.  This can lead
+to significant increases in file processing throughput.
+
+Due to how concurrency is implemented in Phockup (specifically
+`ThreadPoolExecutor`), this option has the greatest impact on
+directories with a large numbers of files in them,
+versus many directories with small numbers of files in each.  As a
+general rule, the concurrency _should not_ be set higher than the
+core-count of the system processing the images.
+
+`--max-concurrency=1` has the default behavior of no concurrency while
+processing the files in the directories.  Beginning with 50% of the
+cores available is a good start.  Larger numbers can have
+diminishing returns as the number of concurrent operations saturate
+the file I/O of the system.
+
+Concurrently processing files does have an impact on the order that
+messages are written to the console/log and the ability to quickly
+terminate the program, as the execution waits for all in-flight
+operations to complete before shutting down.
+
 ## Development
 
 ### Running tests
