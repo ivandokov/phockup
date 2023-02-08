@@ -73,7 +73,32 @@ def test_exception_for_no_write_access_when_creating_output_dir(mocker):
 def test_walking_directory():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output')
-    validate_copy_operation()
+    validate_copy_operations()
+    shutil.rmtree('output', ignore_errors=True)
+
+
+def test_walking_directory_prefix():
+    shutil.rmtree('output', ignore_errors=True)
+    prefix = "Phockup Images"
+    Phockup('input', 'output', output_prefix=prefix)
+    validate_copy_operations(prefix=prefix)
+    shutil.rmtree('output', ignore_errors=True)
+
+
+def test_walking_directory_suffix():
+    shutil.rmtree('output', ignore_errors=True)
+    suffix = "iphone"
+    Phockup('input', 'output', output_suffix=suffix)
+    validate_copy_operations(suffix=suffix)
+    shutil.rmtree('output', ignore_errors=True)
+
+
+def test_walking_directory_prefix_suffix():
+    shutil.rmtree('output', ignore_errors=True)
+    prefix = "ivandokov"
+    suffix = "camera"
+    Phockup('input', 'output', output_prefix=prefix, output_suffix=suffix)
+    validate_copy_operations(prefix=prefix, suffix=suffix)
     shutil.rmtree('output', ignore_errors=True)
 
 
@@ -378,41 +403,41 @@ def test_maxdepth_zero():
 def test_maxdepth_one():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', maxdepth=1)
-    validate_copy_operation()
+    validate_copy_operations()
     shutil.rmtree('output', ignore_errors=True)
 
 
 def test_maxconcurrency_none():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', max_concurrency=0)
-    validate_copy_operation()
+    validate_copy_operations()
     shutil.rmtree('output', ignore_errors=True)
 
 
 def test_maxconcurrency_five():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', max_concurrency=5)
-    validate_copy_operation()
+    validate_copy_operations()
     shutil.rmtree('output', ignore_errors=True)
 
 
-def validate_copy_operation():
-    dir1 = 'output/2017/01/01'
-    dir2 = 'output/2017/10/06'
-    dir3 = 'output/unknown'
-    dir4 = 'output/2018/01/01/'
-    assert os.path.isdir(dir1)
-    assert os.path.isdir(dir2)
-    assert os.path.isdir(dir3)
-    assert os.path.isdir(dir4)
-    assert len([name for name in os.listdir(dir1) if
-                os.path.isfile(os.path.join(dir1, name))]) == 3
-    assert len([name for name in os.listdir(dir2) if
-                os.path.isfile(os.path.join(dir2, name))]) == 1
-    assert len([name for name in os.listdir(dir3) if
-                os.path.isfile(os.path.join(dir3, name))]) == 1
-    assert len([name for name in os.listdir(dir4) if
-                os.path.isfile(os.path.join(dir4, name))]) == 1
+def validate_copy_operations(prefix=None, suffix=None):
+    dir1 = '/2017/01/01'
+    dir2 = '/2017/10/06'
+    dir3 = '/unknown'
+    dir4 = '/2018/01/01/'
+    validate_copy_operation(output_root='output', file_path=dir1, expected_count=3, prefix=prefix, suffix=suffix)
+    validate_copy_operation(output_root='output', file_path=dir2, expected_count=1, prefix=prefix, suffix=suffix)
+    validate_copy_operation(output_root='output', file_path=dir3, expected_count=1, prefix=prefix, suffix=suffix)
+    validate_copy_operation(output_root='output', file_path=dir4, expected_count=1, prefix=prefix, suffix=suffix)
+
+
+def validate_copy_operation(output_root, file_path, expected_count, prefix=None, suffix=None):
+    path = [p for p in [output_root, prefix, file_path, suffix] if p is not None]
+    fullpath = os.path.normpath(os.path.sep.join(path))
+    assert os.path.isdir(fullpath)
+    assert len([name for name in os.listdir(fullpath) if
+                os.path.isfile(os.path.join(fullpath, name))]) == expected_count
 
 
 def test_no_exif_directory():
