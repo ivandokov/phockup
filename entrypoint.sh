@@ -2,7 +2,7 @@
 
 # If the CRON variable is empty, phockup gets executed once as command line tool
 if [ -z "$CRON" ]; then
-  phockup $@
+  phockup "$@"
 
 # When CRON is not empty, phockup will run in a cron job until the container is stopped.
 else
