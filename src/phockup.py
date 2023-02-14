@@ -13,15 +13,11 @@ from tqdm import tqdm
 from src.date import Date
 from src.exif import Exif
 
-UNKNOWN = 'unknown'
-
 logger = logging.getLogger('phockup')
-
-
 ignored_files = ('.DS_Store', 'Thumbs.db')
 
 
-class Phockup():
+class Phockup:
     DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
     DEFAULT_NO_DATE_DIRECTORY = "unknown"
 
@@ -43,6 +39,8 @@ class Phockup():
 
         self.input_dir = input_dir
         self.output_dir = output_dir
+        self.output_prefix = args.get('output_prefix' or None)
+        self.output_suffix = args.get('output_suffix' or '')
         self.no_date_dir = args.get('no_date_dir') or Phockup.DEFAULT_NO_DATE_DIRECTORY
         self.dir_format = args.get('dir_format') or os.path.sep.join(Phockup.DEFAULT_DIR_FORMAT)
         self.move = args.get('move', False)
@@ -106,8 +104,8 @@ class Phockup():
     def check_directories(self):
         """
         Check if input and output directories exist.
-        If input does not exists it exits the process.
-        If output does not exists it tries to create it or exit with error.
+        If input does not exist it exits the process.
+        If output does not exist it tries to create it or exit with error.
         """
 
         if not os.path.exists(self.input_dir):
@@ -180,11 +178,18 @@ class Phockup():
         directory unless user included a regex from filename or uses timestamp.
         """
         try:
-            path = [self.output_dir, date['date'].date().strftime(self.dir_format)]
+            path = [self.output_dir,
+                    self.output_prefix,
+                    date['date'].date().strftime(self.dir_format),
+                    self.output_suffix]
         except (TypeError, ValueError):
-            path = [self.output_dir, self.no_date_dir]
-
-        fullpath = os.path.sep.join(path)
+            path = [self.output_dir,
+                    self.output_prefix,
+                    self.no_date_dir,
+                    self.output_suffix]
+        # Remove any None values that made it in the path
+        path = [p for p in path if p is not None]
+        fullpath = os.path.normpath(os.path.sep.join(path))
 
         if not os.path.isdir(fullpath) and not self.dry_run:
             os.makedirs(fullpath, exist_ok=True)
@@ -201,13 +206,13 @@ class Phockup():
 
         try:
             filename = [
-                f'{(date["date"].year):04d}',
-                f'{(date["date"].month):02d}',
-                f'{(date["date"].day):02d}',
+                f'{date["date"].year :04d}',
+                f'{date["date"].month :02d}',
+                f'{date["date"].day :02d}',
                 '-',
-                f'{(date["date"].hour):02d}',
-                f'{(date["date"].minute):02d}',
-                f'{(date["date"].second):02d}',
+                f'{date["date"].hour :02d}',
+                f'{date["date"].minute :02d}',
+                f'{date["date"].second :02d}',
             ]
 
             if date['subseconds']:
@@ -256,7 +261,7 @@ but looking for '{self.file_type}'"
                 logger.info(progress)
                 break
 
-            if self.skip_unknown and output.endswith(UNKNOWN):
+            if self.skip_unknown and output.endswith(self.no_date_dir):
                 # Skip files that didn't generate a path from EXIF data
                 progress = f"{progress} => skipped, unknown date EXIF information for '{target_file_name}'"
                 self.unknown_found += 1
@@ -341,7 +346,7 @@ but looking for '{self.file_type}'"
 
     def process_xmp(self, original_filename, file_name, suffix, output):
         """
-        Process xmp files. These are meta data for RAW images
+        Process xmp files. These are metadata for RAW images
         """
         xmp_original_with_ext = original_filename + '.xmp'
         xmp_original_without_ext = os.path.splitext(original_filename)[0] + '.xmp'

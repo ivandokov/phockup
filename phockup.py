@@ -274,6 +274,29 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
     with varying and specific EXIF fields that are note checked by default.
     """, )
 
+    parser.add_argument(
+        '--output_prefix',
+        type=str,
+        default='',
+        help="""\
+        String to prepend to the output directory to aid in sorting
+        files by an additional level prior to sorting by date.  This
+        string will immediately follow the output path and is intended
+        to allow runtime setting of the output path (e.g. via $USER,
+        $HOSTNAME, %USERNAME%, etc.)
+        """
+    )
+
+    parser.add_argument(
+        '--output_suffix',
+        type=str,
+        default='',
+        help="""\
+        String to append to the destination directory to aid in sorting
+        files by an additional level after sorting by date.
+        """
+    )
+
     return parser.parse_args(args)
 
 
@@ -319,7 +342,9 @@ def main(options):
         file_type=options.file_type,
         max_concurrency=options.max_concurrency,
         no_date_dir=options.no_date_dir,
-        skip_unknown=options.skip_unknown
+        skip_unknown=options.skip_unknown,
+        output_prefix=options.output_prefix,
+        output_suffix=options.output_suffix
     )
 
 
