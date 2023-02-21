@@ -1,4 +1,12 @@
 # Changelog
+##### `1.10.0`
+* Fixed Dependabot
+* Documented AUR install [#175](https://github.com/ivandokov/phockup/pull/175)
+* Timezone support [#182](https://github.com/ivandokov/phockup/pull/182)
+* Implementation of Issue [#146](https://github.com/ivandokov/phockup/issues/146) to support prefix and suffix [#189](https://github.com/ivandokov/phockup/pull/189)
+* Documented `--max-concurrency` [#188](https://github.com/ivandokov/phockup/pull/188)
+* Make sure arguments are not split [#190](https://github.com/ivandokov/phockup/pull/190)
+* Dependabot PRs
 ##### `1.9.2`
 * Fix brew SHA256 mismatch [#169](https://github.com/ivandokov/phockup/issues/169)
 * Fix deploy for buildx [#168](https://github.com/ivandokov/phockup/pull/168)
