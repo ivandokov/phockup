@@ -1,4 +1,6 @@
 # Changelog
+##### `1.10.1`
+* Fixed python versions for tests and deployments
 ##### `1.10.0`
 * Fixed Dependabot
 * Documented AUR install [#175](https://github.com/ivandokov/phockup/pull/175)
