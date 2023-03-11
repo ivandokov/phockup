@@ -42,7 +42,7 @@ class Phockup:
         self.output_prefix = args.get('output_prefix' or None)
         self.output_suffix = args.get('output_suffix' or '')
         self.no_date_dir = args.get('no_date_dir') or Phockup.DEFAULT_NO_DATE_DIRECTORY
-        self.dir_format = args.get('dir_format') or os.path.sep.join(Phockup.DEFAULT_DIR_FORMAT)
+        self.dir_format = args.get('python_dir_format') or args.get('dir_format') or os.path.sep.join(Phockup.DEFAULT_DIR_FORMAT)
         self.move = args.get('move', False)
         self.link = args.get('link', False)
         self.original_filenames = args.get('original_filenames', False)

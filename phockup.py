@@ -70,6 +70,35 @@ Example:
 """,
     )
 
+    parser.add_argument(
+        '--python_date',
+        action='store',
+        help="""\
+Specify date format in python datetime fomat for OUTPUTDIR directories.
+
+This will take precedence over --date parameter. Any characters not escaped by '%' will bet part of OUTPUTDIR as literal.
+
+Supported formats:
+    %Y   - 2016, 2017 ...
+    %y   - 16, 17 ...
+    %m   - 07, 08, 09 ...
+    %B   - July, August, September ...
+    %b   - Jul, Aug, Sept ...
+    %d   - 27, 28, 29 ... (day of month)
+    %j   - 123, 158, 365 ... (day of year)
+    %U   - 00, 01, 53 ... (week of the year, Sunday first day of week)
+    %W   - 00, 01, 53 ... (week of the year, Monday first day of week)
+
+Example:
+    %Y/%m/%d -> 2011/07/17
+    %Y/Months/%B/%d  -> 2011/Months/July/17
+    %Y/Months/%b/%d  -> 2011/Months/Jul/17
+    %y/Months/%b-%d    -> 11/Months/Jul-17
+    %Y/%U     -> 2011/30
+    %Y/%W     -> 2011/28
+""",
+    )
+
     exclusive_group_link_move = parser.add_mutually_exclusive_group()
 
     exclusive_group_link_move.add_argument(
@@ -329,6 +358,7 @@ def main(options):
         options.input_dir,
         options.output_dir,
         dir_format=options.date,
+        python_dir_format=options.python_date,
         move=options.move,
         link=options.link,
         date_regex=options.regex,

@@ -128,6 +128,31 @@ Example:
     YYYY/W     -> 2011/28
 ```
 
+Date format can also be passed in Python datetime format using the `--python_date` argument. This argument will take 
+precedence over the `-d | --date` argument. Any characters not escaped by `%` as part of Python datetime format will
+be included as part of OUTPUTDIR as literal text.
+
+```
+Supported formats:
+    %Y   - 2016, 2017 ...
+    %y   - 16, 17 ...
+    %m   - 07, 08, 09 ...
+    %B   - July, August, September ...
+    %b   - Jul, Aug, Sept ...
+    %d   - 27, 28, 29 ... (day of month)
+    %j   - 123, 158, 365 ... (day of year)
+    %U   - 00, 01, 53 ... (week of the year, Sunday first day of week)
+    %W   - 00, 01, 53 ... (week of the year, Monday first day of week)
+
+Example:
+    %Y/%m/%d         -> 2011/07/17
+    %Y/Months/%B/%d  -> 2011/Months/July/17
+    %Y/Months/%b/%d  -> 2011/Months/Jul/17
+    %y/Months/%b-%d  -> 11/Months/Jul-17
+    %Y/%U            -> 2011/30
+    %Y/%W            -> 2011/28
+```
+
 ### Prefix/Suffix
 In order to support both aggregation and finer granularity of files
 sorted, you can specify a prefix or suffix (or both) to aid in storing
