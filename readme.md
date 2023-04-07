@@ -66,7 +66,7 @@ brew install phockup
 
 ### Docker
 
-The docker container supports two operation modes. The first allows for a single execution of phockup. In this mdoe, the container will be stopped after the execution is complete. The second mode allows for execution in intervals. In this mode, the container will continue running until the user decides to stop it.
+The docker container supports two operation modes. The first allows for a single execution of phockup. In this mode, the container will be stopped after the execution is complete. The second mode allows for execution in intervals. In this mode, the container will continue running until the user decides to stop it.
 
 #### Single execution mode
 In this mode, all phockup parameters need to be passed as direct parameters within the docker run command. As you define a complete set of phockup parameters for this execution mode, this includes the paths to the input and output folders within the container.
