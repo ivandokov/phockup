@@ -73,7 +73,7 @@ In this mode, all phockup parameters need to be passed as direct parameters with
 To execute phockup only once, use the following command:
 
 ```
-docker run -v ~/Pictures:/mnt ivandokov/phockup:latest /mnt/Input /mnt/Output [PHOCKUP ARGUMENTS]
+docker run -v ~/Pictures:/mnt ivandokov/phockup:latest /mnt/input /mnt/output [PHOCKUP ARGUMENTS]
 ```
 
 #### Continuous execution mode
