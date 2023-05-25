@@ -55,6 +55,14 @@ class Phockup:
         self.max_depth = args.get('max_depth', -1)
         # default to concurrency of one to retain existing behavior
         self.max_concurrency = args.get("max_concurrency", 1)
+
+        self.from_date = args.get("from_date", None)
+        self.to_date = args.get("to_date", None)
+        if self.from_date is not None:
+            self.from_date = Date.strptime(f"{self.from_date} 00:00:00", "%Y-%m-%d %H:%M:%S")
+        if self.to_date is not None:
+            self.to_date = Date.strptime(f"{self.to_date} 23:59:59", "%Y-%m-%d %H:%M:%S")
+
         if self.max_concurrency > 1:
             logger.info(f"Using {self.max_concurrency} workers to process files.")
 
@@ -249,7 +257,7 @@ class Phockup:
 
         progress = f'{filename}'
 
-        output, target_file_name, target_file_path, target_file_type = self.get_file_name_and_path(filename)
+        output, target_file_name, target_file_path, target_file_type, file_date = self.get_file_name_and_path(filename)
         suffix = 1
         target_file = target_file_path
 
@@ -261,6 +269,7 @@ but looking for '{self.file_type}'"
                 logger.info(progress)
                 break
 
+            date_unknown = file_date == None or output.endswith(self.no_date_dir)
             if self.skip_unknown and output.endswith(self.no_date_dir):
                 # Skip files that didn't generate a path from EXIF data
                 progress = f"{progress} => skipped, unknown date EXIF information for '{target_file_name}'"
@@ -269,6 +278,23 @@ but looking for '{self.file_type}'"
                     self.pbar.write(progress)
                 logger.info(progress)
                 break
+
+            if not date_unknown:
+                skip = False
+                print(f"Filedate is {file_date}")
+                if type(file_date) is dict:
+                    file_date = file_date["date"]
+                if self.from_date is not None and file_date < self.from_date:
+                    progress = f"{progress} => {filename} skipped: date {file_date} is older than from_date {self.from_date}"
+                    skip = True
+                if self.to_date is not None and file_date > self.to_date:
+                    progress = f"{progress} => {filename} skipped: date {file_date} is newer than to_date {self.to_date}"
+                    skip = True
+                if skip:
+                    if self.progress:
+                        self.pbar.write(progress)
+                    logger.info(progress)
+                    break
 
             if os.path.isfile(target_file):
                 if filename != target_file and filecmp.cmp(filename, target_file, shallow=False):
@@ -330,6 +356,7 @@ but looking for '{self.file_type}'"
         if exif_data and 'MIMEType' in exif_data:
             target_file_type = self.get_file_type(exif_data['MIMEType'])
 
+        date = None
         if target_file_type in ['image', 'video']:
             date = Date(filename).from_exif(exif_data, self.timestamp, self.date_regex,
                                             self.date_field)
@@ -342,7 +369,7 @@ but looking for '{self.file_type}'"
             target_file_name = os.path.basename(filename)
 
         target_file_path = os.path.sep.join([output, target_file_name])
-        return output, target_file_name, target_file_path, target_file_type
+        return output, target_file_name, target_file_path, target_file_type, date
 
     def process_xmp(self, original_filename, file_name, suffix, output):
         """
