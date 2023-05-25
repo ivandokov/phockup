@@ -281,7 +281,6 @@ but looking for '{self.file_type}'"
 
             if not date_unknown:
                 skip = False
-                print(f"Filedate is {file_date}")
                 if type(file_date) is dict:
                     file_date = file_date["date"]
                 if self.from_date is not None and file_date < self.from_date:
