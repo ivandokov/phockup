@@ -41,6 +41,10 @@ class Phockup:
         self.output_dir = output_dir
         self.output_prefix = args.get('output_prefix' or None)
         self.output_suffix = args.get('output_suffix' or '')
+        
+        self.filename_suffix=args.get('filename_suffix' or '')
+        self.filename_add_original = args.get('filename_add_original', False)
+
         self.no_date_dir = args.get('no_date_dir') or Phockup.DEFAULT_NO_DATE_DIRECTORY
         self.dir_format = args.get('dir_format') or os.path.sep.join(Phockup.DEFAULT_DIR_FORMAT)
         self.move = args.get('move', False)
@@ -203,7 +207,7 @@ class Phockup:
         """
         if self.original_filenames:
             return os.path.basename(original_filename)
-
+        
         try:
             filename = [
                 f'{date["date"].year :04d}',
@@ -217,8 +221,23 @@ class Phockup:
 
             if date['subseconds']:
                 filename.append(date['subseconds'])
+            
+            # target filename with timestamp as name
+            target_filename=''.join(filename)
 
-            return ''.join(filename) + os.path.splitext(original_filename)[1]
+            if self.filename_add_original:
+                base_name=os.path.basename(original_filename)
+                f_name=os.path.splitext(base_name)[0]
+                target_filename=''.join(filename) + '_' + f_name
+                #debug
+                # print(target_filename+os.path.splitext(original_filename)[1])
+                
+            if self.filename_suffix:
+                target_filename=target_filename + '_' + self.filename_suffix
+                # print(target_filename)
+                
+            return target_filename + os.path.splitext(original_filename)[1]
+        
         # TODO: Double check if this is correct!
         except TypeError:
             return os.path.basename(original_filename)
@@ -335,8 +354,9 @@ but looking for '{self.file_type}'"
                                             self.date_field)
             output = self.get_output_dir(date)
             target_file_name = self.get_file_name(filename, date)
-            if not self.original_filenames:
-                target_file_name = target_file_name.lower()
+            
+            # if not self.original_filenames:
+                # target_file_name = target_file_name.lower()
         else:
             output = self.get_output_dir([])
             target_file_name = os.path.basename(filename)

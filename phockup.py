@@ -288,6 +288,28 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
     )
 
     parser.add_argument(
+       '--filename_suffix',
+        type=str,
+        default='',
+        help="""\
+        String to append to the output file name. if --filename_add_original is set, this will be added after the original filename.
+        This string can also be setting of the output name (e.g. via $USER,
+        $HOSTNAME, %USERNAME%, etc.)
+        """
+
+    )
+
+
+    parser.add_argument(
+        '-ao',
+        '--filename_add_original',
+        action='store_true',
+        help="""\
+Add original filename to the  target filename
+""",
+    )
+
+    parser.add_argument(
         '--output_suffix',
         type=str,
         default='',
@@ -344,7 +366,9 @@ def main(options):
         no_date_dir=options.no_date_dir,
         skip_unknown=options.skip_unknown,
         output_prefix=options.output_prefix,
-        output_suffix=options.output_suffix
+        output_suffix=options.output_suffix,
+        filename_suffix=options.filename_suffix,
+        filename_add_original=options.filename_add_original
     )
 
 
