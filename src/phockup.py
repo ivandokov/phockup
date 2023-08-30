@@ -12,6 +12,7 @@ from tqdm import tqdm
 
 from src.date import Date
 from src.exif import Exif
+from collections import defaultdict
 
 logger = logging.getLogger('phockup')
 ignored_files = ('.DS_Store', 'Thumbs.db')
@@ -28,6 +29,7 @@ class Phockup:
         self.unknown_found = 0
         self.files_moved = 0
         self.files_copied = 0
+        self.content_ids = defaultdict(list)
 
         input_dir = os.path.expanduser(input_dir)
         output_dir = os.path.expanduser(output_dir)
@@ -359,16 +361,36 @@ but looking for '{self.file_type}'"
         if target_file_type in ['image', 'video']:
             date = Date(filename).from_exif(exif_data, self.timestamp, self.date_regex,
                                             self.date_field)
-            output = self.get_output_dir(date)
+            output_dir = self.get_output_dir(date)
             target_file_name = self.get_file_name(filename, date)
             if not self.original_filenames:
                 target_file_name = target_file_name.lower()
         else:
-            output = self.get_output_dir([])
+            output_dir = self.get_output_dir([])
             target_file_name = os.path.basename(filename)
 
-        target_file_path = os.path.sep.join([output, target_file_name])
-        return output, target_file_name, target_file_path, target_file_type, date
+        target_file_path = os.path.sep.join([output_dir, target_file_name])
+
+        if exif_data and ('ContentIdentifier' in exif_data or 'MediaGroupUUID' in exif_data):
+            uuid = exif_data['ContentIdentifier'] if 'ContentIdentifier' in exif_data else exif_data['MediaGroupUUID']
+            logger.debug(f"{filename} has media group ID: {uuid}")
+            cids = self.content_ids[uuid]
+
+            # If a file with this same ContentId UUID exists already, use its
+            # name and put it in the same directory
+            if cids:
+                logger.debug(f"Found existing files with same ID: {cids}")
+                logger.debug(f"* Previous target dir for current file:  {output_dir}")
+                logger.debug(f"* Previous target path for current file: {target_file_path}")
+                output_dir, basename = os.path.split(cids[0])
+                target_file_name = os.path.splitext(basename)[0] + os.path.splitext(filename)[1]
+                target_file_name = target_file_name.lower()
+                target_file_path = os.path.sep.join([output_dir, target_file_name])
+                logger.debug(f"* New target dir for current file:  {output_dir}")
+                logger.debug(f"* New target path for current file: {target_file_path}")
+            cids.append(target_file_path)
+
+        return output_dir, target_file_name, target_file_path, target_file_type, date
 
     def process_xmp(self, original_filename, file_name, suffix, output):
         """
