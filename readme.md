@@ -255,6 +255,33 @@ The output may look like this, but with more fields:
 If the correct date is in `DateTimeOriginal`, you can include the option `--date-field=DateTimeOriginal` to get date information from it.
 To set multiple fields to be tried in order until a valid date is found, just join them with spaces in a quoted string like `"CreateDate FileModifyDate"`.
 
+### Handle sidecars
+Sidecars are files that have the same name as an image or video file, but a different extension. They typically contain additional metadata pertaining to the image or video file.
+
+File extensions which are considered to be sidecars if they are named the same as a corresponding image file are:
+
+ * .xmp
+ * .json
+ * .yaml
+ * .yml
+
+So, for example, if `image.jpg` exists, then `image.xmp` (or `image.jpg.xmp`) will be considered a sidecar file of image.jpg.
+
+When moving the main file, sidecars will inherit the name of the main file and be moved to the same location rather than being placed in the unknown directory.
+
+You can change which file extensions are eligible to be considered sidecars using the `--sidecars` argument. For example, to only treat `.xmp` and `.json` as sidecars:
+
+```
+--sidecars='xmp,json'
+```
+
+To disable handling sidecars entirely:
+
+```
+--sidecars=''
+```
+
+
 ### Dry run
 If you want phockup to run without any changes (don't copy/move any files) but just show which changes would be done, enable this feature by using the flag `-y | --dry-run`.
 

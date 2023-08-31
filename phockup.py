@@ -187,6 +187,36 @@ To get all date fields available for a file, do:
 """,
     )
 
+    parser.add_argument(
+        "--sidecars",
+        default=",".join(Phockup.DEFAULT_SIDECAR_EXTENSIONS),
+        action="store",
+        help="""
+Override the set of extensions that are considered to be sidecar files.
+Sidecars are files that have the same name as an image or video file, but a
+different extension. They typically contain additional metadata pertaining to
+the image or video file.
+
+File extensions which are considered to be sidecars if they are named the same
+as a corresponding image file are:
+
+    """
+        + str(Phockup.DEFAULT_SIDECAR_EXTENSIONS)
+        + """
+
+So, for example, if image.jpg exists, then image.xmp (or image.jpg.xmp) will be
+considered a sidecar file of image.jpg.
+
+When moving the main file, sidecars will inherit the name of the main file and
+be moved to the same location rather than being placed in the unknown
+directory.
+
+Using this argument you can change this set. For example, to only consider XMP
+and JSON:
+    --sidecars='xmp,json'
+""",
+    )
+
     exclusive_group_debug_silent = parser.add_mutually_exclusive_group()
 
     exclusive_group_debug_silent.add_argument(

@@ -18,6 +18,14 @@ ignored_files = ('.DS_Store', 'Thumbs.db')
 
 
 class Phockup:
+    DEFAULT_SIDECAR_EXTENSIONS = ["json", "xmp", "yml", "yaml"]
+    """
+    Sidecar files are files with the same name as the source file, but with a
+    different (or additional) extension. For example, 'image.jpg' could have
+    possible sidecars 'image.jpg.xmp', 'image.json', 'image.yml', etc.
+
+    This member stores the recognized sidecar extensions.
+    """
     DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
     DEFAULT_NO_DATE_DIRECTORY = "unknown"
 
@@ -53,6 +61,11 @@ class Phockup:
         self.dry_run = args.get('dry_run', False)
         self.progress = args.get('progress', False)
         self.max_depth = args.get('max_depth', -1)
+        self.sidecar_extensions = (
+            args.get("sidecars").split(",")
+            if args.get("sidecars")
+            else Phockup.DEFAULT_SIDECAR_EXTENSIONS
+        )
         # default to concurrency of one to retain existing behavior
         self.max_concurrency = args.get("max_concurrency", 1)
         if self.max_concurrency > 1:
@@ -242,9 +255,9 @@ class Phockup:
     def process_file(self, filename):
         """
         Process the file using the selected strategy
-        If file is .xmp skip it so process_xmp method can handle it
+        If file is a sidecar skip it so process_sidecars method can handle it
         """
-        if str.endswith(filename, '.xmp'):
+        if any([filename.lower().endswith(sc_ext) for sc_ext in self.sidecar_extensions]):
             return None
 
         progress = f'{filename}'
@@ -309,7 +322,7 @@ but looking for '{self.file_type}'"
                     self.pbar.write(progress)
                 logger.info(progress)
 
-                self.process_xmp(filename, target_file_name, suffix, output)
+                self.process_sidecars(filename, target_file_name, suffix, output)
                 break
 
             suffix += 1
@@ -344,32 +357,40 @@ but looking for '{self.file_type}'"
         target_file_path = os.path.sep.join([output, target_file_name])
         return output, target_file_name, target_file_path, target_file_type
 
-    def process_xmp(self, original_filename, file_name, suffix, output):
+    def process_sidecars(self, original_filename, file_name, suffix, output):
         """
-        Process xmp files. These are metadata for RAW images
+        Given an existing image, handle any sidecar files.
         """
-        xmp_original_with_ext = original_filename + '.xmp'
-        xmp_original_without_ext = os.path.splitext(original_filename)[0] + '.xmp'
-
+        car_no_ext, car_extension = os.path.splitext(original_filename)
+        new_car_no_ext = os.path.splitext(file_name)[0]
         suffix = f'-{suffix}' if suffix > 1 else ''
 
-        xmp_files = {}
+        # Generate list of possible sidecars
+        sidecars = [
+            sidecar
+            for sc_ext in self.sidecar_extensions
+            for sidecar in (
+                car_no_ext + "." + sc_ext,
+                car_no_ext + car_extension + "." + sc_ext,
+            )
+        ]
+        # Filter to only those that exist
+        sidecars = [sidecar for sidecar in sidecars if os.path.isfile(sidecar)]
+        # Build target filenames for sidecars
+        sidecars = [
+            (sidecar, sidecar.replace(car_no_ext, f"{new_car_no_ext}{suffix}"))
+            for sidecar in sidecars
+        ]
 
-        if os.path.isfile(xmp_original_with_ext):
-            xmp_target = f'{file_name}{suffix}.xmp'
-            xmp_files[xmp_original_with_ext] = xmp_target
-        if os.path.isfile(xmp_original_without_ext):
-            xmp_target = f'{(os.path.splitext(file_name)[0])}{suffix}.xmp'
-            xmp_files[xmp_original_without_ext] = xmp_target
-
-        for original, target in xmp_files.items():
-            xmp_path = os.path.sep.join([output, target])
-            logger.info(f'{original} => {xmp_path}')
+        # Perform the move
+        for original, target in sidecars:
+            sidecar_path = os.path.sep.join([output, target])
+            logger.info(f"{original} => {sidecar_path}")
 
             if not self.dry_run:
                 if self.move:
-                    shutil.move(original, xmp_path)
+                    shutil.move(original, sidecar_path)
                 elif self.link:
-                    os.link(original, xmp_path)
+                    os.link(original, sidecar_path)
                 else:
-                    shutil.copy2(original, xmp_path)
+                    shutil.copy2(original, sidecar_path)
