@@ -283,7 +283,7 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
         files by an additional level prior to sorting by date.  This
         string will immediately follow the output path and is intended
         to allow runtime setting of the output path (e.g. via $USER,
-        $HOSTNAME, %USERNAME%, etc.)
+        $HOSTNAME, %%USERNAME%%, etc.)
         """
     )
 
