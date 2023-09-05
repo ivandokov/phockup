@@ -15,7 +15,7 @@ from src.exif import Exif
 
 logger = logging.getLogger('phockup')
 ignored_files = ('.DS_Store', 'Thumbs.db')
-
+ignored_dirs = {'@eaDir'}
 
 class Phockup:
     DEFAULT_DIR_FORMAT = ['%Y', '%m', '%d']
@@ -128,24 +128,32 @@ class Phockup:
 
         # Walk the directory
         for root, dirnames, files in os.walk(self.input_dir):
-            files.sort()
-            file_paths_to_process = []
-            for filename in files:
-                if filename in ignored_files:
-                    continue
-                file_paths_to_process.append(os.path.join(root, filename))
-            if self.max_concurrency > 1:
-                if not self.process_files(file_paths_to_process):
-                    return
+            logger.info(f"walking directory. current dir: {root}, dirnames: {dirnames}, files: {files}")
+            root_set = set(root.split(os.sep))
+            intersect_set = ignored_dirs.intersection(root_set)
+            logger.info(f"root_set: {root_set}, ignored_set: {ignored_dirs}, intersection: {intersect_set}")
+            if len(intersect_set) == 0:
+                files.sort()
+                file_paths_to_process = []
+                for filename in files:
+                    if filename in ignored_files:
+                        continue
+                    file_paths_to_process.append(os.path.join(root, filename))
+                if self.max_concurrency > 1:
+                    if not self.process_files(file_paths_to_process):
+                        return
+                else:
+                    try:
+                        for file_path in file_paths_to_process:
+                            self.process_file(file_path)
+                    except KeyboardInterrupt:
+                        logger.warning("Received interrupt. Shutting down...")
+                        return
+                if root.count(os.sep) >= self.stop_depth:
+                    del dirnames[:]
             else:
-                try:
-                    for file_path in file_paths_to_process:
-                        self.process_file(file_path)
-                except KeyboardInterrupt:
-                    logger.warning("Received interrupt. Shutting down...")
-                    return
-            if root.count(os.sep) >= self.stop_depth:
-                del dirnames[:]
+                logger.info(f"Found directory in ignore list: {root}")
+                continue
 
     def get_file_count(self):
         file_count = 0
