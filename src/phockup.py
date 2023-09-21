@@ -12,6 +12,7 @@ from tqdm import tqdm
 
 from src.date import Date
 from src.exif import Exif
+from pprint import pprint
 
 logger = logging.getLogger('phockup')
 ignored_files = ('.DS_Store', 'Thumbs.db')
@@ -45,6 +46,8 @@ class Phockup:
         if output_dir.endswith(os.path.sep):
             output_dir = output_dir[:-1]
 
+        self.skipped_for_later = set()
+        self.handled_as_sidecar = set()
         self.input_dir = input_dir
         self.output_dir = output_dir
         self.output_prefix = args.get('output_prefix' or None)
@@ -113,6 +116,12 @@ class Phockup:
                 logger.info(f"Would have moved {self.files_moved} files.")
             else:
                 logger.info(f"Moved {self.files_moved} files.")
+        logger.info(f"Files ignored as sidecars ({len(self.skipped_for_later)}):")
+        pprint(self.skipped_for_later)
+        logger.info(f"Files processed as sidecars ({len(self.handled_as_sidecar)}):")
+        pprint(self.handled_as_sidecar)
+        logger.info("Files ignored as sidecars and not handled as sidecars:")
+        pprint(list(self.skipped_for_later - self.handled_as_sidecar))
 
     def check_directories(self):
         """
@@ -258,6 +267,7 @@ class Phockup:
         If file is a sidecar skip it so process_sidecars method can handle it
         """
         if any([filename.lower().endswith(sc_ext) for sc_ext in self.sidecar_extensions]):
+            self.skipped_for_later.add(filename)
             return None
 
         progress = f'{filename}'
@@ -384,6 +394,7 @@ but looking for '{self.file_type}'"
 
         # Perform the move
         for original, target in sidecars:
+            self.handled_as_sidecar.add(original)
             sidecar_path = os.path.sep.join([output, target])
             logger.info(f"{original} => {sidecar_path}")
 
