@@ -39,15 +39,26 @@ class Date:
             keys = date_field.split()
         else:
             keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate',
-                    'DateTimeOriginal']
+                    'DateTimeOriginal', 'CreationDate']
 
-        datestr = None
+        datestr_no_timezone = None
+        datestr_with_timezone = None
 
         for key in keys:
             # Skip 'bad' dates that return integers (-1) or have the format 0000...
+            # Also, prioritize date that has time zone indicator.
             if key in exif and isinstance(exif[key], str) and not exif[key].startswith('0000'):
-                datestr = exif[key]
-                break
+                # Look for datestr with '-' or '+' to indicate time zone
+                print(key)
+                if ('-' in exif[key]) or ('+' in exif[key]):
+                    datestr_with_timezone = exif[key]
+                    break
+                else:
+                    datestr_no_timezone = exif[key]
+                    # Do not break, keep looking for date string with time zone
+
+        # Pick date with time zone if available
+        datestr = datestr_with_timezone if (datestr_with_timezone is not None) else datestr_no_timezone
 
         # sometimes exif data can return all zeros
         # check to see if valid date first
@@ -59,7 +70,7 @@ class Date:
             parsed_date = {'date': None, 'subseconds': ''}
 
         # apply TimeZone if available
-        if exif.get('TimeZone') is not None and isinstance(exif['TimeZone'], str):
+        if exif.get('TimeZone') is not None and isinstance(exif['TimeZone'], str) and datestr_with_timezone is None:
             timezonedata = exif['TimeZone'].split(':')
             if timezonedata and len(timezonedata) == 2:
                 parsed_date['date'] = parsed_date['date'] + timedelta(hours=int(timezonedata[0]), minutes=int(timezonedata[1]))
