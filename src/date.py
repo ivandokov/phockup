@@ -49,7 +49,6 @@ class Date:
             # Also, prioritize date that has time zone indicator.
             if key in exif and isinstance(exif[key], str) and not exif[key].startswith('0000'):
                 # Look for datestr with '-' or '+' to indicate time zone
-                print(key)
                 if ('-' in exif[key]) or ('+' in exif[key]):
                     datestr_with_timezone = exif[key]
                     break
