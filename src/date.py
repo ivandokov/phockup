@@ -39,7 +39,7 @@ class Date:
             keys = date_field.split()
         else:
             keys = ['SubSecCreateDate', 'SubSecDateTimeOriginal', 'CreateDate',
-                    'DateTimeOriginal', 'CreationDate', 'FileModificationDate/Time']
+                    'DateTimeOriginal', 'CreationDate', 'FileModifyDate']
 
         datestr_no_timezone = None
         datestr_with_timezone = None
