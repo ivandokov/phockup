@@ -15,6 +15,39 @@ All files which are not images or videos or those which do not have creation dat
 If the target file already exists, its checksum is compared with the source to determine if it is a duplicate. If the checksums are different, we do not have a duplicate and the target filename will be suffixed with a number, for example "-1". If the checksums match, the copy operation will be skipped.
 
 ## Installation
+
+### Docker
+
+The docker container supports two operation modes. The first allows for a single execution of phockup. In this mode, the container will be stopped after the execution is complete. The second mode allows for execution in intervals. In this mode, the container will continue running until the user decides to stop it.
+
+#### Single execution mode
+In this mode, all phockup parameters need to be passed as direct parameters within the docker run command. As you define a complete set of phockup parameters for this execution mode, this includes the paths to the input and output folders within the container.
+To execute phockup only once, use the following command:
+
+```
+docker run -v ~/Pictures:/mnt ivandokov/phockup:latest /mnt/input /mnt/output [PHOCKUP ARGUMENTS]
+```
+
+#### Continuous execution mode
+In this mode, all relevant settings are defined through environment variables and volume mappings. The folders where phockup moves files are always /mnt/input and /mnt/output within the container and can not be changed. You can of course map any folder on your host system to those folders within the container.
+
+The `-v ~/Pictures/input:/mnt/input` part of the command mounts your `~/Pictures/input` directory to `/mnt/input` inside the container. The same is done for the output folder. You can pass any **absolute** path to be mounted to the container and later on be used as paths for the `phockup` command. The example above provides your `~/Pictures/input` as `INPUTDIR` and `~/Pictures/output` as `OUTPUDIR`. You can pass additional arguments through the `OPTIONS` environment variable.
+
+To keep the container running and execute phockup in intervals, use the following command:
+
+```
+docker run -v ~/Pictures/input:/mnt/input -v ~/Pictures/output:/mnt/output -e "CRON=* * * * *" -e "OPTIONS=[PHOCKUP ARGUMENTS]" ivandokov/phockup:latest
+```
+
+This will execute phockup once every minute (as defined by the [value of the CRON environment variable](https://crontab.guru/#*_*_*_*_*)). However, the container will not spawn a new phockup process if another phockup process is still running. You can define other intervals for execution using the usual cron syntax. If you want to pass further arguments to phockup, use the OPTIONS environment variable. In this execution mode, phockup will always use the directories mounted to `/mnt/input` and `/mnt/output` and ignore arguments passed in the style of the single execution mode.
+
+### Mac
+Requires [Homebrew](http://brew.sh/)
+```
+brew tap ivandokov/homebrew-contrib
+brew install phockup
+```
+
 ### Linux (snap)
 Requires [snapd](https://snapcraft.io/docs/core/install)
 ```
@@ -48,13 +81,6 @@ For example using [yay](https://github.com/Jguer/yay):
 yay -S phockup
 ```
 
-### Mac
-Requires [Homebrew](http://brew.sh/)
-```
-brew tap ivandokov/homebrew-contrib
-brew install phockup
-```
-
 ### Windows
 * Download and install latest stable [Python 3](https://www.python.org/downloads/windows/)
 * Download Phockup's [latest release](https://github.com/ivandokov/phockup/archive/latest.tar.gz) and extract the archive
@@ -63,31 +89,6 @@ brew install phockup
 * Move `exiftool.exe` to phockup folder
 * Open Command Prompt and `cd` to phockup folder
 * Use the command below (use `phockup.py` instead of `phockup`)
-
-### Docker
-
-The docker container supports two operation modes. The first allows for a single execution of phockup. In this mode, the container will be stopped after the execution is complete. The second mode allows for execution in intervals. In this mode, the container will continue running until the user decides to stop it.
-
-#### Single execution mode
-In this mode, all phockup parameters need to be passed as direct parameters within the docker run command. As you define a complete set of phockup parameters for this execution mode, this includes the paths to the input and output folders within the container.
-To execute phockup only once, use the following command:
-
-```
-docker run -v ~/Pictures:/mnt ivandokov/phockup:latest /mnt/input /mnt/output [PHOCKUP ARGUMENTS]
-```
-
-#### Continuous execution mode
-In this mode, all relevant settings are defined through environment variables and volume mappings. The folders where phockup moves files are always /mnt/input and /mnt/output within the container and can not be changed. You can of course map any folder on your host system to those folders within the container.
-
-The `-v ~/Pictures/input:/mnt/input` part of the command mounts your `~/Pictures/input` directory to `/mnt/input` inside the container. The same is done for the output folder. You can pass any **absolute** path to be mounted to the container and later on be used as paths for the `phockup` command. The example above provides your `~/Pictures/input` as `INPUTDIR` and `~/Pictures/output` as `OUTPUDIR`. You can pass additional arguments through the `OPTIONS` environment variable.
-
-To keep the container running and execute phockup in intervals, use the following command:
-
-```
-docker run -v ~/Pictures/input:/mnt/input -v ~/Pictures/output:/mnt/output -e "CRON=* * * * *" -e "OPTIONS=[PHOCKUP ARGUMENTS]" ivandokov/phockup:latest
-```
-
-This will execute phockup once every minute (as defined by the [value of the CRON environment variable](https://crontab.guru/#*_*_*_*_*)). However, the container will not spawn a new phockup process if another phockup process is still running. You can define other intervals for execution using the usual cron syntax. If you want to pass further arguments to phockup, use the OPTIONS environment variable. In this execution mode, phockup will always use the directories mounted to `/mnt/input` and `/mnt/output` and ignore arguments passed in the style of the single execution mode.
 
 ## Usage
 Organize photos from one directory into another
