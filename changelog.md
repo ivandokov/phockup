@@ -1,4 +1,6 @@
 # Changelog
+##### `1.11.1`
+* Fixed code styling
 ##### `1.11.0`
 * Added `--from-date` and `--to-datezz options to limit the processed files [#202](https://github.com/ivandokov/phockup/pull/202)
 * Merged dependabot PRs
