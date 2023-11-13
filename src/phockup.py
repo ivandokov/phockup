@@ -284,10 +284,10 @@ but looking for '{self.file_type}'"
                 if type(file_date) is dict:
                     file_date = file_date["date"]
                 if self.from_date is not None and file_date < self.from_date:
-                    progress = f"{progress} => {filename} skipped: date {file_date} is older than from_date {self.from_date}"
+                    progress = f"{progress} => {filename} skipped: date {file_date} is older than --from-date {self.from_date}"
                     skip = True
                 if self.to_date is not None and file_date > self.to_date:
-                    progress = f"{progress} => {filename} skipped: date {file_date} is newer than to_date {self.to_date}"
+                    progress = f"{progress} => {filename} skipped: date {file_date} is newer than --to-date {self.to_date}"
                     skip = True
                 if skip:
                     if self.progress:

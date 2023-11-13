@@ -298,24 +298,22 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
     )
     
     parser.add_argument(
-        '--from_date',
+        '--from-date',
         type=str,
         default=None,
         help="""\
-Limit the operations to the files that are older than from_date (inclusive).
-The date must be specified in format YYYY-MM-DD
-Files with unknown date won't be skipped.
+Limit the operations to the files that are newer than --from-date (inclusive).
+The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
 """
     )
 
     parser.add_argument(
-        '--to_date',
+        '--to-date',
         type=str,
         default=None,
         help="""\
-Limit the operations to the files that are newer than from_date (inclusive).
-The date must be specified in format YYYY-MM-DD
-Files with unknown date won't be skipped.
+Limit the operations to the files that are older than --to-date (inclusive).
+The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
 """
     )
 
