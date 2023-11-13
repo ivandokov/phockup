@@ -77,10 +77,10 @@ Example:
         '--move',
         action='store_true',
         help="""\
-Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR.
-This is useful when working with a big collection of files and the remaining free space
-is not enough to make a copy of the INPUTDIR.
-""",
+            Instead of copying the process will move all files from the INPUTDIR to the OUTPUTDIR.
+            This is useful when working with a big collection of files and the remaining free space
+            is not enough to make a copy of the INPUTDIR.
+            """,
     )
 
     exclusive_group_link_move.add_argument(
@@ -88,11 +88,11 @@ is not enough to make a copy of the INPUTDIR.
         '--link',
         action='store_true',
         help="""\
-Instead of copying the process will make hard links to all files in INPUTDIR and place
-them in the OUTPUTDIR.
-This is useful when working with working structure and want to create YYYY/MM/DD
-structure to point to same files.
-""",
+            Instead of copying the process will make hard links to all files in INPUTDIR and place
+            them in the OUTPUTDIR.
+            This is useful when working with working structure and want to create YYYY/MM/DD
+            structure to point to same files.
+            """,
     )
 
     parser.add_argument(
@@ -100,9 +100,9 @@ structure to point to same files.
         '--original-names',
         action='store_true',
         help="""\
-Organize the files in selected format or using the default year/month/day format but
-keep original filenames.
-""",
+            Organize the files in selected format or using the default year/month/day format but
+            keep original filenames.
+            """,
     )
 
     parser.add_argument(
@@ -110,11 +110,11 @@ keep original filenames.
         '--timestamp',
         action='store_true',
         help="""\
-Use the timestamp of the file (last modified date) if there is no EXIF date information.
-If the user supplies a regex, it will be used if it finds a match in the filename.
-This option is intended as "last resort" since the file modified date may not be
-accurate, nevertheless it can be useful if no other date information can be obtained.
-""",
+            Use the timestamp of the file (last modified date) if there is no EXIF date information.
+            If the user supplies a regex, it will be used if it finds a match in the filename.
+            This option is intended as "last resort" since the file modified date may not be
+            accurate, nevertheless it can be useful if no other date information can be obtained.
+            """,
     )
 
     parser.add_argument(
@@ -122,9 +122,9 @@ accurate, nevertheless it can be useful if no other date information can be obta
         '--dry-run',
         action='store_true',
         help="""\
-Does a trial run with no permanent changes to the filesystem.
-So it will not move any files, just shows which changes would be done.
-""",
+            Does a trial run with no permanent changes to the filesystem.
+            So it will not move any files, just shows which changes would be done.
+            """,
     )
 
     parser.add_argument(
@@ -134,9 +134,10 @@ So it will not move any files, just shows which changes would be done.
         default=1,
         choices=range(1, 255),
         metavar='1-255',
-        help="Sets the level of concurrency for processing files in a "
-             "directory.  Defaults to 1.  Higher values can improve "
-             "throughput of file operations"
+        help="""\
+            Sets the level of concurrency for processing files in a directory.
+            Defaults to 1. Higher values can improve throughput of file operations
+            """,
     )
 
     parser.add_argument(
@@ -146,8 +147,8 @@ So it will not move any files, just shows which changes would be done.
         choices=range(0, 255),
         metavar='1-255',
         help="""\
-Descend at most 'maxdepth' levels (a non-negative integer) of directories
-""",
+            Descend at most 'maxdepth' levels (a non-negative integer) of directories
+            """,
     )
 
     parser.add_argument(
@@ -156,14 +157,14 @@ Descend at most 'maxdepth' levels (a non-negative integer) of directories
         action='store',
         type=re.compile,
         help="""\
-Specify date format for date extraction from filenames if there is no EXIF date
-information.
+            Specify date format for date extraction from filenames if there is no EXIF date
+            information.
 
-Example:
-    {regex}
-    can be used to extract the date from file names like the following
-    IMG_27.01.2015-19.20.00.jpg.
-""",
+            Example:
+                {regex}
+                can be used to extract the date from file names like the following
+                IMG_27.01.2015-19.20.00.jpg.
+            """,
     )
 
     parser.add_argument(
@@ -171,20 +172,20 @@ Example:
         '--date-field',
         action='store',
         help="""\
-Use a custom date extracted from the exif field specified.
-To set multiple fields to try in order until finding a valid date, use spaces to
-separate fields inside a string.
+            Use a custom date extracted from the exif field specified.
+            To set multiple fields to try in order until finding a valid date, use spaces to
+            separate fields inside a string.
 
-Example:
-    DateTimeOriginal
-    "DateTimeOriginal CreateDate FileModifyDate"
+            Example:
+                DateTimeOriginal
+                "DateTimeOriginal CreateDate FileModifyDate"
 
-These fields are checked by default when this argument is not set:
-    "SubSecCreateDate SubSecDateTimeOriginal CreateDate DateTimeOriginal"
+            These fields are checked by default when this argument is not set:
+                "SubSecCreateDate SubSecDateTimeOriginal CreateDate DateTimeOriginal"
 
-To get all date fields available for a file, do:
-    exiftool -time:all -mimetype -j <file>
-""",
+            To get all date fields available for a file, do:
+                exiftool -time:all -mimetype -j <file>
+            """,
     )
 
     exclusive_group_debug_silent = parser.add_mutually_exclusive_group()
@@ -194,8 +195,8 @@ To get all date fields available for a file, do:
         action='store_true',
         default=False,
         help="""\
-Enable debugging.  Alternately, set the LOGLEVEL environment variable to DEBUG
-""",
+            Enable debugging.  Alternately, set the LOGLEVEL environment variable to DEBUG
+            """,
     )
 
     exclusive_group_debug_silent.add_argument(
@@ -203,8 +204,8 @@ Enable debugging.  Alternately, set the LOGLEVEL environment variable to DEBUG
         action='store_true',
         default=False,
         help="""\
-Run without output.
-""",
+            Run without output.
+            """,
     )
 
     exclusive_group_debug_silent.add_argument(
@@ -212,33 +213,33 @@ Run without output.
         action='store_true',
         default=False,
         help="""\
-Run with progressbar output.
-""",
+            Run with progressbar output.
+            """,
     )
 
     parser.add_argument(
         '--log',
         action='store',
         help="""\
-Specify the output directory where your log file should be exported.
-This flag can be used in conjunction with the flag `--quiet` or `--progress`.
-""",
+            Specify the output directory where your log file should be exported.
+            This flag can be used in conjunction with the flag `--quiet` or `--progress`.
+            """,
     )
 
     parser.add_argument(
         'input_dir',
         metavar='INPUTDIR',
         help="""\
-Specify the source directory where your photos are located.
-""",
+            Specify the source directory where your photos are located.
+            """,
     )
 
     parser.add_argument(
         'output_dir',
         metavar='OUTPUTDIR',
         help="""\
-Specify the output directory where your photos should be exported.
-""",
+            Specify the output directory where your photos should be exported.
+            """,
     )
 
     parser.add_argument(
@@ -247,10 +248,10 @@ Specify the output directory where your photos should be exported.
         choices=['image', 'video'],
         metavar='image|video',
         help="""\
-By default, Phockup addresses both image and video files.
-If you want to restrict your command to either images or
-videos only, use `--file-type=[image|video]`.
-""",
+            By default, Phockup addresses both image and video files.
+            If you want to restrict your command to either images or
+            videos only, use `--file-type=[image|video]`.
+            """,
     )
 
     parser.add_argument(
@@ -258,10 +259,10 @@ videos only, use `--file-type=[image|video]`.
         type=str,
         default=Phockup.DEFAULT_NO_DATE_DIRECTORY,
         help="""\
-Files without EXIF date information are placed in a directory
-named 'unknown' by default.  This option overrides that
-folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
-""",
+            Files without EXIF date information are placed in a directory
+            named 'unknown' by default.  This option overrides that
+            folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
+            """,
     )
 
     parser.add_argument(
@@ -269,22 +270,23 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
         action='store_true',
         default=False,
         help="""\
-    Ignore files that don't contain valid EXIF data for the criteria specified.
-    This is useful if you intend to make multiple passes over an input directory
-    with varying and specific EXIF fields that are note checked by default.
-    """, )
+            Ignore files that don't contain valid EXIF data for the criteria specified.
+            This is useful if you intend to make multiple passes over an input directory
+            with varying and specific EXIF fields that are note checked by default.
+            """,
+    )
 
     parser.add_argument(
         '--output_prefix',
         type=str,
         default='',
         help="""\
-        String to prepend to the output directory to aid in sorting
-        files by an additional level prior to sorting by date.  This
-        string will immediately follow the output path and is intended
-        to allow runtime setting of the output path (e.g. via $USER,
-        $HOSTNAME, %%USERNAME%%, etc.)
-        """
+            String to prepend to the output directory to aid in sorting
+            files by an additional level prior to sorting by date.  This
+            string will immediately follow the output path and is intended
+            to allow runtime setting of the output path (e.g. via $USER,
+            $HOSTNAME, %%USERNAME%%, etc.)
+            """,
     )
 
     parser.add_argument(
@@ -292,9 +294,9 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
         type=str,
         default='',
         help="""\
-        String to append to the destination directory to aid in sorting
-        files by an additional level after sorting by date.
-        """
+            String to append to the destination directory to aid in sorting
+            files by an additional level after sorting by date.
+            """,
     )
 
     parser.add_argument(
@@ -302,9 +304,9 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
         type=str,
         default=None,
         help="""\
-Limit the operations to the files that are newer than --from-date (inclusive).
-The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
-"""
+            Limit the operations to the files that are newer than --from-date (inclusive).
+            The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
+            """,
     )
 
     parser.add_argument(
@@ -312,9 +314,9 @@ The date must be specified in format YYYY-MM-DD. Files with unknown date won't b
         type=str,
         default=None,
         help="""\
-Limit the operations to the files that are older than --to-date (inclusive).
-The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
-"""
+            Limit the operations to the files that are older than --to-date (inclusive).
+            The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
+            """,
     )
 
     return parser.parse_args(args)
