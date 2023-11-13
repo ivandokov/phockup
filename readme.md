@@ -1,8 +1,8 @@
 # Phockup
 
-[![Tests](https://github.com/ivandokov/phockup/workflows/Tests/badge.svg)](https://github.com/ivandokov/phockup/actions)
-[![Deploy](https://github.com/ivandokov/phockup/workflows/Deploy/badge.svg)](https://github.com/ivandokov/phockup/actions)
-[![All lints status](https://github.com/ivandokov/phockup/workflows/All-lints/badge.svg)](https://github.com/ivandokov/phockup/workflows/actions)
+[![Tests](https://github.com/ivandokov/phockup/actions/workflows/tests.yml/badge.svg)](https://github.com/ivandokov/phockup/actions/workflows/tests.yml)
+[![Deploy](https://github.com/ivandokov/phockup/actions/workflows/deploy.yml/badge.svg)](https://github.com/ivandokov/phockup/actions/workflows/deploy.yml)
+[![Lint](https://github.com/ivandokov/phockup/actions/workflows/lint.yml/badge.svg)](https://github.com/ivandokov/phockup/actions/workflows/lint.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](license)
 
 Media sorting tool to organize photos and videos from your camera in folders by year, month and day.
