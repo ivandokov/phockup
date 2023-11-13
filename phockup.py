@@ -296,6 +296,26 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
         files by an additional level after sorting by date.
         """
     )
+    
+    parser.add_argument(
+        '--from-date',
+        type=str,
+        default=None,
+        help="""\
+Limit the operations to the files that are newer than --from-date (inclusive).
+The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
+"""
+    )
+
+    parser.add_argument(
+        '--to-date',
+        type=str,
+        default=None,
+        help="""\
+Limit the operations to the files that are older than --to-date (inclusive).
+The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
+"""
+    )
 
     return parser.parse_args(args)
 
@@ -344,7 +364,9 @@ def main(options):
         no_date_dir=options.no_date_dir,
         skip_unknown=options.skip_unknown,
         output_prefix=options.output_prefix,
-        output_suffix=options.output_suffix
+        output_suffix=options.output_suffix,
+        from_date=options.from_date,
+        to_date=options.to_date
     )
 
 

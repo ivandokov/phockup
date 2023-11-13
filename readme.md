@@ -220,6 +220,29 @@ saving to the same central respository.
 
 The two options above can be used to help sort/store images
 
+#### Limit files processed by date
+`--from-date` flag can be used to limit the operations to the files that are newer than the provided date (inclusive).
+The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
+
+For example:
+```
+phockup ~/Pictures/DCIM/NIKOND40 ~/Pictures/sorted --from-date="2017-01-02"
+```
+`--to-date` flag can be used to limit the operations to the files that are older than the provided date (inclusive).
+The date must be specified in format YYYY-MM-DD. Files with unknown date won't be skipped.
+
+For example:
+```
+phockup ~/Pictures/DCIM/NIKOND40 ~/Pictures/sorted --to-date="2017-01-02"
+```  
+
+`--from-date` and `--to-date` can be combined for better control over the files that are processed.
+
+For example:
+```
+phockup ~/Pictures/DCIM/NIKOND40 ~/Pictures/sorted --from-date="2017-01-02" --to-date="2017-01-03"
+``` 
+
 ### Missing date information in EXIF
 If any of the photos does not have date information you can use the `-r | --regex` option to specify date format for date extraction from filenames:
 ```
