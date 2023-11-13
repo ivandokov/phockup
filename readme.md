@@ -370,7 +370,7 @@ Please make sure that the code is compliant as described below when committing a
 We use [flake8](https://flake8.pycqa.org/en/latest/) to check the PEP 8 ruleset.
 
 Code style for the line length are following the description of the tool [black](https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length)
-In a nutshell, this comes down to to 88 characters per line. This number was found to produce significantly shorter files.
+In a nutshell, this comes down to 88 characters per line. This number was found to produce significantly shorter files.
 
 #### isort
 We also use [isort](https://github.com/PyCQA/isort) to check if import are sorted alphabetically, separated into sections and by type.
