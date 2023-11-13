@@ -154,7 +154,7 @@ def test_get_file_name(mocker):
     }
 
     assert Phockup('in', 'out').get_file_name("Bar/Foo.jpg", date) == \
-        "20170101-01010120.jpg"
+           "20170101-01010120.jpg"
 
 
 def test_get_file_name_is_original_on_exception(mocker):
@@ -474,6 +474,7 @@ def test_skip_unknown():
                 os.path.isfile(os.path.join(dir4, name))]) == 1
     shutil.rmtree('output', ignore_errors=True)
 
+
 def test_from_date():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', from_date="2017-10-06")
@@ -495,6 +496,7 @@ def test_from_date():
                 os.path.isfile(os.path.join(dir4, name))]) == 1
     shutil.rmtree('output', ignore_errors=True)
 
+
 def test_to_date():
     shutil.rmtree('output', ignore_errors=True)
     Phockup('input', 'output', to_date="2017-10-06", progress=True)
@@ -515,6 +517,7 @@ def test_to_date():
     assert len([name for name in os.listdir(dir4) if
                 os.path.isfile(os.path.join(dir4, name))]) == 0
     shutil.rmtree('output', ignore_errors=True)
+
 
 def test_from_date_to_date():
     shutil.rmtree('output', ignore_errors=True)

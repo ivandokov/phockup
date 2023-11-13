@@ -269,7 +269,7 @@ but looking for '{self.file_type}'"
                 logger.info(progress)
                 break
 
-            date_unknown = file_date == None or output.endswith(self.no_date_dir)
+            date_unknown = file_date is None or output.endswith(self.no_date_dir)
             if self.skip_unknown and output.endswith(self.no_date_dir):
                 # Skip files that didn't generate a path from EXIF data
                 progress = f"{progress} => skipped, unknown date EXIF information for '{target_file_name}'"

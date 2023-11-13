@@ -296,7 +296,7 @@ folder name. e.g. --no-date-dir=misc, --no-date-dir="no date"
         files by an additional level after sorting by date.
         """
     )
-    
+
     parser.add_argument(
         '--from-date',
         type=str,
