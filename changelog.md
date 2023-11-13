@@ -1,4 +1,8 @@
 # Changelog
+##### `1.11.3`
+* Fixed wrong tag in Git
+##### `1.11.2`
+* Fixed [deployment to Homebrew](https://github.com/ivandokov/phockup/commit/33aec10e7506fe5f70a8e244e963304ff6f54337)
 ##### `1.11.1`
 * Fixed code styling
 ##### `1.11.0`
