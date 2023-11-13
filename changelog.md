@@ -1,4 +1,8 @@
 # Changelog
+##### `1.11.0`
+* Added `--from-date` and `--to-datezz options to limit the processed files [#202](https://github.com/ivandokov/phockup/pull/202)
+* Merged dependabot PRs 
+* Improved documentation 
 ##### `1.10.1`
 * Fixed python versions for tests and deployments
 ##### `1.10.0`
