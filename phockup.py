@@ -276,7 +276,7 @@ Example:
             """,
     )
 
-    exclusive_group_debug_silent.add_argument(
+    parser.add_argument(
         '--movedel',
         action='store_true',
         default=False,
