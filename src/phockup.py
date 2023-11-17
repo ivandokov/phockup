@@ -50,6 +50,7 @@ class Phockup:
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
         self.skip_unknown = args.get("skip_unknown", False)
+        self.movedel = args.get("movedel", False),
         self.dry_run = args.get('dry_run', False)
         self.progress = args.get('progress', False)
         self.max_depth = args.get('max_depth', -1)
@@ -297,7 +298,12 @@ but looking for '{self.file_type}'"
 
             if os.path.isfile(target_file):
                 if filename != target_file and filecmp.cmp(filename, target_file, shallow=False):
-                    progress = f'{progress} => skipped, duplicated file {target_file}'
+                    if self.movedel and self.move and self.skip_unknown:
+                        if not self.dry_run:
+                            os.remove(filename)
+                        progress = f'{progress} => deleted, duplicated file {target_file}'
+                    else:
+                        progress = f'{progress} => skipped, duplicated file {target_file}'
                     self.duplicates_found += 1
                     if self.progress:
                         self.pbar.write(progress)

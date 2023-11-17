@@ -276,6 +276,16 @@ Example:
             """,
     )
 
+    exclusive_group_debug_silent.add_argument(
+        '--movedel',
+        action='store_true',
+        default=False,
+        help="""\
+            DELETE source files which are determined to be duplicates of files
+            already transferred.  Only valid in conjunction with both `--move`
+            and `--skip-unknown`.
+            """,
+    )
     parser.add_argument(
         '--output_prefix',
         type=str,
@@ -365,6 +375,7 @@ def main(options):
         max_concurrency=options.max_concurrency,
         no_date_dir=options.no_date_dir,
         skip_unknown=options.skip_unknown,
+        movedel=options.movedel,
         output_prefix=options.output_prefix,
         output_suffix=options.output_suffix,
         from_date=options.from_date,
