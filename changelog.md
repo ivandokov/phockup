@@ -1,4 +1,6 @@
 # Changelog
+##### `1.12.0`
+* Implement `--movedel` [#223](https://github.com/ivandokov/phockup/pull/223)
 ##### `1.11.3`
 * Fixed wrong tag in Git
 ##### `1.11.2`
