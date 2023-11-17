@@ -290,6 +290,27 @@ def test_process_move(mocker):
     shutil.rmtree('output', ignore_errors=True)
 
 
+def test_process_movedel(mocker, caplog):
+    shutil.rmtree('output', ignore_errors=True)
+    mocker.patch.object(Phockup, 'check_directories')
+    mocker.patch.object(Phockup, 'walk_directory')
+    mocker.patch.object(Exif, 'data')
+    Exif.data.return_value = {
+        "MIMEType": "image/jpeg"
+    }
+    phockup = Phockup('input', 'output', move=True, movedel=True, skip_unknown=True)
+    open("input/tmp_20170101_010101.jpg", "w").close()
+    open("input/sub_folder/tmp_20170101_010101.jpg", "w").close()
+    phockup.process_file("input/tmp_20170101_010101.jpg")
+    assert not os.path.isfile("input/tmp_20170101_010101.jpg")
+    assert os.path.isfile("output/2017/01/01/20170101-010101.jpg")
+    with caplog.at_level(logging.INFO):
+        phockup.process_file("input/sub_folder/tmp_20170101_010101.jpg")
+    assert 'deleted, duplicated file' in caplog.text
+    assert not os.path.isfile("input/sub_folder/tmp_20170101_010101.jpg")
+    shutil.rmtree('output', ignore_errors=True)
+
+
 def test_process_link(mocker):
     shutil.rmtree('output', ignore_errors=True)
     mocker.patch.object(Phockup, 'check_directories')
