@@ -311,6 +311,41 @@ def test_process_movedel(mocker, caplog):
     shutil.rmtree('output', ignore_errors=True)
 
 
+def test_process_rmdirs(mocker, caplog):
+    shutil.rmtree('output', ignore_errors=True)
+    shutil.rmtree('input/sub_folder/sub0', ignore_errors=True)
+    mocker.patch.object(Exif, 'data')
+    Exif.data.return_value = {
+        "MIMEType": "image/jpeg"
+    }
+    os.mkdir('input/sub_folder/sub0')
+    os.mkdir('input/sub_folder/sub0/sub1')
+    os.mkdir('input/sub_folder/sub0/sub2')
+    os.mkdir('input/sub_folder/sub0/sub2/sub3')
+    open("input/sub_folder/sub0/tmp_20170101_010101.jpg", "w").close()
+    open("input/sub_folder/sub0/sub1/tmp_20170101_010102.jpg", "w").close()
+    open("input/sub_folder/sub0/sub2/tmp_20170101_010103.jpg", "w").close()
+    open("input/sub_folder/sub0/sub2/sub3/tmp_20170101_010104.jpg", "w").close()
+    with caplog.at_level(logging.INFO):
+        Phockup('input/sub_folder/sub0', 'output', move=True, rmdirs=True, max_depth=1)
+    assert 'Deleted empty directory: input/sub_folder/sub0/sub1' in caplog.text
+    assert 'input/sub_folder/sub0/sub2/sub3 not deleted' in caplog.text
+    assert os.path.isfile("output/2017/01/01/20170101-010101.jpg")
+    assert os.path.isfile("output/2017/01/01/20170101-010102.jpg")
+    assert os.path.isfile("output/2017/01/01/20170101-010103.jpg")
+    assert not os.path.isfile("output/2017/01/01/20170101-010104.jpg")
+    assert not os.path.isdir("input/sub_folder/sub0/sub1")
+    assert os.path.isdir("input/sub_folder/sub0/sub2")
+    assert os.path.isdir("input/sub_folder/sub0/sub2/sub3")
+    with caplog.at_level(logging.INFO):
+        Phockup('input/sub_folder/sub0', 'output', move=True, rmdirs=True)
+    assert 'Deleted empty directory: input/sub_folder/sub0/sub2' in caplog.text
+    assert not os.path.isdir("input/sub_folder/sub0/sub2")
+    assert os.path.isfile("output/2017/01/01/20170101-010104.jpg")
+    shutil.rmtree('input/sub_folder/sub0', ignore_errors=True)
+    shutil.rmtree('output', ignore_errors=True)
+
+
 def test_process_link(mocker):
     shutil.rmtree('output', ignore_errors=True)
     mocker.patch.object(Phockup, 'check_directories')

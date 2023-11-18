@@ -51,6 +51,7 @@ class Phockup:
         self.date_field = args.get('date_field', False)
         self.skip_unknown = args.get("skip_unknown", False)
         self.movedel = args.get("movedel", False),
+        self.rmdirs = args.get("rmdirs", False),
         self.dry_run = args.get('dry_run', False)
         self.progress = args.get('progress', False)
         self.max_depth = args.get('max_depth', -1)
@@ -88,6 +89,9 @@ class Phockup:
         else:
             self.pbar = None
             self.walk_directory()
+
+        if self.move and self.rmdirs:
+            self.rm_subdirs()
 
         run_time = time.time() - start_time
         if self.files_processed and run_time:
@@ -155,6 +159,24 @@ class Phockup:
                     return
             if root.count(os.sep) >= self.stop_depth:
                 del dirnames[:]
+
+    def rm_subdirs(self):
+        def _get_depth(sub_path):
+            return sub_path.count(os.sep) - self.input_dir.count(os.sep)
+
+        for root, dirs, files in os.walk(self.input_dir, topdown=False):
+            # Traverse the tree bottom-up
+            if _get_depth(root) > self.stop_depth:
+                continue
+            for name in dirs:
+                dir_path = os.path.join(root, name)
+                if _get_depth(dir_path) > self.stop_depth:
+                    continue
+                try:
+                    os.rmdir(dir_path)  # Try to remove the dir
+                    logger.info(f"Deleted empty directory: {dir_path}")
+                except OSError as e:
+                    logger.info(f"{e.strerror} - {dir_path} not deleted.")
 
     def get_file_count(self):
         file_count = 0

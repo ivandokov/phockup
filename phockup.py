@@ -286,6 +286,17 @@ Example:
             and `--skip-unknown`.
             """,
     )
+
+    parser.add_argument(
+        '--rmdirs',
+        action='store_true',
+        default=False,
+        help="""\
+            DELETE empty directories after processing.  Only valid in
+            conjunction with `--move`.
+            """,
+    )
+
     parser.add_argument(
         '--output_prefix',
         type=str,
@@ -376,6 +387,7 @@ def main(options):
         no_date_dir=options.no_date_dir,
         skip_unknown=options.skip_unknown,
         movedel=options.movedel,
+        rmdirs=options.rmdirs,
         output_prefix=options.output_prefix,
         output_suffix=options.output_suffix,
         from_date=options.from_date,
