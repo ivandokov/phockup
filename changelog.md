@@ -1,4 +1,6 @@
 # Changelog
+##### `1.13.0`
+* Implement `--rmdirs` [#225](https://github.com/ivandokov/phockup/pull/225)
 ##### `1.12.0`
 * Implement `--movedel` [#223](https://github.com/ivandokov/phockup/pull/223)
 ##### `1.11.3`
