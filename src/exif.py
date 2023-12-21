@@ -28,5 +28,5 @@ class Exif(object):
     def get_exif_command(filename):
         # Handle all platform variations
         if sys.platform == 'win32':
-            return f'exiftool -time:all -mimetype -j "{filename}"'
-        return f'exiftool -time:all -mimetype -j {shlex.quote(filename)}'
+            return f'exiftool -MediaGroupUUID -ContentIdentifier -time:all -mimetype -j "{filename}"'
+        return f'exiftool -MediaGroupUUID -ContentIdentifier -time:all -mimetype -j {shlex.quote(filename)}'
