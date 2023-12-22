@@ -1,19 +1,38 @@
 #!/usr/bin/env bash
 
-# If the CRON variable is empty, phockup gets executed once as command line tool
-if [ -z "$CRON" ]; then
-  phockup "$@"
+if [[ "$PHOCKUP_UID" != "" && "$PHOCKUP_GID" != "" ]]
+then
+	adduser -D -u $PHOCKUP_UID $PHOCKUP_UID || echo "User $PHOCKUP_UID already exists"
+	addgroup -g $PHOCKUP_GID $PHOCKUP_GID || echo "Group $PHOCKUP_GID already exists"
+	GNAME=`getent group $PHOCKUP_GID | cut -d: -f1`
+	if [ -z "$CRON" ]; then
+		su $PHOCKUP_UID -g $GNAME -c "phockup $*"
+	else
+		if [ -f /tmp/phockup.lockfile ]; then
+			rm /tmp/phockup.lockfile
+		fi
 
-# When CRON is not empty, phockup will run in a cron job until the container is stopped.
+		CRON_COMMAND="$CRON flock -n /tmp/phockup.lockfile su $PHOCKUP_UID -g $GNAME -c \"phockup /mnt/input /mnt/output $OPTIONS\""
+
+		echo "$CRON_COMMAND" >> /etc/crontabs/root
+		echo "cron job has been set up with command: $CRON_COMMAND"
+
+		crond -f -d 8
+	fi
 else
-  if [ -f /tmp/phockup.lockfile ]; then
-    rm /tmp/phockup.lockfile
-  fi
+	if [ -z "$CRON" ]; then
+		phockup "$@"
+	else
+		if [ -f /tmp/phockup.lockfile ]; then
+			rm /tmp/phockup.lockfile
+		fi
 
-  CRON_COMMAND="$CRON flock -n /tmp/phockup.lockfile phockup /mnt/input /mnt/output $OPTIONS"
+		CRON_COMMAND="$CRON flock -n /tmp/phockup.lockfile phockup /mnt/input /mnt/output $OPTIONS"
 
-  echo "$CRON_COMMAND" >> /etc/crontabs/root
-  echo "cron job has been set up with command: $CRON_COMMAND"
+		echo "$CRON_COMMAND" >> /etc/crontabs/root
+		echo "cron job has been set up with command: $CRON_COMMAND"
 
-  crond -f -d 8
+		crond -f -d 8
+	fi
 fi
+
