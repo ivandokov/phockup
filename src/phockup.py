@@ -49,17 +49,17 @@ class Phockup:
         self.date_regex = args.get('date_regex', None)
         self.timestamp = args.get('timestamp', False)
         self.date_field = args.get('date_field', False)
-        self.skip_unknown = args.get("skip_unknown", False)
-        self.movedel = args.get("movedel", False),
-        self.rmdirs = args.get("rmdirs", False),
+        self.skip_unknown = args.get('skip_unknown', False)
+        self.movedel = args.get('movedel', False)
+        self.rmdirs = args.get('rmdirs', False)
         self.dry_run = args.get('dry_run', False)
         self.progress = args.get('progress', False)
         self.max_depth = args.get('max_depth', -1)
         # default to concurrency of one to retain existing behavior
-        self.max_concurrency = args.get("max_concurrency", 1)
+        self.max_concurrency = args.get('max_concurrency', 1)
 
-        self.from_date = args.get("from_date", None)
-        self.to_date = args.get("to_date", None)
+        self.from_date = args.get('from_date', None)
+        self.to_date = args.get('to_date', None)
         if self.from_date is not None:
             self.from_date = Date.strptime(f"{self.from_date} 00:00:00", "%Y-%m-%d %H:%M:%S")
         if self.to_date is not None:

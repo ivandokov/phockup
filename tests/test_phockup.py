@@ -278,6 +278,7 @@ def test_process_move(mocker):
     Exif.data.return_value = {
         "MIMEType": "image/jpeg"
     }
+    os.mkdir('input/sub0')
     phockup = Phockup('input', 'output', move=True)
     open("input/tmp_20170101_010101.jpg", "w").close()
     open("input/tmp_20170101_010101.xmp", "w").close()
@@ -287,7 +288,9 @@ def test_process_move(mocker):
     assert not os.path.isfile("input/tmp_20170101_010101.xmp")
     assert os.path.isfile("output/2017/01/01/20170101-010101.jpg")
     assert os.path.isfile("output/2017/01/01/20170101-010101.xmp")
+    assert os.path.isdir("input/sub0")  # empty dir not deleted
     shutil.rmtree('output', ignore_errors=True)
+    os.rmdir('input/sub0')
 
 
 def test_process_movedel(mocker, caplog):
