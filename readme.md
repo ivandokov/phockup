@@ -62,12 +62,10 @@ sudo snap connect phockup:removable-media
 ### Linux (without snap)
 If you are using distro which doesn't support [snapd](https://snapcraft.io/docs/core/install) or you don't want to download the snap you can use the following commands to download the source and set it up
 ```
-sudo apt-get install python3 libimage-exiftool-perl -y
+sudo apt-get install python3 python3-tqdm libimage-exiftool-perl -y
 curl -L https://github.com/ivandokov/phockup/archive/latest.tar.gz -o phockup.tar.gz
 tar -zxf phockup.tar.gz
 sudo mv phockup-* /opt/phockup
-cd /opt/phockup
-pip3 install -r requirements.txt
 sudo ln -s /opt/phockup/phockup.py /usr/local/bin/phockup
 ```
 
