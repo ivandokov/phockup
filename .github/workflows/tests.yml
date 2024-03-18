@@ -18,7 +18,7 @@ jobs:
         python-version: [ '3.7', '3.8', '3.9', '3.10', '3.11' ]
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build
         uses: docker/build-push-action@v5
         with:
